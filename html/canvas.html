@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Main HTML file</title>
+    <link rel="stylesheet" href="../css/canvasStyle.css">
+    <link rel="stylesheet" href="../css/menuStyle.css">
+    <link rel="stylesheet" href="../css/themeStyle.css">
+    <link rel="stylesheet" href="../css/figure.css">
+</head>
+<body class="entry-point">
+    <div class="window entry-point">
+        <header id="title-bar" class="entry-point">
+            <div style="position: relative;">
+                <button id="menu-button" class="style-button-menu entry-point">⋮</button>
+                <div id="div-dropdown" class="style-dropdown entry-point">
+                    <button class="dropdown-button-style button-transform entry-point" data-value="about">О программе</button>
+                    <div>
+                        <button id="theme-button" class="dropdown-button-style button-transform entry-point">Темы</button>
+                        <div id="theme-switch-menu" class="theme-dropdown entry-point">
+                            <button class="dropdown-button-style button-transform entry-point" id="button-swith-theme-light" data-value="light">Светлая тема</button>
+                            <button class="dropdown-button-style button-transform entry-point" id="button-swith-theme-dark" data-value="dark">Темная тема</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <button class="button-minimize-style entry-point" id="minimize" aria-label="Minimize"></button>
+                <button class="button-maximize-style entry-point" id="maximize" aria-label="Maximize"></button>   
+                <button class="button-close-style entry-point" id="close" aria-label="Close"></button>
+            </div>
+        </header>
+        <main class="entry-point">
+            <div id="shapes-container" class="canvas entry-point">
+                <div id="context-menu" class="context-menu">
+                    <button id="create-rectangle">Создать Прямоугольник</button>
+                    <button id="create-square">Создать Квадрат</button>
+                </div>
+            </div> 
+        </main>
+    </div>
+    <!-- <script type="module" src="../js/windowManager.js"></script> -->
+    <script type="module" src="../js/canvas.js"></script>
+</body>
+</html>

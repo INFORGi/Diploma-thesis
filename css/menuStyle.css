@@ -1,0 +1,82 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+}
+
+.style-button-menu{
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    width: 25px;
+    height: 25px;
+}
+
+.style-dropdown {
+    position: absolute; 
+    top: 100%; 
+    left: 50%;
+    display: none; 
+    z-index: 1000; 
+}
+
+.dropdown-button-style{
+    background: none;
+    border: none;
+    padding: 10px 20px; 
+    text-align: left; 
+    cursor: pointer;
+    width: 100%;
+}
+
+.theme-dropdown{
+    position: absolute; 
+    top: 0;
+    left: 100%;
+    display: none; 
+    z-index: 1000; 
+}
+
+.button-minimize-style{
+    background-color: transparent;
+    border: 0;
+    background-size: contain;
+    width: 25px;
+    height: 25px;
+}
+
+.button-maximize-style{
+    background-color: transparent;
+    border: 0;
+    background-size: contain;
+    width: 25px;
+    height: 25px;
+}
+
+.button-close-style{
+    background-color: transparent;
+    border: 0;
+    background-size: contain;
+    width: 25px;
+    height: 25px;
+}
+
+.img-button {
+    width: 15px;
+    height: 15px;
+    border-radius: 10px;
+    align-items: center;
+    justify-items: center;
+}
+
+.block-menu {
+    display: flex; /* Используем flexbox для выравнивания кнопок */
+    flex-direction: column; /* Располагаем кнопки вертикально */
+}
+
+.create-map-display {
+    display: none;
+}
+

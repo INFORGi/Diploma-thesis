@@ -1,0 +1,91 @@
+:root {
+    --light-bg: #f0f0f0;
+    --light-header-bg: #523f9e;
+    --light-header-button-bg: #CCCCFF;
+    --light-header-button-hover-bg: #1e1ea3;
+    --light-color: #000000;
+    --light-button-bg: #24b16a;
+    --light-card-bg: #f08e3f;
+
+
+    --dark-bg: #383838;
+    --dark-header-bg: #31255e;
+    --dark-header-button-bg: #003153;
+    --dark-header-button-hover-bg: #1988d8;
+    --dark-color: #ffffff;
+    --dark-button-bg: #9c9c9c;
+    --dark-border-color: #636363;
+    --dark-card-bg: #728820;
+    
+    --dropdown-button-bg: #9c29d8;
+    --header-button-close-hover-bg: #e32636;
+    --border-color: #ccc;
+}
+
+body.light { background-color: var(--light-bg); color: var(--light-color); }
+body.dark { background-color: var(--dark-bg); color: var(--dark-color); }
+
+header.light{ background-color: var(--light-header-bg); }
+header.dark{ background-color: var(--dark-header-bg); }
+
+main.light { background-color: var(--light-bg); }
+main.dark { background-color: var(--dark-bg); }
+
+.window.light { background-color: var(--light-bg); }
+.window.dark { background-color: var(--dark-bg); }
+
+.button-minimize-style.light{ background-image:url(../image/minimize_window.png); }
+.button-minimize-style.dark{ background-image:url(../image/minimize_window.png); }
+
+.button-minimize-style.light:hover{ background-color: var(--dark-header-button-hover-bg); border: 1px solid var(--border-color); border-radius: 3px; }
+.button-minimize-style.dark:hover{ background-color: var(--light-header-button-hover-bg); border: 1px solid var(--border-color); border-radius: 3px; }
+
+.button-maximize-style.light{ background-image:url(../image/expand_window.png); }
+.button-maximize-style.dark{ background-image:url(../image/expand_window.png); }
+
+.button-maximize-style.light:hover{ background-color: var(--dark-header-button-hover-bg); border: 1px solid var(--border-color); border-radius: 3px; }
+.button-maximize-style.dark:hover{ background-color: var(--light-header-button-hover-bg); border: 1px solid var(--border-color); border-radius: 3px; }
+
+.button-close-style.light{ background-image:url(../image/close_window.png); } 
+.button-close-style.dark{ background-image:url(../image/close_window.png); }
+
+.button-close-style.light:hover{ background-color: var(--header-button-close-hover-bg); border-radius: 3px; }
+.button-close-style.dark:hover{ background-color: var(--header-button-close-hover-bg); border-radius: 3px; }
+
+.style-button-menu.light{ background-color: var(--light-header-bg); color: var(--dark-color); }
+.style-button-menu.dark{ background-color: var(--dark-header-bg); color: var(--dark-color); }
+
+.style-dropdown.light { background-color: var(--light-bg); border: 1px solid var(--border-color); border-radius: 4px; }
+.style-dropdown.dark { background-color: var(--dark-bg); border: 1px solid var(--border-color); border-radius: 4px; }
+
+.dropdown-button-style.light { color: var(--light-color); }
+.dropdown-button-style.dark { color: var(--dark-color); }
+
+.dropdown-button-style.dark:hover { background-color: var(--dropdown-button-bg); color: var(--dark-color); }
+.dropdown-button-style.light:hover { background-color: var(--dropdown-button-bg); color: var(--dark-color); }
+
+.theme-dropdown.light { background-color: var(--light-bg); border: 1px solid var(--border-color); border-radius: 4px;}
+.theme-dropdown.dark { background-color: var(--dark-bg); border: 1px solid var(--border-color); border-radius: 4px; }
+
+.block-history.light { background-color: var(--light-bg); }
+.block-history.dark { background-color: var(--dark-bg); }
+
+.block-menu.light { background-color: var(--light-bg); border-right: 2px solid var(--border-color); } 
+.block-menu.dark { background-color: var(--dark-bg); border-right: 2px solid var(--dark-border-color); } 
+
+.button-main-menu.light { background-color: var(--light-button-bg); color: var(--light-color); }
+.button-main-menu.dark { background-color: var(--dark-button-bg); color: var(--dark-color);  }
+
+/* Трансформация кнопок */
+.button-transform { border: none; border-radius: 1px; cursor: pointer; transition: background-color 0.3s, transform 0.2s; }
+.button-transform:hover { transform: translateY(-2px); }
+.button-transform:active { transform: translateY(0); }
+
+.card.light{ background-color: var(--light-card-bg); border: 1px solid var(--dark-border-color); }
+.card.dark { background-color: var(--dark-card-bg); border: 1px solid var(--border-color); }
+
+.p-card.light { color: var(--light-color); }
+.p-card.dark { color: var(--dark-color); }
+
+.button-card.light { background-color: var(--light-button-bg); color: var(--light-color); }
+.button-card.dark { background-color: var(--dark-button-bg); color: var(--dark-color); }

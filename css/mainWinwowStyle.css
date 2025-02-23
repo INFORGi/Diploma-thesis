@@ -1,3 +1,9 @@
+/* 
+
+    Это фал стилей для главного окна, который подгружается во время запуска проекта.
+
+*/
+
 body {
     margin: 0;
     padding: 0;
@@ -13,8 +19,6 @@ main{
     grid-template-columns: 25% 75%;
     height: 100%;
 }
-
-
 
 .window {
     border-radius: 8px;

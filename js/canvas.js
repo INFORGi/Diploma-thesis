@@ -1,20 +1,25 @@
 import { initWindowDragging, initButtonHandlers, initDropdownStyleMenu, setTheme } from './windowManager.js';
-import { Rectangle } from './rectangle.js';
-import { Square } from './square.js';
+import { MindMap } from '../api/my/MindMap.js';
 
-const shapesContainer = document.getElementById('shapes-container');
-
-
-document.addEventListener("DOMContentLoaded", function() {
+function init(){
     initButtonHandlers();
     initWindowDragging();
     initDropdownStyleMenu();
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    init();
+
+    const mindMap = new MindMap('canvas-inner', 'tree',{ draggable: false });
+    mindMap.addNode('root',{id:'root2', topic: 'dsadsad', style:{ backgroundColor: "#7FFFD4"}});
+    mindMap.addNode('root',{id:'root3', topic: 'dsadsad', style:{}});
+    mindMap.render();
 
     // Добавляем обработчик для правого клика
-    const shapesContainer = document.getElementById('shapes-container');
+    const shapesContainer = document.getElementById('canvas-inner');
     shapesContainer.addEventListener('contextmenu', function(event) {
         event.preventDefault(); // Предотвращаем стандартное контекстное меню
-        showContextMenu(event.pageX, event.pageY);
+        showContextMenu(event.pageX, event.pageY, shapesContainer);
     });
 
     // Обработчик для клика вне контекстного меню
@@ -22,47 +27,54 @@ document.addEventListener("DOMContentLoaded", function() {
         hideContextMenu();
     });
 
-    // Обработчики для кнопок контекстного меню
-    document.getElementById('create-rectangle').addEventListener('click', function(event) {
-        createRectangle(event.pageX, event.pageY);
-        hideContextMenu();
-    });
-
-    document.getElementById('create-square').addEventListener('click', function() {
-        createSquare();
-        hideContextMenu();
-    });
+    // Обработчик для кнопки создания прямоугольника
+    const createRectangleButton = document.getElementById('create-rectangle');
+    if (createRectangleButton) {
+        createRectangleButton.addEventListener('click', function(event) {
+            createRectangle(event.pageX, event.pageY);
+            hideContextMenu();
+        });
+    } else {
+        console.error("Create Rectangle button not found!");
+    }
 });
 
 // Функция для отображения контекстного меню
-function showContextMenu(x, y) {
+function showContextMenu(x, y, container) {
     const contextMenu = document.getElementById('context-menu');
-    contextMenu.style.left = `${x}px`;
-    contextMenu.style.top = `${y}px`;
+    if (!contextMenu) {
+        console.error("Context menu not found!");
+        return;
+    }
+
+    // Получаем размеры меню и окна
+    const menuWidth = contextMenu.offsetWidth;
+    const menuHeight = contextMenu.offsetHeight;
+    const windowWidth = container.windowWidth;
+    const windowHeight = container.windowHeight;
+
+    // Корректируем позицию, чтобы меню не выходило за границы
+    const adjustedX = x + menuWidth > windowWidth ? windowWidth - menuWidth : x;
+    const adjustedY = y + menuHeight > windowHeight ? y - menuHeight : y;
+
+    // Применяем стили
+    contextMenu.style.left = `${adjustedX}px`;
+    contextMenu.style.top = `${adjustedY}px`;
     contextMenu.style.display = 'block';
 }
 
 // Функция для скрытия контекстного меню
 function hideContextMenu() {
     const contextMenu = document.getElementById('context-menu');
-    contextMenu.style.display = 'none';
+    if (contextMenu) {
+        contextMenu.style.display = 'none';
+    }
 }
 
 // Функция для создания прямоугольника
 async function createRectangle(x, y) {
-    const userInput = await window.electron.showdialog();
-    if (userInput) { // Проверяем, что пользователь ввел текст
-        const container = document.getElementById('shapes-container');
-        const rectangle = new Rectangle(container, 200, 100, x, y, userInput);
-    }
+    
 }
-
-// Функция для создания квадрата
-function createSquare(x, y) {
-    const container = document.getElementById('shapes-container');
-    const square = new Square(container, 100, 'Квадрат');
-}
-
 
 // Получаем настройки и устанавливаем тему
 window.electron.onLoadSettings((settings) => {

@@ -50,6 +50,8 @@ function initButtonHandlers() {
 
     document.getElementById('maximize').onclick = function() {
         window.electron.maximize();
+
+        console.log('click');
     };
 
     document.getElementById('close').onclick = function() {

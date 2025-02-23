@@ -1,203 +1,233 @@
 import { Node } from './Node.js';
-import { Connection } from './Connection.js';
+import { TreeRenderer } from './TreeRenderer.js';
+import { findNodeById, findParentNode, traverseNodes } from './utils.js';
+import { DEFAULT_NODE_STYLE } from '../../data/constants.js';
 
 export class MindMap {
-    constructor(containerId, options = {}, meta = {}, format = "node_tree", data = {}, style = {}) {
-        this.mind = {
-            option: {
-                container: containerId,
-                editable: true,
-                theme: 'orange',
-                ...options,
-            },
-            meta: {
-                name: "First",
-                author: "INFORG",
-                version: "0.0",
-                ...meta,
-            },
-            format: format,
-            data: new Node("root", "jsMind", style, window.innerWidth / 2 - data.width / 2, window.innerHeight / 2 - data.height / 2, "right", [], false), // Разрешаем перетаскивание по умолчанию
-            ...data,
-        };
+    constructor(containerId, rendererType = 'tree', options = {}, meta = {}) {
+        // Инициализация рендерера
+        this.renderer = this.createRenderer(containerId, rendererType);
 
-        this.container = document.getElementById(this.mind.option.container);
-        if (!this.container) throw new Error(`Container "${this.mind.option.container}" not found`);
-        
-        // Убедитесь, что контейнер имеет позиционирование relative для правильного позиционирования дочерних элементов
-        this.container.style.position = 'relative';
-        this.container.style.width = '100%'; // Задаем ширину
-        this.container.style.height = '100vh'; // Задаем высоту на всю страницу
+        // Данные карты
+        this.nodes = []; // Все узлы карты
+        this.connections = []; // Все соединения
 
-        this.jsPlumbInstance = jsPlumb.getInstance({ Container: this.container });
-
+        // Инициализация корневого узла
+        this.initializeRootNode(options, meta);
     }
 
+    /**
+     * Создает рендерер в зависимости от типа.
+     * @param {string} containerId - ID контейнера.
+     * @param {string} type - Тип рендерера (например, 'tree').
+     * @returns {Renderer} - Экземпляр рендерера.
+     */
+    createRenderer(containerId, type) {
+        const container = document.getElementById(containerId);
+        if (!container) throw new Error(`Container "${containerId}" not found`);
+
+        const jsPlumbInstance = jsPlumb.getInstance({
+            Container: container });
+
+        switch (type) {
+            case 'tree':
+                return new TreeRenderer(container, jsPlumbInstance);
+            // Другие типы рендереров можно добавить здесь
+            default:
+                throw new Error(`Unknown renderer type: ${type}`);
+        }
+    }
+
+    /**
+     * Инициализирует корневой узел карты.
+     * @param {Object} options - Настройки карты.
+     * @param {Object} meta - Метаданные карты.
+     */
+    initializeRootNode(options, meta) {
+        const rootNode = new Node(
+            'root',
+            'Text',
+            options.style || DEFAULT_NODE_STYLE,
+            window.innerWidth / 2 - (options.width || 0) / 2,
+            window.innerHeight / 2 - (options.height || 0) / 2,
+            'right',
+            [],
+            options.draggable !== false
+        );
+
+        this.addNode(null, rootNode);
+    }
+
+    /**
+     * Добавляет новый узел в карту.
+     * @param {string|null} parentId - ID родительского узла (null для корневого).
+     * @param {Object} nodeData - Данные нового узла.
+     */
     addNode(parentId, nodeData) {
-        const parentNode = this.findNodeById(parentId, this.mind.data);
-        if (!parentNode) {
+        if (findNodeById(nodeData.id, this.nodes[0])) {
+            console.warn(`Узел с id "${nodeData.id}" уже существует!`);
+            return;
+        }
+    
+        console.log(this.nodes);
+
+        const parent = parentId ? findNodeById(parentId, this.nodes[0]) : null;
+        if (!parent && parentId) {
             console.error(`Parent node with id "${parentId}" not found`);
             return;
         }
-        const newNode = new Node(nodeData.id, nodeData.topic, nodeData.style, nodeData.x || parentNode.x + 150, nodeData.y || parentNode.y + 100, nodeData.connectionType || "left", [], nodeData.draggable !== undefined ? nodeData.draggable : true);
-        parentNode.children.push(newNode);
-        this.render();
+    
+        const node = new Node(
+            nodeData.id,
+            nodeData.topic,
+            nodeData.style,
+            nodeData.x || (parent ? parent.x + 150 : 0),
+            nodeData.y || (parent ? parent.y + 100 : 0),
+            nodeData.connectionType || 'left',
+            [],
+            nodeData.draggable !== undefined ? nodeData.draggable : true
+        );
+    
+        if (parent) {
+            parent.children.push(node); // Добавляем в дочерние узлы родителя
+        } else {
+            this.nodes.push(node); // Если нет родителя, добавляем как отдельный узел
+        }
+    
+        // Отрисовка узла и соединения
+        const parentElement = parent ? this.renderer.nodeElements.get(parent.id) : this.renderer.container;
+        this.renderer.renderNode(node, parentElement);
+        if (parent) this.renderer.renderConnection(parent, node);
     }
+    
+    
 
+    /**
+     * Удаляет узел из карты.
+     * @param {string} nodeId - ID узла для удаления.
+     */
     removeNode(nodeId) {
-        const parentNode = this.findParentNode(nodeId, this.mind.data);
+        const parentNode = findParentNode(nodeId, this.nodes);
         if (!parentNode) {
             console.error(`Node with id "${nodeId}" not found`);
             return;
         }
+
+        // Удаляем узел из списка детей родителя
         parentNode.children = parentNode.children.filter(node => node.id !== nodeId);
+
+        // Удаляем узел из общего списка узлов
+        this.nodes = this.nodes.filter(node => node.id !== nodeId);
+
+        // Перерисовываем карту
         this.render();
     }
 
+    /**
+     * Обновляет данные узла.
+     * @param {string} nodeId - ID узла.
+     * @param {Object} newData - Новые данные узла.
+     */
     updateNode(nodeId, newData) {
-        const node = this.findNodeById(nodeId, this.mind.data);
+        const node = findNodeById(nodeId, this.nodes);
         if (node) {
             node.update(newData);
-            this.render();
+            this.renderer.updateNodePosition(node);
+            this.updateConnections(nodeId);
         } else {
             console.error(`Node with id "${nodeId}" not found`);
         }
     }
 
-    findNodeById(nodeId, node = this.mind.data) {
-        if (node.id === nodeId) return node;
-        for (const child of node.children) {
-            const result = this.findNodeById(nodeId, child);
-            if (result) return result;
-        }
-        return null;
-    }
-
-    findParentNode(nodeId, node = this.mind.data) {
-        for (const child of node.children) {
-            if (child.id === nodeId) return node;
-            const result = this.findParentNode(nodeId, child);
-            if (result) return result;
-        }
-        return null;
-    }
-
+    /**
+     * Отрисовывает всю карту.
+     */
     render() {
-        const renderNode = (node, parentElement) => {
-            const nodeElement = document.createElement("div");
-            nodeElement.id = node.id;
-            nodeElement.textContent = node.topic;
-            nodeElement.style.position = "absolute";
-            nodeElement.style.width = node.style.width || "100px";
-            nodeElement.style.height = node.style.height || "50px";
-            nodeElement.style.backgroundColor = node.style.backgroundColor || "#fff";
-            nodeElement.style.color = node.style.color || "#000";
-            nodeElement.style.border = node.style.border || "1px solid rgb(44, 184, 44)";
-            nodeElement.style.left = `${node.x}px`;
-            nodeElement.style.top = `${node.y}px`;
-
-            // Добавляем элемент в контейнер
-            parentElement.appendChild(nodeElement);
-
-            // Делаем узел перетаскиваемым, если это разрешено
-            if (node.draggable) {
-                this.jsPlumbInstance.draggable(nodeElement);
-                nodeElement.addEventListener('dragstart', (e) => this.handleDragStart(e, node.id));
-                nodeElement.addEventListener('drag', (e) => this.handleDrag(e, node.id));
-                nodeElement.addEventListener('mouseup', (e) => this.handleDragEnd(e, node.id));
-            }
-
-            node.children.forEach(child => renderNode(child, parentElement));
-        };
-
-        this.container.innerHTML = "";
-        renderNode(this.mind.data, this.container);
-        this.renderConnections();
+        this.renderer.clear();
+        traverseNodes(this.nodes[0], node => {
+            this.renderer.renderNode(node);
+            node.children.forEach(child => 
+                this.renderer.renderConnection(node, child)
+            );
+        });
     }
 
-    renderConnections() {
-        this.jsPlumbInstance.deleteEveryConnection(); // Удаляем все соединения перед обновлением
-        const renderConnection = (node) => {
-            node.children.forEach(child => {
-                new Connection(this.jsPlumbInstance, node, child);
-                renderConnection(child);
-            });
-        };
-        renderConnection(this.mind.data);
-    }
-    
-
-
-    handleDragStart(e, nodeId) {
-        e.dataTransfer.setData("nodeId", nodeId);
-    }
-
-    handleDrag(e, nodeId) {
-        const node = this.findNodeById(nodeId);
-        if (node) {
-            const nodeElement = document.getElementById(nodeId);
-            nodeElement.style.left = `${e.clientX - nodeElement.offsetWidth / 2}px`;
-            nodeElement.style.top = `${e.clientY - nodeElement.offsetHeight / 2}px`;
-        }
-    }
-
-    handleDragEnd(e, nodeId) {
-        const node = this.findNodeById(nodeId);
-        if (node) {
-            node.x = e.clientX - 50;
-            node.y = e.clientY - 25;
-    
-            const parentNode = this.findParentNode(nodeId);
-            if (parentNode) {
-                node.connectionType = this.calculateConnectionType(node, parentNode);
-            }
-    
-            this.updateConnections(nodeId);        
-              
-        }
-    }
-
+    /**
+     * Обновляет соединения для узла после перемещения.
+     * @param {string} nodeId - ID узла.
+     */
     updateConnections(nodeId) {
-        const node = this.findNodeById(nodeId);
-        const parentNode = this.findParentNode(nodeId);
+        const node = findNodeById(nodeId, this.nodes);
+        const parentNode = findParentNode(nodeId, this.nodes);
         if (!node) return;
-    
+
         // Обновляем соединение с родителем
         if (parentNode) {
-            this.jsPlumbInstance.deleteConnectionsForElement(node.id);
-            new Connection(this.jsPlumbInstance, parentNode, node);
+            this.renderer.jsPlumb.deleteConnectionsForElement(node.id);
+            this.renderer.renderConnection(parentNode, node);
         }
-    
+
         // Обновляем соединения с детьми
         this.updateChildConnections(nodeId);
     }
-    
+
+    /**
+     * Рекурсивно обновляет соединения для всех дочерних узлов.
+     * @param {string} nodeId - ID родительского узла.
+     */
     updateChildConnections(nodeId) {
-        const node = this.findNodeById(nodeId);
+        const node = findNodeById(nodeId, this.nodes);
         if (node) {
             node.children.forEach(child => {
-                // Обновляем connectionType ребенка относительно нового положения родителя
+                // Обновляем тип соединения
                 child.connectionType = this.calculateConnectionType(child, node);
+
                 // Удаляем старое соединение
-                this.jsPlumbInstance.deleteConnectionsForElement(child.id);
-                // Создаём новое соединение с обновленными анкерами
-                new Connection(this.jsPlumbInstance, node, child);
+                this.renderer.jsPlumb.deleteConnectionsForElement(child.id);
+
+                // Создаем новое соединение
+                this.renderer.renderConnection(node, child);
+
                 // Рекурсивно обновляем соединения для вложенных детей
                 this.updateChildConnections(child.id);
             });
         }
     }
-     
+
+    /**
+     * Вычисляет тип соединения между узлами.
+     * @param {Node} node - Дочерний узел.
+     * @param {Node} parent - Родительский узел.
+     * @returns {string} - Тип соединения ('left', 'right', 'top', 'bottom').
+     */
     calculateConnectionType(node, parent) {
         const dx = node.x - parent.x;
         const dy = node.y - parent.y;
-        
+
         if (Math.abs(dx) > Math.abs(dy)) {
             return dx > 0 ? "right" : "left";
-        } 
-        else {
+        } else {
             return dy > 0 ? "bottom" : "top";
         }
     }
-    
+
+    /**
+     * Обрабатывает завершение перетаскивания узла.
+     * @param {Object} event - Событие перетаскивания.
+     * @param {string} nodeId - ID узла.
+     */
+    handleDragEnd(event, nodeId) {
+        const node = findNodeById(nodeId, this.nodes);
+        if (node) {
+            // Обновляем координаты узла
+            node.x = event.pos[0];
+            node.y = event.pos[1];
+
+            // Обновляем позицию узла на экране
+            this.renderer.updateNodePosition(node);
+
+            // Обновляем соединения
+            this.updateConnections(nodeId);
+        }
+    }
 }

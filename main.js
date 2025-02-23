@@ -37,7 +37,7 @@ function createWindow() {
         win.webContents.send('load-settings', settings);
     });
     
-    // win.webContents.openDevTools();
+    win.webContents.openDevTools();
 }
 
 // Функция создания окна
@@ -104,7 +104,7 @@ ipcMain.on('switch-theme', (event, newTheme) => {
 ipcMain.on('open-canvas', (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     win.loadFile('html/canvas.html');
-    win.maximize();
+    win.setFullScreen(true);
 });
 
 // Обработчик для получения текста от рендерера

@@ -11,7 +11,7 @@ body {
 
 main {
     display: grid;
-    grid-template-columns: 80% 20%; /* 80% для canvas, 20% для меню */
+    grid-template-columns: 100% 20%; /* 80% для canvas, 20% для меню */
     height: 100vh; /* Занимает всю высоту окна */
     width: 100vw; /* Занимает всю ширину окна */
 }
@@ -30,16 +30,15 @@ main {
     position: relative;
     width: 100%; /* Занимает 100% ширины своей колонки (80% от main) */
     height: 100vh; /* Занимает всю высоту окна */
-    overflow: scroll; /* Прокрутка только внутри контейнера */
+    overflow: visible; /* Прокрутка только внутри контейнера */
 }
 
 #canvas-inner {
-    width: 2000px; /* Ширина внутреннего содержимого */
-    height: 2000px; /* Высота внутреннего содержимого */
+    width: 150%; /* Ширина внутреннего содержимого */
+    height: 150%; /* Высота внутреннего содержимого */
     position: absolute; /* Позиционируем абсолютно внутри mind-map-container */
     top: 0;
     left: 0;
-    overflow: auto; /* Прокрутка внутри .canvas-inner */
 }
 
 .context-menu {

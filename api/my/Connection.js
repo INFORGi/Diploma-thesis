@@ -37,14 +37,12 @@ export class Connection {
     
         const styleParams = this.getStyleParams(this.styleType);
     
-
         const sourceElement = document.getElementById(this.sourceNode.id);
         const targetElement = document.getElementById(this.targetNode.id);
-
+    
         console.log('Source position:', sourceElement.getBoundingClientRect());
         console.log('Target position:', targetElement.getBoundingClientRect());
-
-
+    
         const commonParams = {
             source: this.sourceNode.id,
             target: this.targetNode.id,
@@ -129,22 +127,12 @@ export class Connection {
 
             default:
                 params.paintStyle = { stroke: color, strokeWidth: 3 };
-                params.connector = ["Bezier", { curvature: 0.5 }];
+                params.connectorStyle = { curvature: 0.5 };
                 params.endpoints = ["Blank", "Blank"];
         }
 
         return params;
     }
-
-    // getAnchorPosition(node, type) {
-    //     switch (node.connectionType) {
-    //         case "left": return type === "source" ? CONNECTION_DIRECTIONS.LEFT : CONNECTION_DIRECTIONS.RIGHT;
-    //         case "right": return type === "source" ? CONNECTION_DIRECTIONS.RIGHT : CONNECTION_DIRECTIONS.LEFT;
-    //         case "top": return type === "source" ? CONNECTION_DIRECTIONS.TOP : CONNECTION_DIRECTIONS.TOP;
-    //         case "bottom": return type === "source" ? CONNECTION_DIRECTIONS.BOTTOM : CONNECTION_DIRECTIONS.TOP;
-    //         default: return "Center";
-    //     }
-    // }
 
     getAnchorPosition(node, type) {
         switch (node.connectionType) {
@@ -154,8 +142,22 @@ export class Connection {
                 // - target (ребёнок) привязывается к левой стороне
                 return type === "source" ? [1, 0.5, 0, 0] : [0, 0.5, 0, 0];
             case "right":
+                // Для правого соединения:
+                // - source (родитель) привязывается к левой стороне
+                // - target (ребёнок) привязывается к правой стороне
                 return type === "source" ? [0, 0.5, 0, 0] : [1, 0.5, 0, 0];
+            case "top":
+                // Для верхнего соединения:
+                // - source (родитель) привязывается к нижней стороне
+                // - target (ребёнок) привязывается к верхней стороне
+                return type === "source" ? [0.5, 1, 0, 0] : [0.5, 0, 0, 0];
+            case "bottom":
+                // Для нижнего соединения:
+                // - source (родитель) привязывается к верхней стороне
+                // - target (ребёнок) привязывается к нижней стороне
+                return type === "source" ? [0.5, 0, 0, 0] : [0.5, 1, 0, 0];
             default:
+                // Центр по умолчанию
                 return "Center";
         }
     }

@@ -217,17 +217,6 @@ export class MindMap {
      * @param {string} nodeId - ID узла.
      */
     handleDragEnd(event, nodeId) {
-        const node = findNodeById(nodeId, this.nodes);
-        if (node) {
-            // Обновляем координаты узла
-            node.x = event.pos[0];
-            node.y = event.pos[1];
-
-            // Обновляем позицию узла на экране
-            this.renderer.updateNodePosition(node);
-
-            // Обновляем соединения
-            this.updateConnections(nodeId);
-        }
+        this.renderer.handleDragEnd(event, nodeId);
     }
 }

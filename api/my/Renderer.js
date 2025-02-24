@@ -1,21 +1,42 @@
+import { DEFAULT_NODE_STYLE } from '../../data/constants.js';
+
 export class Renderer {
-    constructor(container, jsPlumbInstance) {
+    constructor(container) {
         if (new.target === Renderer) {
-            throw new Error("Renderer is an abstract class and cannot be instantiated directly");
+            throw new Error("Renderer is an abstract class");
         }
         this.container = container;
-        this.jsPlumb = jsPlumbInstance;
+        this.nodeElements = new Map();
     }
 
-    renderNode(node, parentElement) {
-        throw new Error("Method 'renderNode()' must be implemented");
+    renderNode(node, parentElement = this.container) {
+        if (!parentElement) {
+            console.error('Parent element is null!');
+            return;
+        }
+        
+        const nodeElement = this.createNodeElement(node);
+        parentElement.appendChild(nodeElement);
+        this.nodeElements.set(node.id, nodeElement);
+    
+        return nodeElement;
     }
 
-    renderConnection(source, target) {
-        throw new Error("Method 'renderConnection()' must be implemented");
+    createNodeElement(node) {
+        const element = document.createElement('div');
+        element.id = node.id;
+        element.textContent = node.topic;
+        
+        Object.assign(element.style, {
+            ...DEFAULT_NODE_STYLE,
+            position: 'absolute'
+        });
+
+        return element;
     }
 
-    updateNodePosition(node) {
-        throw new Error("Method 'updateNodePosition()' must be implemented");
+    clear() {
+        this.container.innerHTML = '';
+        this.nodeElements.clear();
     }
 }

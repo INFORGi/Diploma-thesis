@@ -5,8 +5,9 @@
     <link rel="stylesheet" href="../css/canvasStyle.css">
     <link rel="stylesheet" href="../css/menuStyle.css">
     <link rel="stylesheet" href="../css/themeStyle.css">
-    <!-- <link rel="stylesheet" href="../css/figure.css"> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsPlumb/2.15.5/js/jsplumb.min.js"></script>
+    <link rel="stylesheet" href="../lib/jsmind/style/jsmind.css">
+    <script type="module" src="../lib/jsmind/js/jsmind.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsPlumb/2.15.5/js/jsplumb.min.js" defer></script>
 </head>
 <body class="entry-point">
     <div class="window entry-point">
@@ -33,6 +34,7 @@
         </header>
         <main class="entry-point">
             <div id="mind-map-container" class="canvas entry-point">
+                <div id="jsmind_container"></div>
                 <div id="canvas-inner">
                 </div>
                 <div id="context-menu" class="context-menu">

@@ -34,8 +34,8 @@ main {
 }
 
 #canvas-inner {
-    width: 150%; /* Ширина внутреннего содержимого */
-    height: 150%; /* Высота внутреннего содержимого */
+    width: 1000%; /* Ширина внутреннего содержимого */
+    height: 1000%; /* Высота внутреннего содержимого */
     position: absolute; /* Позиционируем абсолютно внутри mind-map-container */
     top: 0;
     left: 0;
@@ -61,4 +61,19 @@ main {
 
 .context-menu button:hover {
     background-color: #f0f0f0;
+}
+
+#jsmind_container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: auto;
+}
+
+.jsmind-node {
+    cursor: pointer;
+}
+
+.jsmind-node:hover {
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
 }

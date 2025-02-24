@@ -7,27 +7,48 @@ export const LINE_STYLES = {
 };
 
 export const DEFAULT_NODE_STYLE = {
-    width: "150px",
-    height: "75px",
-    backgroundColor: "#fff",
-    color: "#000",
-    border: "1px solid rgb(0, 0, 0)",
+    width: "auto",
+    minWidth: "120px",
+    maxWidth: "200px",
+    padding: "10px 15px",
+    margin: "5px",
+    backgroundColor: "#ffffff",
+    color: "#333333",
+    border: "1px solid #cccccc",
+    borderRadius: "5px",
     fontFamily: "Arial, sans-serif",
     fontSize: "14px",
     fontWeight: "normal",
-    fontStyle: "normal",
     textAlign: "center",
-    lineHeight: "1.5",
-    letterSpacing: "normal",
-    textDecoration: "none",
-    textTransform: "none",
-    padding: "5px",
-    borderRadius: "30px",
-    boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+    lineHeight: "1.4",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
     cursor: "pointer",
+    position: "absolute",
+    transition: "all 0.3s ease",
     overflow: "hidden",
-    whiteSpace: "wrap",
-    textOverflow: "ellipsis"
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
+    userSelect: "none",
+    zIndex: "1"
+};
+
+// Добавим стили для разных типов узлов
+export const NODE_THEMES = {
+    root: {
+        backgroundColor: "#f0f0f0",
+        borderWidth: "2px",
+        borderColor: "#666666",
+        fontWeight: "bold",
+        fontSize: "16px"
+    },
+    left: {
+        backgroundColor: "#e1f5fe",
+        borderColor: "#81d4fa"
+    },
+    right: {
+        backgroundColor: "#f3e5f5",
+        borderColor: "#ce93d8"
+    }
 };
 
 export const CONNECTION_DIRECTIONS = {

@@ -1,0 +1,90 @@
+#jsmind_container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: 50px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.jsmind-node {
+    position: absolute;
+    cursor: move;
+    transform: translate(0, 0);
+    will-change: transform;
+    transition: all 0.3s ease;
+    backface-visibility: hidden;
+    -webkit-font-smoothing: subpixel-antialiased;
+    background: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    min-width: 100px;
+    text-align: center;
+    user-select: none;
+    margin: 5px;
+    z-index: 2;
+}
+
+.jsmind-node:hover {
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    transform: scale(1.02);
+}
+
+.jsmind-node[data-direction="left"] {
+    background-color: #e1f5fe;
+}
+
+.jsmind-node[data-direction="right"] {
+    background-color: #f3e5f5;
+}
+
+.node-topic {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #333;
+}
+
+.jsmind-node[data-isroot="true"] {
+    background-color: #f0f0f0 !important;
+    border-width: 2px !important;
+    margin-left: 0;
+    cursor: default;
+}
+
+.node-context-menu {
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.node-context-menu div:hover {
+    opacity: 0.8;
+}
+
+.children-container {
+    padding-left: 20px;
+    margin-top: 10px;
+    border-left: 2px solid #ccc;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.jsmind-node.dragging {
+    opacity: 0.8;
+    cursor: grabbing;
+    transition: none !important;
+}
+
+.children-container:empty {
+    display: none;
+}

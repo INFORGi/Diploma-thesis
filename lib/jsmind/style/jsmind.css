@@ -49,6 +49,31 @@
     overflow: hidden;
     text-overflow: ellipsis;
     color: #333;
+    min-width: 30px;
+    outline: none;
+    pointer-events: all !important; /* Убеждаемся, что события мыши работают */
+}
+
+.node-topic.editing {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 3px rgba(0,0,0,0.2);
+    border-radius: 2px;
+    padding: 2px 4px;
+    margin: -2px -4px;
+    cursor: text;
+    white-space: normal;
+    min-width: 100px;
+}
+
+.node-topic:focus {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 3px rgba(0,0,0,0.2);
+    border-radius: 2px;
+    padding: 2px 4px;
+    margin: -2px -4px;
+    white-space: normal;
+    overflow: visible;
+    min-width: 100px;
 }
 
 .jsmind-node[data-isroot="true"] {
@@ -83,6 +108,10 @@
     opacity: 0.8;
     cursor: grabbing;
     transition: none !important;
+}
+
+.jsmind-node.dragging .node-topic {
+    cursor: move;
 }
 
 .children-container:empty {

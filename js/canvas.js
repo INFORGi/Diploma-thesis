@@ -65,18 +65,14 @@ function init(){
     initDropdownStyleMenu();
     initJsMind();
 
-    // Добавляем обработчик двойного клика для добавления узлов
+    // Заменяем обработчик двойного клика
     document.getElementById('jsmind_container').addEventListener('dblclick', async function(e) {
-        if (e.target.closest('.jsmind-node')) {
-            const parentNode = e.target.closest('.jsmind-node');
-            const parentId = parentNode.id;
-            
-            // Показываем диалог для ввода текста
-            const topic = await window.electron.showdialog();
-            
+        const node = e.target.closest('.jsmind-node');
+
+        if (node) {
+            const topic = node.querySelector('.node-topic');
             if (topic) {
-                const newNodeId = 'node_' + Date.now();
-                jm.add_node(parentId, newNodeId, topic);
+                topic.focus();
             }
         }
     });

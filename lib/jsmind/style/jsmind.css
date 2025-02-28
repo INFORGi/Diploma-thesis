@@ -15,7 +15,7 @@
     cursor: move;
     transform: translate(0, 0);
     will-change: transform;
-    transition: all 0.3s ease;
+    transition: all 0.1s ease; /* Уменьшаем время анимации до 100мс Закомментируйте или удалите эту строку */
     backface-visibility: hidden;
     -webkit-font-smoothing: subpixel-antialiased;
     background: white;
@@ -31,15 +31,7 @@
 
 .jsmind-node:hover {
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    transform: scale(1.02);
-}
-
-.jsmind-node[data-direction="left"] {
-    background-color: #e1f5fe;
-}
-
-.jsmind-node[data-direction="right"] {
-    background-color: #f3e5f5;
+    transform: scale(1.01); /* Уменьшаем эффект увеличения */
 }
 
 .node-topic {
@@ -107,7 +99,7 @@
 .jsmind-node.dragging {
     opacity: 0.8;
     cursor: grabbing;
-    transition: none !important;
+    transition: none !important; /* Отключаем анимацию при перетаскивании */
 }
 
 .jsmind-node.dragging .node-topic {
@@ -116,4 +108,23 @@
 
 .children-container:empty {
     display: none;
+}
+
+.jsmind-context-menu {
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    min-width: 150px;
+}
+
+.jsmind-context-menu div {
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.jsmind-context-menu div:hover {
+    background-color: #f0f0f0;
 }

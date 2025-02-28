@@ -1,39 +1,76 @@
 :root {
-    --light-bg: #f0f0f0;
-    --light-header-bg: #523f9e;
-    --light-header-button-bg: #CCCCFF;
-    --light-header-button-hover-bg: #1e1ea3;
-    --light-color: #000000;
-    --light-button-bg: #24b16a;
-    --light-card-bg: #f08e3f;
+    /* Основные цвета для всего приложения */
+    --light-bg: #f8fafc;
+    --light-text: #241b1d;
 
+    /* Верхняя панель с кнопками управления */
+    --light-header-bg: #cdd8eb;
+    --light-header-text: #241b1d;
+    --light-header-button-bg: #a3a8b7;
+    --light-header-button-text: #241b1d;
+    --light-header-button-hover-bg: #c2c6d4;
 
-    --dark-bg: #333333;
-    --dark-header-bg: #31255e;
-    --dark-header-button-bg: #003153;
-    --dark-header-button-hover-bg: #1988d8;
-    --dark-color: #ffffff;
-    --dark-button-bg: #9c9c9c;
-    --dark-border-color: #636363;
-    --dark-card-bg: #728820;
-    
-    --dropdown-button-bg: #9c29d8;
-    --header-button-close-hover-bg: #e32636;
-    --border-color: #ccc;
+    /* Основные кнопки меню ("Создать", "Открыть") */
+    --light-button-bg: #b0b5c3;
+    --light-button-text: #241b1d;
+    --light-button-hover: #d9dce2;
+
+    /* Карточки для выбора шаблона карты */
+    --light-card-bg: #e8ebf2;
+    --light-card-text: #241b1d;
+    --light-card-border: #e3e7f0;
+
+    /* Выпадающее меню (три точки) */
+    --light-dropdown-hover: #f4f6fa;
+
+    /* Тёмная тема */
+    /* Основной фон и текст */
+    --dark-bg: #313338;
+    --dark-text: #9b9ea5;
+
+    /* Верхняя панель в тёмной теме */
+    --dark-header-bg: #393b40;
+    --dark-header-text: #888b92;
+    --dark-header-button-bg: #424449;
+    --dark-header-button-text: #777a80;
+    --dark-header-button-hover-bg: #4b4d52;
+
+    /* Кнопки меню в тёмной теме */
+    --dark-button-bg: #54565c;
+    --dark-button-text: #9b9ea5;
+    --dark-button-hover: #5e6066;
+
+    /* Карточки в тёмной теме */
+    --dark-card-bg: #393b40;
+    --dark-card-text: #888b92;
+    --dark-card-border: #6b6e75;
+
+    /* Выпадающее меню в тёмной теме */
+    --dark-dropdown-hover: #4b4d52;
+
+    /* Общие элементы интерфейса */
+    --dropdown-bg: var(--light-bg);
+    --close-button-hover: #54565c;
+    --border-color: #6b6e75;
 }
 
-body.light { background-color: var(--light-bg); color: var(--light-color); }
-body.dark { background-color: var(--dark-bg); color: var(--dark-color); }
+/* Основной фон окна */
+body.light { background-color: var(--light-bg); color: var(--light-text); }
+body.dark { background-color: var(--dark-bg); color: var(--dark-text); }
 
+/* Верхняя панель с кнопками */
 header.light{ background-color: var(--light-header-bg); }
 header.dark{ background-color: var(--dark-header-bg); }
 
+/* Основной фон */
 main.light { background-color: var(--light-bg); }
 main.dark { background-color: var(--dark-bg); }
 
+/* Окно */
 .window.light { background-color: var(--light-bg); }
 .window.dark { background-color: var(--dark-bg); }
 
+/* Кнопки управления окном (свернуть, развернуть, закрыть) */
 .button-minimize-style.light{ background-image:url(../image/minimize_window.png); }
 .button-minimize-style.dark{ background-image:url(../image/minimize_window.png); }
 
@@ -49,43 +86,49 @@ main.dark { background-color: var(--dark-bg); }
 .button-close-style.light{ background-image:url(../image/close_window.png); } 
 .button-close-style.dark{ background-image:url(../image/close_window.png); }
 
-.button-close-style.light:hover{ background-color: var(--header-button-close-hover-bg); border-radius: 3px; }
-.button-close-style.dark:hover{ background-color: var(--header-button-close-hover-bg); border-radius: 3px; }
+.button-close-style.light:hover{ background-color: var(--close-button-hover); border-radius: 3px; }
+.button-close-style.dark:hover{ background-color: var (--close-button-hover); border-radius: 3px; }
 
-.style-button-menu.light{ background-color: var(--light-header-bg); color: var(--dark-color); }
-.style-button-menu.dark{ background-color: var(--dark-header-bg); color: var(--dark-color); }
+/* Меню с тремя точками */
+.style-button-menu.light{ background-color: var(--light-header-bg); color: var(--light-header-text); }
+.style-button-menu.dark{ background-color: var(--dark-header-bg); color: var(--dark-header-text); }
 
+/* Выпадающее меню */
 .style-dropdown.light { background-color: var(--light-bg); border: 1px solid var(--border-color); border-radius: 4px; }
 .style-dropdown.dark { background-color: var(--dark-bg); border: 1px solid var(--border-color); border-radius: 4px; }
 
-.dropdown-button-style.light { color: var(--light-color); }
-.dropdown-button-style.dark { color: var(--dark-color); }
+.dropdown-button-style.light { color: var(--light-text); }
+.dropdown-button-style.dark { color: var(--dark-text); }
 
-.dropdown-button-style.dark:hover { background-color: var(--dropdown-button-bg); color: var(--dark-color); }
-.dropdown-button-style.light:hover { background-color: var(--dropdown-button-bg); color: var(--dark-color); }
+.dropdown-button-style.dark:hover { background-color: var(--dark-dropdown-hover); color: var(--dark-text); }
+.dropdown-button-style.light:hover { background-color: var(--light-dropdown-hover); color: var(--light-text); }
 
+/* Левая панель с кнопками создания и открытия карты */
 .theme-dropdown.light { background-color: var(--light-bg); border: 1px solid var(--border-color); border-radius: 4px;}
 .theme-dropdown.dark { background-color: var(--dark-bg); border: 1px solid var(--border-color); border-radius: 4px; }
 
+/* Область с карточками шаблонов */
 .block-history.light { background-color: var(--light-bg); }
 .block-history.dark { background-color: var(--dark-bg); }
 
-.block-menu.light { background-color: var(--light-bg); border-right: 2px solid var(--border-color); } 
+/* Левая панель с кнопками создания и открытия карты */
+.block-menu.light { background-color: var (--light-bg); border-right: 2px solid var(--border-color); } 
 .block-menu.dark { background-color: var(--dark-bg); border-right: 2px solid var(--dark-border-color); } 
 
-.button-main-menu.light { background-color: var(--light-button-bg); color: var(--light-color); }
-.button-main-menu.dark { background-color: var(--dark-button-bg); color: var(--dark-color);  }
+.button-main-menu.light { background-color: var(--light-button-bg); color: var(--light-button-text); }
+.button-main-menu.dark { background-color: var(--dark-button-bg); color: var(--dark-button-text);  }
 
-/* Трансформация кнопок */
+/* Эффект при наведении на кнопки */
 .button-transform { border: none; border-radius: 1px; cursor: pointer; transition: background-color 0.3s, transform 0.2s; }
 .button-transform:hover { transform: translateY(-2px); }
 .button-transform:active { transform: translateY(0); }
 
-.card.light{ background-color: var(--light-card-bg); border: 1px solid var(--dark-border-color); }
-.card.dark { background-color: var(--dark-card-bg); border: 1px solid var(--border-color); }
+/* Карточка шаблона */
+.card.light{ background-color: var(--light-card-bg); border: 1px solid var(--dark-card-border); }
+.card.dark { background-color: var(--dark-card-bg); border: 1px solid var(--light-card-border); }
 
-.p-card.light { color: var(--light-color); }
-.p-card.dark { color: var(--dark-color); }
+.p-card.light { color: var(--light-card-text); }
+.p-card.dark { color: var(--dark-card-text); }
 
-.button-card.light { background-color: var(--light-button-bg); color: var(--light-color); }
-.button-card.dark { background-color: var(--dark-button-bg); color: var(--dark-color); }
+.button-card.light { background-color: var(--light-button-bg); color: var(--light-button-text); }
+.button-card.dark { background-color: var(--dark-button-bg); color: var(--dark-button-text); }

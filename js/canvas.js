@@ -26,29 +26,64 @@ function initJsMind() {
         meta: {
             name: 'demo',
             author: 'user',
-            version: '0.1'
+            version: '0.2',
+            nodeTypes: {
+                main: 'main',
+                sub: 'sub',
+                child: 'child'
+            }
         },
         format: 'node_tree',
         data: {
             id: 'root',
             topic: 'Главная тема',
+            type: 'main',
+            connectionType: 'straight',
+            style: {},
             children: [
                 {
                     id: 'left1',
                     topic: 'Левая ветвь 1',
                     direction: 'left',
+                    type: 'sub',
+                    connectionType: 'curved',
+                    style: {},
                     children: [
-                        { id: 'left1.1', topic: 'Подтема 1.1' },
-                        { id: 'left1.2', topic: 'Подтема 1.2' }
+                        { 
+                            id: 'left1.1', 
+                            topic: 'Подтема 1.1',
+                            type: 'child',
+                            connectionType: 'inherit', // Наследует тип подключения от родителя
+                            style: {}
+                        },
+                        { 
+                            id: 'left1.2', 
+                            topic: 'Подтема 1.2',
+                            type: 'child',
+                            connectionType: 'inherit'
+                        }
                     ]
                 },
                 {
                     id: 'right1',
                     topic: 'Правая ветвь 1',
                     direction: 'right',
+                    type: 'sub',
+                    connectionType: 'bezier',
+                    style: {},
                     children: [
-                        { id: 'right1.1', topic: 'Подтема 1.1' },
-                        { id: 'right1.2', topic: 'Подтема 1.2' }
+                        { 
+                            id: 'right1.1', 
+                            topic: 'Подтема 1.1',
+                            type: 'child',
+                            connectionType: 'inherit'
+                        },
+                        { 
+                            id: 'right1.2', 
+                            topic: 'Подтема 1.2',
+                            type: 'child',
+                            connectionType: 'inherit'
+                        }
                     ]
                 }
             ]
@@ -57,6 +92,7 @@ function initJsMind() {
 
     jm = new jsMind(options);
     jm.show(mind);
+    jm.initContextMenu(); // Инициализируем контекстное меню
 }
 
 function init(){

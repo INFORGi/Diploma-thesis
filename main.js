@@ -21,11 +21,12 @@ function createWindow() {
     const win = new BrowserWindow({
         width: 800,
         height: 600,
-        frame: false, 
+        frame: false,
+        transparent: false,
+        roundedCorners: true,  // Включаем скругленные углы
         webPreferences: {
-            preload: path.join(__dirname, 'js/preload.js'), 
+            preload: path.join(__dirname, 'js/preload.js'),
             contextIsolation: true,
-            enableRemoteModule: false,
         },
     });
 
@@ -37,7 +38,7 @@ function createWindow() {
         win.webContents.send('load-settings', settings);
     });
     
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
 }
 
 // Функция создания окна

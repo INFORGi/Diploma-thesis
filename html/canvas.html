@@ -6,8 +6,10 @@
     <link rel="stylesheet" href="../css/menuStyle.css">
     <link rel="stylesheet" href="../css/themeStyle.css">
     <link rel="stylesheet" href="../lib/jsmind/style/jsmind.css">
+    <link rel="stylesheet" href="../css/styleMenu.css">
     <script type="module" src="../lib/jsmind/js/jsmind.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsPlumb/2.15.5/js/jsplumb.min.js" defer></script>
+    <script type="module" src="../js/styleManager.js"></script>
 </head>
 <body class="entry-point">
     <div class="window entry-point">
@@ -32,9 +34,103 @@
                 <button class="button-close-style entry-point" id="close" aria-label="Close"></button>
             </div>
         </header>
-        <main class="entry-point">
-            <div id="mind-map-container" class="canvas entry-point">
-                <div id="jsmind_container"></div>
+        <main class="entry-point" style="display: flex; height: 100vh; overflow: hidden;">
+            
+            <div class="style-sidebar">
+                <div class="style-header">Выберите узел для стилизации</div>
+                <form class="style-form" id="nodeStyleForm">
+                    <div class="style-group">
+                        <label for="width">Ширина (px)</label>
+                        <input type="number" id="width" class="style-input" min="100" max="500">
+                    </div>
+
+                    <div class="style-group">
+                        <label for="height">Высота (px)</label>
+                        <input type="number" id="height" class="style-input" min="20" max="200" value="20">
+                    </div>
+
+                    
+                    <div class="style-group">
+                        <label>Стиль текста</label>
+                        <div class="text-style-options">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="textBold"> Жирный
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="textItalic"> Курсив
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="textStrike"> Зачеркнутый
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="style-group">
+                        <label for="backgroundColor">Цвет фона</label>
+                        <input type="color" id="backgroundColor" class="color-input" value="#ffffff">
+                    </div>
+                    
+                    <div class="style-group">
+                        <label for="color">Цвет текста</label>
+                        <input type="color" id="color" class="color-input" value="#333333">
+                    </div>
+                    
+                    <div class="style-group">
+                        <label for="borderWidth">Толщина границы (px)</label>
+                        <input type="number" id="borderWidth" class="style-input" min="0" max="10" value="1">
+                    </div>
+
+                    <div class="style-group">
+                        <label for="borderColor">Цвет границы</label>
+                        <input type="color" id="borderColor" class="color-input" value="#cccccc">
+                    </div>
+
+                    <div class="style-group">
+                        <label for="borderStyle">Стиль границы</label>
+                        <select id="borderStyle" class="select-input">
+                            <option value="solid">Сплошная</option>
+                            <option value="dashed">Пунктирная</option>
+                            <option value="dotted">Точечная</option>
+                        </select>
+                    </div>
+                    
+                    <div class="style-group">
+                        <label for="borderRadius">Скругление углов (px)</label>
+                        <input type="number" id="borderRadius" class="style-input" min="0" max="50" value="5">
+                    </div>
+                    
+                    <div class="style-group">
+                        <label for="fontFamily">Шрифт</label>
+                        <select id="fontFamily" class="select-input">
+                            <option value="Arial, sans-serif">Arial</option>
+                            <option value="Times New Roman, serif">Times New Roman</option>
+                            <option value="Courier New, monospace">Courier New</option>
+                        </select>
+                    </div>
+                    
+                    <div class="style-group">
+                        <label for="fontSize">Размер шрифта (px)</label>
+                        <input type="number" id="fontSize" class="style-input" min="8" max="72" value="14">
+                    </div>
+
+                    <div class="style-group">
+                        <label for="textAlign">Выравнивание текста</label>
+                        <select id="textAlign" class="select-input">
+                            <option value="left">По левому краю</option>
+                            <option value="center">По центру</option>
+                            <option value="right">По правому краю</option>
+                        </select>
+                    </div>
+                    
+                    <div class="style-group">
+                        <label for="lineHeight">Высота строки</label>
+                        <input type="number" id="lineHeight" class="style-input" min="1" max="3" step="0.1" value="1.4">
+                    </div>
+                </form>
+            </div>
+
+            <div id="mind-map-container" class="canvas entry-point" style="flex: 1; height: 100%; display: flex; overflow: hidden;">
+                <div id="jsmind_container" style="flex: 1;"></div>
                 <div id="canvas-inner">
                 </div>
                 <div id="context-menu" class="context-menu">
@@ -44,7 +140,7 @@
             <div id="menu-settings" class="block-menu entry-point"></div>
         </main>
     </div>
-    <!-- <script type="module" src="../js/windowManager.js"></script> -->
+    
     <script type="module" src="../js/canvas.js"></script>
 </body>
 </html>

@@ -26,7 +26,7 @@ export const DEFAULT_NODE_STYLE = {
     position: "absolute",
     transition: "all 0.3s ease",
     overflow: "hidden",
-    whiteSpace: "nowrap",
+    whiteSpace: "wrap",
     textOverflow: "ellipsis",
     userSelect: "none",
     zIndex: "1"

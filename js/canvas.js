@@ -1,9 +1,25 @@
 import { initWindowDragging, initButtonHandlers, initDropdownStyleMenu, setTheme } from './windowManager.js';
 import { jsMind } from '../lib/jsmind/js/jsmind.js';
+import { StyleManager } from './styleManager.js';
 
-let jm = null; // глобальная переменная для хранения экземпляра jsMind
+let jm = null; 
+let styleManager = null;
 
 function initJsMind() {
+    const container = document.getElementById('jsmind_container');
+    if (!container) {
+        console.log('Container not found');
+        return;
+    }
+
+    
+    console.log('Container dimensions:', {
+        width: container.offsetWidth,
+        height: container.offsetHeight,
+        clientWidth: container.clientWidth,
+        clientHeight: container.clientHeight
+    });
+
     const options = {
         container: 'jsmind_container',
         theme: 'orange',
@@ -16,8 +32,8 @@ function initJsMind() {
             line_color: '#555'
         },
         layout: {
-            hspace: 200,  // Увеличиваем горизонтальное расстояние
-            vspace: 100,  // Увеличиваем вертикальное расстояние
+            hspace: 200,  
+            vspace: 100,  
             pspace: 13
         }
     };
@@ -53,7 +69,7 @@ function initJsMind() {
                             id: 'left1.1', 
                             topic: 'Подтема 1.1',
                             type: 'child',
-                            connectionType: 'inherit', // Наследует тип подключения от родителя
+                            connectionType: 'inherit', 
                             style: {}
                         },
                         { 
@@ -90,9 +106,32 @@ function initJsMind() {
         }
     };
 
-    jm = new jsMind(options);
-    jm.show(mind);
-    jm.initContextMenu(); // Инициализируем контекстное меню
+    try {
+        jm = new jsMind(options);
+        jm.show(mind);
+        jm.initContextMenu();
+        
+        
+        styleManager = new StyleManager('nodeStyleForm');
+
+        
+        container.addEventListener('click', (e) => {
+            const node = e.target.closest('.jsmind-node');
+            if (node) {
+                styleManager.setNode(node);
+            }
+        });
+
+        
+        window.addEventListener('resize', () => {
+            if (jm) {
+                jm.layout();
+                jm.drawLines();
+            }
+        });
+    } catch (error) {
+        console.error('Error initializing jsMind:', error);
+    }
 }
 
 function init(){
@@ -101,7 +140,7 @@ function init(){
     initDropdownStyleMenu();
     initJsMind();
 
-    // Заменяем обработчик двойного клика
+    
     document.getElementById('jsmind_container').addEventListener('dblclick', async function(e) {
         const node = e.target.closest('.jsmind-node');
 
@@ -118,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function() {
     init();
 });
 
-// Получаем настройки и устанавливаем тему
+
 window.electron.onLoadSettings((settings) => {
     setTheme(settings.Theme);
 });

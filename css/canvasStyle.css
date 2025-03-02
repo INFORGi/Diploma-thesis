@@ -6,14 +6,14 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    overflow: hidden; /* Убираем прокрутку у всего окна */
+    overflow: hidden;
 }
 
 main {
     display: grid;
-    grid-template-columns: 100% 20%; /* 80% для canvas, 20% для меню */
-    height: 100vh; /* Занимает всю высоту окна */
-    width: 100vw; /* Занимает всю ширину окна */
+    grid-template-columns: 100% 20%;
+    height: 100vh;
+    width: 100vw;
 }
 
 .window {
@@ -28,15 +28,15 @@ main {
 .canvas {
     background-color: whitesmoke;
     position: relative;
-    width: 100%; /* Занимает 100% ширины своей колонки (80% от main) */
-    height: 100vh; /* Занимает всю высоту окна */
-    overflow: visible; /* Прокрутка только внутри контейнера */
+    width: 100%;
+    height: 100vh;
+    overflow: visible;
 }
 
 #canvas-inner {
-    width: 1000%; /* Ширина внутреннего содержимого */
-    height: 1000%; /* Высота внутреннего содержимого */
-    position: absolute; /* Позиционируем абсолютно внутри mind-map-container */
+    width: 1000%;
+    height: 1000%;
+    position: absolute;
     top: 0;
     left: 0;
 }

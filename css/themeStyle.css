@@ -1,60 +1,38 @@
 :root {
-    /* Основные цвета для всего приложения */
     --light-bg: #f8fafc;
     --light-text: #241b1d;
-
-    /* Верхняя панель с кнопками управления */
     --light-header-bg: #cdd8eb;
     --light-header-text: #241b1d;
     --light-header-button-bg: #a3a8b7;
     --light-header-button-text: #241b1d;
     --light-header-button-hover-bg: #c2c6d4;
-
-    /* Основные кнопки меню ("Создать", "Открыть") */
     --light-button-bg: #b0b5c3;
     --light-button-text: #241b1d;
     --light-button-hover: #d9dce2;
-
-    /* Карточки для выбора шаблона карты */
     --light-card-bg: #e8ebf2;
     --light-card-text: #241b1d;
     --light-card-border: #e3e7f0;
-
-    /* Выпадающее меню (три точки) */
     --light-dropdown-hover: #f4f6fa;
 
     /* Тёмная тема */
-    /* Основной фон и текст */
-    --dark-bg: #313338;
     --dark-text: #9b9ea5;
-
-    /* Верхняя панель в тёмной теме */
     --dark-header-bg: #393b40;
     --dark-header-text: #888b92;
     --dark-header-button-bg: #424449;
     --dark-header-button-text: #777a80;
     --dark-header-button-hover-bg: #4b4d52;
-
-    /* Кнопки меню в тёмной теме */
     --dark-button-bg: #54565c;
     --dark-button-text: #9b9ea5;
     --dark-button-hover: #5e6066;
-
-    /* Карточки в тёмной теме */
     --dark-card-bg: #393b40;
     --dark-card-text: #888b92;
     --dark-card-border: #6b6e75;
-
-    /* Выпадающее меню в тёмной теме */
     --dark-dropdown-hover: #4b4d52;
-
-    /* Общие элементы интерфейса */
     --dropdown-bg: var(--light-bg);
     --close-button-hover: #54565c;
     --border-color: #6b6e75;
 }
 
-/* Основной фон окна */
 body.light { background-color: var(--light-bg); color: var(--light-text); }
 body.dark { background-color: var(--dark-bg); color: var(--dark-text); }
 
@@ -66,7 +44,6 @@ header.dark{ background-color: var(--dark-header-bg); }
 main.light { background-color: var(--light-bg); }
 main.dark { background-color: var(--dark-bg); }
 
-/* Окно */
 .window.light { background-color: var(--light-bg); }
 .window.dark { background-color: var(--dark-bg); }
 

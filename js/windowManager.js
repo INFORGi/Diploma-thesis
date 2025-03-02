@@ -1,6 +1,3 @@
-// const fs = require('fs');
-// const path = require('path');
-
 // Переменные для отслеживания состояния перетаскивания
 let isDragging = false;
 let startX;

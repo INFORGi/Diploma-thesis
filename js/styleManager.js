@@ -2,6 +2,11 @@ export class StyleManager {
     constructor(formId) {
         this.form = document.getElementById(formId);
         this.currentNode = null;
+        if (!this.form) {
+            console.error('Style form not found:', formId);
+            return;
+        }
+        console.log('StyleManager initialized with form:', this.form);
         this.initializeListeners();
     }
 
@@ -21,15 +26,18 @@ export class StyleManager {
     clearForm() {
         this.currentNode = null;
         this.form.classList.remove('active');
-        this.form.reset(); 
+        this.form.reset();
+        console.log('Form cleared and deactivated');
     }
 
     setNode(node) {
+        console.log('Setting node:', node);
         if (this.currentNode !== node) {
             this.clearForm();
             this.currentNode = node;
             if (node) {
                 this.form.classList.add('active');
+                console.log('Form activated');
                 this.updateFormValues();
             }
         }
@@ -42,28 +50,35 @@ export class StyleManager {
         const topic = this.currentNode.querySelector('.node-topic');
         const nodeComputedStyle = window.getComputedStyle(this.currentNode);
         const topicComputedStyle = topic ? window.getComputedStyle(topic) : null;
-        const topicStyle = nodeData.topicStyle || {};
-        const nodeStyle = nodeData.nodeStyle || {};
+
+        const savedNodeStyle = nodeData.nodeStyle || {};
+        const savedTopicStyle = nodeData.topicStyle || {};
+
+        if (!this.currentNode.nodeData) {
+            this.currentNode.nodeData = {
+                nodeStyle: {},
+                topicStyle: {}
+            };
+        }
 
         this.setValue('width', parseInt(nodeComputedStyle.width));
         this.setValue('height', parseInt(nodeComputedStyle.height));
-        this.setValue('backgroundColor', nodeStyle.backgroundColor || nodeComputedStyle.backgroundColor);
-        this.setValue('borderWidth', parseInt(nodeStyle.borderWidth) || parseInt(nodeComputedStyle.borderWidth));
-        this.setValue('borderStyle', nodeStyle.borderStyle || nodeComputedStyle.borderStyle);
-        this.setValue('borderColor', nodeStyle.borderColor || nodeComputedStyle.borderColor);
-        this.setValue('borderRadius', parseInt(nodeStyle.borderRadius) || parseInt(nodeComputedStyle.borderRadius));
+        this.setValue('backgroundColor', savedNodeStyle.backgroundColor || nodeComputedStyle.backgroundColor);
+        this.setValue('borderWidth', parseInt(savedNodeStyle.borderWidth) || parseInt(nodeComputedStyle.borderWidth));
+        this.setValue('borderStyle', savedNodeStyle.borderStyle || nodeComputedStyle.borderStyle);
+        this.setValue('borderColor', savedNodeStyle.borderColor || nodeComputedStyle.borderColor);
+        this.setValue('borderRadius', parseInt(savedNodeStyle.borderRadius) || parseInt(nodeComputedStyle.borderRadius));
+        this.setValue('verticalAlign', savedNodeStyle.alignItems || nodeComputedStyle.alignItems || 'center');
 
         if (topicComputedStyle) {
-            this.setValue('color', topicStyle.color || topicComputedStyle.color);
-            this.setValue('fontFamily', topicStyle.fontFamily || topicComputedStyle.fontFamily);
-            this.setValue('fontSize', parseInt(topicStyle.fontSize) || parseInt(topicComputedStyle.fontSize));
+            this.setValue('color', savedTopicStyle.color || topicComputedStyle.color);
+            this.setValue('fontFamily', savedTopicStyle.fontFamily || topicComputedStyle.fontFamily);
+            this.setValue('fontSize', parseInt(savedTopicStyle.fontSize) || parseInt(topicComputedStyle.fontSize));
             this.setValue('textBold', topicComputedStyle.fontWeight === 'bold' || parseInt(topicComputedStyle.fontWeight) >= 700);
             this.setValue('textItalic', topicComputedStyle.fontStyle === 'italic');
             this.setValue('textStrike', topicComputedStyle.textDecoration.includes('line-through'));
-            this.setValue('textAlign', topicStyle.textAlign || topicComputedStyle.textAlign);
+            this.setValue('textAlign', savedTopicStyle.textAlign || topicComputedStyle.textAlign);
         }
-
-        this.setValue('verticalAlign', nodeStyle.alignItems || nodeComputedStyle.alignItems || 'center');
     }
 
     rgbToHex(rgb) {
@@ -95,38 +110,70 @@ export class StyleManager {
     }
 
     updateNodeStyle() {
-        if (!this.currentNode) return;
+        if (!this.currentNode) {
+            console.log('No current node selected');
+            return;
+        }
+
+        console.log('Updating node style for:', this.currentNode);
+
+        const formElements = {
+            width: document.getElementById('width'),
+            height: document.getElementById('height'),
+            backgroundColor: document.getElementById('backgroundColor'),
+            borderWidth: document.getElementById('borderWidth'),
+            borderStyle: document.getElementById('borderStyle'),
+            borderColor: document.getElementById('borderColor'),
+            borderRadius: document.getElementById('borderRadius'),
+            verticalAlign: document.getElementById('verticalAlign'),
+            color: document.getElementById('color'),
+            fontFamily: document.getElementById('fontFamily'),
+            fontSize: document.getElementById('fontSize'),
+            textBold: document.getElementById('textBold'),
+            textItalic: document.getElementById('textItalic'),
+            textStrike: document.getElementById('textStrike'),
+            textAlign: document.getElementById('textAlign')
+        };
 
         const nodeStyle = {
-            width: `${this.form.width.value}px`,
-            height: `${this.form.height.value}px`,
-            backgroundColor: this.form.backgroundColor.value,
-            borderWidth: `${this.form.borderWidth.value}px`,
-            borderStyle: this.form.borderStyle.value,
-            borderColor: this.form.borderColor.value,
-            borderRadius: `${this.form.borderRadius.value}px`,
+            minWidth: `${formElements.width.value}px`,
+            minHeight: `${formElements.height.value}px`,
+            backgroundColor: formElements.backgroundColor.value,
+            borderWidth: `${formElements.borderWidth.value}px`,
+            borderStyle: formElements.borderStyle.value,
+            borderColor: formElements.borderColor.value,
+            borderRadius: `${formElements.borderRadius.value}px`,
             display: 'flex',
-            alignItems: this.form.verticalAlign.value,
-            justifyContent: 'flex-start'
+            alignItems: formElements.verticalAlign.value, 
+            justifyContent: 'center',
+            width: 'fit-content',
+            height: 'fit-content',
+            padding: '0'
         };
 
         const topicStyle = {
-            color: this.form.color.value,
-            fontFamily: this.form.fontFamily.value,
-            fontSize: `${this.form.fontSize.value}px`,
-            fontWeight: this.form.textBold.checked ? 'bold' : 'normal',
-            fontStyle: this.form.textItalic.checked ? 'italic' : 'normal',
-            textDecoration: this.form.textStrike.checked ? 'line-through' : 'none',
-            textAlign: this.form.textAlign.value,
+            color: formElements.color.value,
+            fontFamily: formElements.fontFamily.value,
+            fontSize: `${formElements.fontSize.value}px`,
+            fontWeight: formElements.textBold.checked ? 'bold' : 'normal',
+            fontStyle: formElements.textItalic.checked ? 'italic' : 'normal',
+            textDecoration: formElements.textStrike.checked ? 'line-through' : 'none',
+            textAlign: formElements.textAlign.value,
             whiteSpace: 'normal',
-            width: '100%'
+            width: '100%',
+            padding: '8px 15px',
+            boxSizing: 'border-box',
+            margin: '0',
+            height: '100%',
+            overflowWrap: 'break-word'
         };
 
         if (!this.currentNode.nodeData) {
             this.currentNode.nodeData = {};
         }
-        this.currentNode.nodeData.nodeStyle = nodeStyle;
-        this.currentNode.nodeData.topicStyle = topicStyle;
+
+        this.currentNode.nodeData.nodeStyle = { ...nodeStyle };
+        this.currentNode.nodeData.topicStyle = { ...topicStyle };
 
         Object.assign(this.currentNode.style, nodeStyle);
 
@@ -135,7 +182,9 @@ export class StyleManager {
             Object.assign(topic.style, topicStyle);
         }
 
-        this.updateChildrenStyles(this.currentNode);
+        if (this.currentNode.dataset.isroot === 'true' || this.form.applyToChildren?.checked) {
+            this.updateChildrenStyles(this.currentNode);
+        }
     }
 
     updateChildrenStyles(parentNode) {
@@ -145,7 +194,9 @@ export class StyleManager {
             .filter(node => node.dataset.parent === parentNode.id);
 
         children.forEach(child => {
-            if (!child.nodeData) child.nodeData = {};
+            if (!child.nodeData) {
+                child.nodeData = {};
+            }
 
             if (parentNode.nodeData.nodeStyle) {
                 child.nodeData.nodeStyle = { ...parentNode.nodeData.nodeStyle };

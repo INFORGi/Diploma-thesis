@@ -1,3 +1,24 @@
+/* Основные цвета и стили для карты */
+:root {
+    --node-bg-color: #ffffff;
+    --node-text-color: #333333;
+    --node-border-color: #cccccc;
+    --node-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    --node-hover-shadow: 0 0 10px rgba(0,0,0,0.2);
+    
+    --root-node-bg: #f0f0f0;
+    --root-node-border: #d0d0d0;
+    
+    --line-color: #555555;
+    --line-width: 2px;
+    
+    --potential-parent-color: rgba(0, 150, 255, 0.5);
+    --potential-parent-scale: 1.05;
+    
+    --node-hover-scale: 1.01;
+    --dragging-opacity: 0.8;
+}
+
 #mind-map-container {
     width: 100%;
     height: 100%;
@@ -20,6 +41,21 @@
     align-items: center;
 }
 
+#jsmind_container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    min-height: 400px;
+    overflow: auto;
+    padding: 50px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    border: 1px solid #eee;
+}
+
 #jsmind-container svg {
     position: absolute;
     top: 0;
@@ -30,6 +66,11 @@
     z-index: 1;
 }
 
+#jsmind-container svg path {
+    stroke: var(--line-color);
+    stroke-width: var(--line-width);
+}
+
 .jsmind-node {
     position: absolute;
     cursor: move;
@@ -38,29 +79,41 @@
     transition: all 0.1s ease;
     backface-visibility: hidden;
     -webkit-font-smoothing: subpixel-antialiased;
-    background: white;
-    padding: 10px 15px;
+    background: var(--node-bg-color);
+    padding: 0;
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: var(--node-shadow);
     min-width: 100px;
+    min-height: 40px;
+    width: fit-content !important;
+    height: fit-content !important;
     text-align: center;
     user-select: none;
     margin: 5px;
     z-index: 2;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
+    box-sizing: border-box;
+    color: var(--node-text-color);
+    border: 1px solid var(--node-border-color);
 }
 
 .jsmind-node:hover {
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    transform: scale(1.01);
+    box-shadow: var(--node-hover-shadow);
+    transform: scale(var(--node-hover-scale));
+}
+
+.jsmind-node.potential-parent {
+    box-shadow: 0 0 10px var(--potential-parent-color);
+    transform: scale(var(--potential-parent-scale));
 }
 
 .node-topic {
     font-family: Arial, sans-serif;
     font-size: 14px;
-    white-space: normal;
+    white-space: pre-wrap;
+    word-wrap: break-word;
     overflow: hidden;
     text-overflow: ellipsis;
     color: #333;
@@ -69,21 +122,26 @@
     pointer-events: all !important;
     width: 100%;
     height: 100%;
+    min-width: inherit;
+    min-height: inherit;
     display: flex;
     text-align: center;
     flex-direction: column;
-    line-height: 1.5 !important; /* Фиксируем базовое значение и запрещаем наследование */
-    min-height: 0; /* Предотвращаем растягивание */
-    height: auto !important; /* Отменяем фиксированную высоту */
-    justify-content: center; /* Центрируем содержимое по вертикали */
+    line-height: 1.5 !important;
+    min-height: 20px;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 8px 15px;
+    margin: 0;
+    overflow-wrap: break-word;
 }
-
 
 .node-topic.editing {
     background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 0 3px rgba(0,0,0,0.2);
     border-radius: 2px;
-    padding: 2px 4px;
+    padding: 8px 15px;
+    margin: 0;
     margin: -2px -4px;
     cursor: text;
     white-space: normal;
@@ -94,7 +152,8 @@
     background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 0 3px rgba(0,0,0,0.2);
     border-radius: 2px;
-    padding: 2px 4px;
+    padding: 8px 15px;
+    margin: 0;
     margin: -2px -4px;
     white-space: normal;
     overflow: visible;
@@ -102,8 +161,9 @@
 }
 
 .jsmind-node[data-isroot="true"] {
-    background-color: #f0f0f0 !important;
-    border-width: 2px !important;
+    background-color: var(--root-node-bg);
+    border-color: var(--root-node-border);
+    border-width: 2px;
     margin-left: 0;
     cursor: default;
 }
@@ -130,7 +190,7 @@
 }
 
 .jsmind-node.dragging {
-    opacity: 0.8;
+    opacity: var(--dragging-opacity);
     cursor: grabbing;
     transition: none !important;
 }

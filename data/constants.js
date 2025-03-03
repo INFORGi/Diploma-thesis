@@ -32,24 +32,6 @@ export const DEFAULT_NODE_STYLE = {
     zIndex: "1"
 };
 
-// Добавим стили для разных типов узлов
-export const NODE_THEMES = {
-    root: {
-        backgroundColor: "#f0f0f0",
-        borderWidth: "2px",
-        borderColor: "#666666",
-        fontWeight: "bold",
-        fontSize: "16px"
-    },
-    left: {
-        backgroundColor: "#e1f5fe",
-        borderColor: "#81d4fa"
-    },
-    right: {
-        backgroundColor: "#f3e5f5",
-        borderColor: "#ce93d8"
-    }
-};
 
 export const CONNECTION_DIRECTIONS = {
     RIGHT: "Right",
@@ -67,4 +49,71 @@ export const DEFAULT_META = {
 export const DEFAULT_OPTIONS = {
     editable: true,
     theme: ""
+};
+
+export const MIND_MAP_THEMES = {
+    default: {
+        canvas: {
+            backgroundColor: '#ffffff'
+        },
+        node: {
+            backgroundColor: '#ffffff',
+            color: '#333333',
+            borderColor: '#cccccc',
+            borderWidth: '1px',
+            shadow: '0 2px 5px rgba(0,0,0,0.1)',
+            hoverShadow: '0 0 10px rgba(0,0,0,0.2)'
+        },
+        root: {
+            backgroundColor: '#f0f0f0',
+            borderColor: '#d0d0d0'
+        },
+        line: {
+            color: '#555555',
+            width: '2px'
+        }
+    },
+    dark: {
+        canvas: {
+            backgroundColor: '#1a1a1a'
+        },
+        node: {
+            backgroundColor: '#2d2d2d',
+            color: '#e0e0e0',
+            borderColor: '#404040',
+            borderWidth: '1px',
+            shadow: '0 2px 5px rgba(0,0,0,0.3)',
+            hoverShadow: '0 0 10px rgba(255,255,255,0.1)'
+        },
+        root: {
+            backgroundColor: '#404040',
+            borderColor: '#505050'
+        },
+        line: {
+            color: '#606060',
+            width: '2px'
+        }
+    },
+    blue: {
+        canvas: {
+            backgroundColor: '#f5f9ff'
+        },
+        node: {
+            backgroundColor: '#e3f2fd',
+            color: '#1976d2',
+            borderColor: '#90caf9',
+            borderWidth: '1px',
+            shadow: '0 2px 5px rgba(25,118,210,0.1)',
+            hoverShadow: '0 0 10px rgba(25,118,210,0.2)'
+        },
+        root: {
+            backgroundColor: '#1976d2',
+            borderColor: '#1565c0',
+            color: '#ffffff'
+        },
+        line: {
+            color: '#64b5f6',
+            width: '2px'
+        }
+    }
 };

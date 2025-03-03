@@ -23,6 +23,7 @@
     gap: 10px;
     opacity: 0.5;
     pointer-events: none;
+    transition: opacity 0.3s ease;
 }
 
 .style-form.active {
@@ -80,4 +81,46 @@
 .checkbox-label input[type="checkbox"] {
     width: 16px;
     height: 16px;
+}
+
+.theme-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 10px;
+}
+
+.map-theme-button {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+.map-theme-button:hover {
+    background: #f0f0f0;
+}
+
+.jsmind-context-menu {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    min-width: 150px;
+}
+
+.jsmind-context-menu div {
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    color: #333;
+}
+
+.jsmind-context-menu div:hover {
+    background-color: #f0f0f0;
 }

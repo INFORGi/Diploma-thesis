@@ -6,7 +6,7 @@ let jm = null;
 let styleManager = null;
 
 function initJsMind() {
-    const container = document.getElementById('jsmind_container');
+    const container = document.getElementById('jsmind-container');
     if (!container) {
         console.log('Container not found');
         return;
@@ -21,7 +21,7 @@ function initJsMind() {
     });
 
     const options = {
-        container: 'jsmind_container',
+        container: 'jsmind-container',
         theme: 'orange',
         editable: true,
         mode: 'side',
@@ -141,7 +141,7 @@ function init(){
     initJsMind();
 
     
-    document.getElementById('jsmind_container').addEventListener('dblclick', async function(e) {
+    document.getElementById('jsmind-container').addEventListener('dblclick', async function(e) {
         const node = e.target.closest('.jsmind-node');
 
         if (node) {

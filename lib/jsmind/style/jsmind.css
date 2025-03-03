@@ -4,14 +4,14 @@
     position: relative;
     display: flex;
     flex: 1;
-    overflow: hidden; /* Добавляем это свойство */
+    overflow: hidden;
 }
 
-#jsmind_container {
+#jsmind-container {
     position: relative;
     width: 100%;
     height: 100%;
-    min-height: 400px; /* Добавляем минимальную высоту */
+    min-height: 400px;
     overflow: auto;
     padding: 50px;
     box-sizing: border-box;
@@ -20,8 +20,7 @@
     align-items: center;
 }
 
-/* Обновляем стили для SVG контейнера */
-#jsmind_container svg {
+#jsmind-container svg {
     position: absolute;
     top: 0;
     left: 0;
@@ -36,7 +35,7 @@
     cursor: move;
     transform: translate(0, 0);
     will-change: transform;
-    transition: all 0.1s ease; /* Уменьшаем время анимации до 100мс Закомментируйте или удалите эту строку */
+    transition: all 0.1s ease;
     backface-visibility: hidden;
     -webkit-font-smoothing: subpixel-antialiased;
     background: white;
@@ -48,24 +47,37 @@
     user-select: none;
     margin: 5px;
     z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .jsmind-node:hover {
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    transform: scale(1.01); /* Уменьшаем эффект увеличения */
+    transform: scale(1.01);
 }
 
 .node-topic {
     font-family: Arial, sans-serif;
     font-size: 14px;
-    white-space: nowrap;
+    white-space: normal;
     overflow: hidden;
     text-overflow: ellipsis;
     color: #333;
     min-width: 30px;
     outline: none;
-    pointer-events: all !important; /* Убеждаемся, что события мыши работают */
+    pointer-events: all !important;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    line-height: 1.5 !important; /* Фиксируем базовое значение и запрещаем наследование */
+    min-height: 0; /* Предотвращаем растягивание */
+    height: auto !important; /* Отменяем фиксированную высоту */
+    justify-content: center; /* Центрируем содержимое по вертикали */
 }
+
 
 .node-topic.editing {
     background: rgba(255, 255, 255, 0.9);
@@ -120,7 +132,7 @@
 .jsmind-node.dragging {
     opacity: 0.8;
     cursor: grabbing;
-    transition: none !important; /* Отключаем анимацию при перетаскивании */
+    transition: none !important;
 }
 
 .jsmind-node.dragging .node-topic {

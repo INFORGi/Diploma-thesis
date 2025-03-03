@@ -123,14 +123,18 @@
                     </div>
                     
                     <div class="style-group">
-                        <label for="lineHeight">Высота строки</label>
-                        <input type="number" id="lineHeight" class="style-input" min="1" max="3" step="0.1" value="1.4">
+                        <label for="verticalAlign">Вертикальное выравнивание</label>
+                        <select id="verticalAlign" class="select-input">
+                            <option value="flex-start">По верху</option>
+                            <option value="center">По центру</option>
+                            <option value="flex-end">По низу</option>
+                        </select>
                     </div>
                 </form>
             </div>
 
             <div id="mind-map-container" class="canvas entry-point" style="flex: 1; height: 100%; display: flex; overflow: hidden;">
-                <div id="jsmind_container" style="flex: 1;"></div>
+                <div id="jsmind-container" style="flex: 1;"></div>
                 <div id="canvas-inner">
                 </div>
                 <div id="context-menu" class="context-menu">

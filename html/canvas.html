@@ -34,105 +34,105 @@
             </div>
         </header>
         <main class="entry-point">
-            <div class="style-sidebar">
-                <div class="style-header">Стили узла</div>
-                <form class="style-form" id="nodeStyleForm">
-                    <div class="style-group">
-                        <label for="width">Ширина (px)</label>
-                        <input type="number" id="width" class="style-input" min="100" max="500" value="120">
+            <div id="style-sidebar" class="style-sidebar entry-point">
+                <div class="style-header entry-point">Стили узла</div>
+                <form class="style-form entry-point" id="nodeStyleForm">
+                    <div class="style-group entry-point">
+                        <label for="width" class="entry-point">Ширина (px)</label>
+                        <input type="number" id="width" class="style-input entry-point" min="100" max="500" value="120">
                     </div>
 
-                    <div class="style-group">
-                        <label for="height">Высота (px)</label>
-                        <input type="number" id="height" class="style-input" min="40" max="200" value="40">
+                    <div class="style-group entry-point">
+                        <label for="height" class="entry-point">Высота (px)</label>
+                        <input type="number" id="height" class="style-input entry-point" min="40" max="200" value="40">
                     </div>
 
-                    <div class="style-group">
-                        <label>Стиль текста</label>
-                        <div class="text-style-options">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="textBold"> Жирный
+                    <div class="style-group entry-point">
+                        <label class="entry-point">Стиль текста</label>
+                        <div class="text-style-options entry-point">
+                            <label class="checkbox-label entry-point">
+                                <input type="checkbox" id="textBold" class="entry-point"> Жирный
                             </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="textItalic"> Курсив
+                            <label class="checkbox-label entry-point">
+                                <input type="checkbox" id="textItalic" class="entry-point"> Курсив
                             </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="textStrike"> Зачеркнутый
+                            <label class="checkbox-label entry-point">
+                                <input type="checkbox" id="textStrike" class="entry-point"> Зачеркнутый
                             </label>
                         </div>
                     </div>
                     
-                    <div class="style-group">
-                        <label for="backgroundColor">Цвет фона</label>
-                        <input type="color" id="backgroundColor" class="color-input" value="#ffffff">
+                    <div class="style-group entry-point">
+                        <label for="backgroundColor" class="entry-point">Цвет фона</label>
+                        <input type="color" id="backgroundColor" class="color-input entry-point" value="#ffffff">
                     </div>
                     
-                    <div class="style-group">
-                        <label for="color">Цвет текста</label>
-                        <input type="color" id="color" class="color-input" value="#333333">
+                    <div class="style-group entry-point">
+                        <label for="color" class="entry-point">Цвет текста</label>
+                        <input type="color" id="color" class="color-input entry-point" value="#333333">
                     </div>
                     
-                    <div class="style-group">
-                        <label for="borderWidth">Толщина границы (px)</label>
-                        <input type="number" id="borderWidth" class="style-input" min="0" max="10" value="1">
+                    <div class="style-group entry-point">
+                        <label for="borderWidth" class="entry-point">Толщина границы (px)</label>
+                        <input type="number" id="borderWidth" class="style-input entry-point" min="0" max="10" value="1">
                     </div>
 
-                    <div class="style-group">
-                        <label for="borderColor">Цвет границы</label>
-                        <input type="color" id="borderColor" class="color-input" value="#cccccc">
+                    <div class="style-group entry-point">
+                        <label for="borderColor" class="entry-point">Цвет границы</label>
+                        <input type="color" id="borderColor" class="color-input entry-point" value="#cccccc">
                     </div>
 
-                    <div class="style-group">
-                        <label for="borderStyle">Стиль границы</label>
-                        <select id="borderStyle" class="select-input">
+                    <div class="style-group entry-point">
+                        <label for="borderStyle" class="entry-point">Стиль границы</label>
+                        <select id="borderStyle" class="select-input entry-point">
                             <option value="solid">Сплошная</option>
                             <option value="dashed">Пунктирная</option>
                             <option value="dotted">Точечная</option>
                         </select>
                     </div>
                     
-                    <div class="style-group">
-                        <label for="borderRadius">Скругление углов (px)</label>
-                        <input type="number" id="borderRadius" class="style-input" min="0" max="50" value="5">
+                    <div class="style-group entry-point">
+                        <label for="borderRadius" class="entry-point">Скругление углов (px)</label>
+                        <input type="number" id="borderRadius" class="style-input entry-point" min="0" max="50" value="5">
                     </div>
                     
-                    <div class="style-group">
-                        <label for="fontFamily">Шрифт</label>
-                        <select id="fontFamily" class="select-input">
+                    <div class="style-group entry-point">
+                        <label for="fontFamily" class="entry-point">Шрифт</label>
+                        <select id="fontFamily" class="select-input entry-point">
                             <option value="Arial, sans-serif">Arial</option>
                             <option value="Times New Roman, serif">Times New Roman</option>
                             <option value="Courier New, monospace">Courier New</option>
                         </select>
                     </div>
                     
-                    <div class="style-group">
-                        <label for="fontSize">Размер шрифта (px)</label>
-                        <input type="number" id="fontSize" class="style-input" min="8" max="72" value="14">
+                    <div class="style-group entry-point">
+                        <label for="fontSize" class="entry-point">Размер шрифта (px)</label>
+                        <input type="number" id="fontSize" class="style-input entry-point" min="8" max="72" value="14">
                     </div>
 
-                    <div class="style-group">
-                        <label for="textAlign">Выравнивание текста</label>
-                        <select id="textAlign" class="select-input">
+                    <div class="style-group entry-point">
+                        <label for="textAlign" class="entry-point">Выравнивание текста</label>
+                        <select id="textAlign" class="select-input entry-point">
                             <option value="left">По левому краю</option>
                             <option value="center">По центру</option>
                             <option value="right">По правому краю</option>
                         </select>
                     </div>
 
-                    <div class="style-group">
-                        <label for="verticalAlign">Вертикальное выравнивание</label>
-                        <select id="verticalAlign" class="select-input">
+                    <div class="style-group entry-point">
+                        <label for="verticalAlign" class="entry-point">Вертикальное выравнивание</label>
+                        <select id="verticalAlign" class="select-input entry-point">
                             <option value="flex-start">По верху</option>
                             <option value="center">По центру</option>
                             <option value="flex-end">По низу</option>
                         </select>
                     </div>
                 </form>
-                <div class="style-header">Тема карты</div>
-                <div class="theme-buttons">
-                    <button type="button" onclick="changeMapTheme('default')" class="map-theme-button">Стандартная</button>
-                    <button type="button" onclick="changeMapTheme('dark')" class="map-theme-button">Тёмная</button>
-                    <button type="button" onclick="changeMapTheme('blue')" class="map-theme-button">Синяя</button>
+                <div class="style-header entry-point">Тема карты</div>
+                <div class="theme-buttons entry-point">
+                    <button type="button" onclick="changeMapTheme('default')" class="map-theme-button entry-point">Стандартная</button>
+                    <button type="button" onclick="changeMapTheme('dark')" class="map-theme-button entry-point">Тёмная</button>
+                    <button type="button" onclick="changeMapTheme('blue')" class="map-theme-button entry-point">Синяя</button>
                 </div>
             </div>
 

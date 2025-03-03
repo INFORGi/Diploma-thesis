@@ -42,7 +42,7 @@ function initJsMind() {
 
     const options = {
         container: 'jsmind_container',
-        theme: 'dark',
+        theme: 'default',
         editable: true,
         mode: 'side',
         view: {

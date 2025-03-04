@@ -13,10 +13,15 @@ function initJsMind() {
         return;
     }
 
-    container.style.width = '100%';
-    container.style.height = '100%';
-    container.style.minHeight = '400px';
-    container.style.position = 'relative';
+    container.style.position = 'absolute';
+    container.style.overflow = 'auto';
+    container.style.background = 'inherit';
+    
+    container.addEventListener('scroll', () => {
+        if (jm) {
+            jm.drawLines();
+        }
+    });
 
     const mind = {
         meta: {

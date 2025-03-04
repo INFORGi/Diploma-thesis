@@ -87,7 +87,6 @@ function initJsMind() {
         document.addEventListener('click', (e) => {
             const node = e.target.closest('.jsmind-node');
             if (node) {
-                console.log('Node clicked:', node);
                 styleManager.setNode(node);
             }
         });

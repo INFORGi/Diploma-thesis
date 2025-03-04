@@ -6,7 +6,7 @@ export class StyleManager {
             console.error('Style form not found:', formId);
             return;
         }
-        console.log('StyleManager initialized with form:', this.form);
+        
         this.initializeListeners();
     }
 
@@ -26,18 +26,18 @@ export class StyleManager {
     clearForm() {
         this.currentNode = null;
         this.form.classList.remove('active');
-        this.form.reset();
-        console.log('Form cleared and deactivated');
+        // this.form.reset();
+        
     }
 
     setNode(node) {
-        console.log('Setting node:', node);
+        
         if (this.currentNode !== node) {
             this.clearForm();
             this.currentNode = node;
             if (node) {
                 this.form.classList.add('active');
-                console.log('Form activated');
+                
                 this.updateFormValues();
             }
         }
@@ -111,11 +111,9 @@ export class StyleManager {
 
     updateNodeStyle() {
         if (!this.currentNode) {
-            console.log('No current node selected');
+            console.error('No current node selected');
             return;
         }
-
-        console.log('Updating node style for:', this.currentNode);
 
         const formElements = {
             width: document.getElementById('width'),

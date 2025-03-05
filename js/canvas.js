@@ -13,6 +13,35 @@ function initJsMind() {
         return;
     }
 
+    const mindContainer = document.getElementById('jsmind_container');
+
+    // Настройка размеров контейнера и SVG
+    const resizeContainer = () => {
+        const svg = container.querySelector('svg');
+        if (svg) {
+            svg.style.width = mindContainer.clientWidth + 'px';
+            svg.style.height = mindContainer.clientHeight + 'px';
+            svg.setAttribute('width', mindContainer.clientWidth + 'px');
+            svg.setAttribute('height', mindContainer.clientHeight + 'px');
+        }
+    };
+
+    const canvasElement = document.querySelector('.canvas');
+    if (canvasElement) {
+        // Сначала центрируем карту
+        setTimeout(() => {
+            // Точный центр карты 5000x5000
+            const centerX = mindContainer.clientWidth / 2;
+            const centerY = mindContainer.clientHeight / 2;
+            
+            // Вычисляем позицию скролла для центрирования
+            canvasElement.scrollLeft = centerX - (canvasElement.clientWidth / 2);
+            canvasElement.scrollTop = centerY - (canvasElement.clientHeight / 2);
+            
+            console.log('Initial scroll position:', canvasElement.scrollLeft, canvasElement.scrollTop);
+        }, 0);
+    }
+
     container.style.position = 'absolute';
     container.style.overflow = 'auto';
     container.style.background = 'inherit';
@@ -51,14 +80,16 @@ function initJsMind() {
         editable: true,
         mode: 'side',
         view: {
-            hmargin: 100,
-            vmargin: 50,
+            hmargin: 200,
+            vmargin: 100,
             line_width: MIND_MAP_THEMES.default.line.width,
-            line_color: MIND_MAP_THEMES.default.line.color
+            line_color: MIND_MAP_THEMES.default.line.color,
+            draggable: true,
+            engine: 'canvas'
         },
         layout: {
             hspace: 200,
-            vspace: 100,
+            vspace: 200,
             pspace: 13
         }
     };
@@ -66,6 +97,42 @@ function initJsMind() {
     try {
         jm = new jsMind(options);
         jm.show(mind);
+
+        setTimeout(() => {
+            const canvas = document.querySelector('.canvas');
+            if (canvas && jm) {
+                const rootElement = document.querySelector('.jsmind-node[data-isroot="true"]');
+                if (rootElement) {
+                    const mindContainer = document.getElementById('jsmind_container');
+                    
+                    // Получаем координаты корневого узла относительно контейнера карты
+                    const rootRect = rootElement.getBoundingClientRect();
+                    const containerRect = mindContainer.getBoundingClientRect();
+        
+                    // Вычисляем относительное положение корня
+                    const rootX = rootRect.left - containerRect.left + rootRect.width / 2;
+                    const rootY = rootRect.top - containerRect.top + rootRect.height / 2;
+        
+                    // Прокручиваем `.canvas` так, чтобы корневой узел оказался в центре
+                    canvas.scrollLeft = rootX - canvas.clientWidth / 2;
+                    canvas.scrollTop = rootY - canvas.clientHeight / 2;
+        
+                    console.log('Centered at:', canvas.scrollLeft, canvas.scrollTop);
+                }
+            }
+        }, 100);
+        
+
+        // Обработчик изменения размеров
+        window.addEventListener('resize', () => {
+            if (jm) {
+                resizeContainer();
+                jm.resize();
+                jm.drawLines();
+            }
+        });
+
+        resizeContainer(); // Первоначальная настройка размеров
 
         jm.initContextMenu(); 
 

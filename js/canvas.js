@@ -411,6 +411,8 @@ function initJsMind() {
                 currentFilePath = mapData.meta?.path;
                 jm.show(mapData);
             } else {
+                // Очищаем путь при создании новой карты
+                currentFilePath = null;
                 jm.show(mind);
             }
         });

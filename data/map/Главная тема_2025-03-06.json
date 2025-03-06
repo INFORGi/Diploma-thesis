@@ -12,17 +12,17 @@
     "type": "main",
     "connectionType": "straight",
     "position": {
-      "x": 3702,
+      "x": 4677,
       "y": 2527
     },
-    "canvasColor": "rgb(26, 26, 26)",
+    "canvasColor": "rgb(245, 249, 255)",
     "style": {
-      "backgroundColor": "rgb(64, 64, 64)",
-      "borderColor": "rgb(80, 80, 80)",
+      "backgroundColor": "rgb(25, 118, 210)",
+      "borderColor": "rgb(21, 101, 192)",
       "borderWidth": "2px",
       "borderStyle": "solid",
       "borderRadius": "5px",
-      "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+      "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
       "width": "auto",
       "height": "70px",
       "minWidth": "120px",
@@ -30,12 +30,14 @@
       "padding": "10px 15px"
     },
     "topicStyle": {
-      "color": "rgb(224, 224, 224)",
+      "color": "rgb(255, 255, 255)",
       "fontSize": "20px",
       "fontFamily": "Arial, sans-serif",
       "fontWeight": "normal",
       "fontStyle": "normal",
-      "textDecoration": "line-through"
+      "textDecoration": "line-through",
+      "textAlign": "center",
+      "verticalAlign": "center"
     },
     "children": [
       {
@@ -48,14 +50,14 @@
           "x": 4085,
           "y": 2344
         },
-        "canvasColor": "rgb(26, 26, 26)",
+        "canvasColor": "rgb(245, 249, 255)",
         "style": {
-          "backgroundColor": "rgb(45, 45, 45)",
-          "borderColor": "rgb(64, 64, 64)",
+          "backgroundColor": "rgb(227, 242, 253)",
+          "borderColor": "rgb(144, 202, 249)",
           "borderWidth": "1px",
           "borderStyle": "solid",
           "borderRadius": "5px",
-          "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+          "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
           "width": "auto",
           "height": "59px",
           "minWidth": "120px",
@@ -63,12 +65,14 @@
           "padding": "10px 15px"
         },
         "topicStyle": {
-          "color": "rgb(224, 224, 224)",
+          "color": "rgb(25, 118, 210)",
           "fontSize": "14px",
           "fontFamily": "Arial, sans-serif",
           "fontWeight": "normal",
           "fontStyle": "normal",
-          "textDecoration": "line-through"
+          "textDecoration": "line-through",
+          "textAlign": "center",
+          "verticalAlign": "center"
         },
         "children": [
           {
@@ -78,17 +82,17 @@
             "type": "child",
             "connectionType": "inherit",
             "position": {
-              "x": 3647,
-              "y": 2210
+              "x": 4446,
+              "y": 2241
             },
-            "canvasColor": "rgb(26, 26, 26)",
+            "canvasColor": "rgb(245, 249, 255)",
             "style": {
-              "backgroundColor": "rgb(45, 45, 45)",
-              "borderColor": "rgb(64, 64, 64)",
+              "backgroundColor": "rgb(227, 242, 253)",
+              "borderColor": "rgb(144, 202, 249)",
               "borderWidth": "1px",
               "borderStyle": "solid",
               "borderRadius": "5px",
-              "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+              "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
               "width": "fit-content",
               "height": "fit-content",
               "minWidth": "400px",
@@ -96,12 +100,14 @@
               "padding": "0px"
             },
             "topicStyle": {
-              "color": "rgb(224, 224, 224)",
+              "color": "rgb(25, 118, 210)",
               "fontSize": "21px",
               "fontFamily": "",
               "fontWeight": "normal",
               "fontStyle": "italic",
-              "textDecoration": "line-through"
+              "textDecoration": "line-through",
+              "textAlign": "center",
+              "verticalAlign": "center"
             },
             "children": [
               {
@@ -111,17 +117,17 @@
                 "type": "child",
                 "connectionType": "inherit",
                 "position": {
-                  "x": 3749,
-                  "y": 2336
+                  "x": 4628,
+                  "y": 2428
                 },
-                "canvasColor": "rgb(26, 26, 26)",
+                "canvasColor": "rgb(245, 249, 255)",
                 "style": {
-                  "backgroundColor": "rgb(45, 45, 45)",
-                  "borderColor": "rgb(64, 64, 64)",
+                  "backgroundColor": "rgb(227, 242, 253)",
+                  "borderColor": "rgb(144, 202, 249)",
                   "borderWidth": "1px",
                   "borderStyle": "solid",
                   "borderRadius": "5px",
-                  "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+                  "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
                   "width": "auto",
                   "height": "59px",
                   "minWidth": "120px",
@@ -129,12 +135,14 @@
                   "padding": "10px 15px"
                 },
                 "topicStyle": {
-                  "color": "rgb(224, 224, 224)",
+                  "color": "rgb(25, 118, 210)",
                   "fontSize": "14px",
                   "fontFamily": "Arial, sans-serif",
                   "fontWeight": "normal",
                   "fontStyle": "normal",
-                  "textDecoration": "line-through"
+                  "textDecoration": "line-through",
+                  "textAlign": "center",
+                  "verticalAlign": "center"
                 },
                 "children": []
               }
@@ -149,17 +157,17 @@
         "type": "child",
         "connectionType": "inherit",
         "position": {
-          "x": 3822,
-          "y": 2753
+          "x": 4473,
+          "y": 2690
         },
-        "canvasColor": "rgb(26, 26, 26)",
+        "canvasColor": "rgb(245, 249, 255)",
         "style": {
-          "backgroundColor": "rgb(45, 45, 45)",
-          "borderColor": "rgb(64, 64, 64)",
+          "backgroundColor": "rgb(227, 242, 253)",
+          "borderColor": "rgb(144, 202, 249)",
           "borderWidth": "1px",
           "borderStyle": "solid",
           "borderRadius": "5px",
-          "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+          "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
           "width": "auto",
           "height": "59px",
           "minWidth": "120px",
@@ -167,12 +175,14 @@
           "padding": "10px 15px"
         },
         "topicStyle": {
-          "color": "rgb(224, 224, 224)",
+          "color": "rgb(25, 118, 210)",
           "fontSize": "14px",
           "fontFamily": "Arial, sans-serif",
           "fontWeight": "normal",
           "fontStyle": "normal",
-          "textDecoration": "line-through"
+          "textDecoration": "line-through",
+          "textAlign": "center",
+          "verticalAlign": "center"
         },
         "children": []
       },
@@ -183,17 +193,17 @@
         "type": "child",
         "connectionType": "inherit",
         "position": {
-          "x": 3947,
-          "y": 2542
+          "x": 4157,
+          "y": 2686
         },
-        "canvasColor": "rgb(26, 26, 26)",
+        "canvasColor": "rgb(245, 249, 255)",
         "style": {
-          "backgroundColor": "rgb(45, 45, 45)",
-          "borderColor": "rgb(64, 64, 64)",
+          "backgroundColor": "rgb(227, 242, 253)",
+          "borderColor": "rgb(144, 202, 249)",
           "borderWidth": "1px",
           "borderStyle": "dashed",
           "borderRadius": "15px",
-          "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+          "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
           "width": "fit-content",
           "height": "fit-content",
           "minWidth": "152px",
@@ -201,12 +211,14 @@
           "padding": "0px"
         },
         "topicStyle": {
-          "color": "rgb(224, 224, 224)",
+          "color": "rgb(25, 118, 210)",
           "fontSize": "14px",
           "fontFamily": "Arial, sans-serif",
           "fontWeight": "normal",
           "fontStyle": "normal",
-          "textDecoration": "line-through"
+          "textDecoration": "line-through",
+          "textAlign": "center",
+          "verticalAlign": "center"
         },
         "children": []
       }

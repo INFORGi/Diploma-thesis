@@ -150,6 +150,8 @@ ipcMain.on('switch-theme', (event, newTheme) => {
     }
 });
 
+let lastMapPath = null;  // Добавляем переменную для хранения последнего пути
+
 /**
  * Обработчик открытия холста
  * @param {Event} event - Событие Electron
@@ -158,20 +160,28 @@ ipcMain.on('open-canvas', async (event, mapPath) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     win.loadFile('html/canvas.html');
     
-    if (mapPath) {
-        try {
-            const fullPath = path.join(__dirname, 'data/map', mapPath);
-            const mapData = await fsPromises.readFile(fullPath, 'utf-8');
-            const parsedData = JSON.parse(mapData);
-            // Добавляем путь к файлу в meta данные
-            parsedData.meta.path = fullPath;
-            win.webContents.on('did-finish-load', () => {
+    // Сохраняем путь во временную переменную и сразу очищаем входной параметр
+    lastMapPath = mapPath;
+    mapPath = null;
+    
+    win.webContents.on('did-finish-load', () => {
+        if (lastMapPath) {
+            try {
+                const fullPath = path.join(__dirname, 'data/map', lastMapPath);
+                const mapData = fs.readFileSync(fullPath, 'utf-8');
+                const parsedData = JSON.parse(mapData);
+                parsedData.meta.path = fullPath;
                 win.webContents.send('load-map-data', parsedData);
-            });
-        } catch (error) {
-            console.error('Error loading map:', error);
+            } catch (error) {
+                console.error('Error loading map:', error);
+                win.webContents.send('load-map-data', null);
+            }
+        } else {
+            win.webContents.send('load-map-data', null);
         }
-    }
+        // Очищаем путь после отправки данных
+        lastMapPath = null;
+    });
     
     win.setFullScreen(true);
 });

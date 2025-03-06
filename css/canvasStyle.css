@@ -85,27 +85,6 @@ main {
     pointer-events: none;
 }
 
-/* Удалить этот блок стилей
-.canvas::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
-}
-
-.canvas::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
-}
-
-.canvas::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 6px;
-}
-
-.canvas::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.3);
-}
-*/
-
 .jsmind-node {
     cursor: pointer;
 }

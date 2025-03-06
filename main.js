@@ -61,7 +61,7 @@ function createWindow() {
         win.webContents.send('load-settings', settings);
     });
     
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
 }
 
 /**

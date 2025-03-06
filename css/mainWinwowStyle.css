@@ -63,7 +63,7 @@ main {
 #create-map, #existing-maps {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    justify-content: center;
     gap: 1vh;
     overflow-y: auto;
     height: auto;

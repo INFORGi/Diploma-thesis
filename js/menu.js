@@ -17,7 +17,7 @@ document.getElementById('new-map').onclick = function() {
     const divExistingMaps = document.getElementById('existing-maps');
     
     divExistingMaps.style.display = 'none';
-    divCreateCard.style.display = 'block';
+    divCreateCard.style.display = 'flex';
 };
 
 
@@ -58,7 +58,7 @@ document.getElementById('open-map').onclick = function() {
             };
         });
         
-        divExistingMaps.style.display = 'block';
+        divExistingMaps.style.display = 'flex';
 
         const currentTheme = document.body.classList.contains('dark') ? 'dark' : 'light';
 

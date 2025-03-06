@@ -15,7 +15,7 @@ function initJsMind() {
 
     const mindContainer = document.getElementById('jsmind_container');
 
-    // Настройка размеров контейнера и SVG
+    
     const resizeContainer = () => {
         const svg = container.querySelector('svg');
         if (svg) {
@@ -28,13 +28,13 @@ function initJsMind() {
 
     const canvasElement = document.querySelector('.canvas');
     if (canvasElement) {
-        // Сначала центрируем карту
+        
         setTimeout(() => {
-            // Точный центр карты 5000x5000
+            
             const centerX = mindContainer.clientWidth / 2;
             const centerY = mindContainer.clientHeight / 2;
             
-            // Вычисляем позицию скролла для центрирования
+            
             canvasElement.scrollLeft = centerX - (canvasElement.clientWidth / 2);
             canvasElement.scrollTop = centerY - (canvasElement.clientHeight / 2);
             
@@ -105,15 +105,15 @@ function initJsMind() {
                 if (rootElement) {
                     const mindContainer = document.getElementById('jsmind_container');
                     
-                    // Получаем координаты корневого узла относительно контейнера карты
+                    
                     const rootRect = rootElement.getBoundingClientRect();
                     const containerRect = mindContainer.getBoundingClientRect();
         
-                    // Вычисляем относительное положение корня
+                    
                     const rootX = rootRect.left - containerRect.left + rootRect.width / 2;
                     const rootY = rootRect.top - containerRect.top + rootRect.height / 2;
         
-                    // Прокручиваем `.canvas` так, чтобы корневой узел оказался в центре
+                    
                     canvas.scrollLeft = rootX - canvas.clientWidth / 2;
                     canvas.scrollTop = rootY - canvas.clientHeight / 2;
         
@@ -123,7 +123,7 @@ function initJsMind() {
         }, 100);
         
 
-        // Обработчик изменения размеров
+        
         window.addEventListener('resize', () => {
             if (jm) {
                 resizeContainer();
@@ -132,7 +132,7 @@ function initJsMind() {
             }
         });
 
-        resizeContainer(); // Первоначальная настройка размеров
+        resizeContainer(); 
 
         jm.initContextMenu(); 
 
@@ -158,8 +158,19 @@ function initJsMind() {
 
         document.addEventListener('click', (e) => {
             const node = e.target.closest('.jsmind-node');
+            const sidebar = document.querySelector('.style-sidebar');
+            
             if (node) {
-                styleManager.setNode(node);
+                if (styleManager) {
+                    styleManager.setNode(node);
+                    sidebar.classList.add('visible');
+                }
+            } else if (!e.target.closest('.style-sidebar')) {
+                
+                sidebar.classList.remove('visible');
+                if (styleManager) {
+                    styleManager.setNode(null);
+                }
             }
         });
 

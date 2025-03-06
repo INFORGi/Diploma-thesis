@@ -12,16 +12,22 @@
     "type": "main",
     "connectionType": "straight",
     "position": {
-      "x": 4678,
-      "y": 2528
+      "x": 3702,
+      "y": 2527
     },
+    "canvasColor": "rgb(26, 26, 26)",
     "style": {
       "backgroundColor": "rgb(64, 64, 64)",
       "borderColor": "rgb(80, 80, 80)",
       "borderWidth": "2px",
       "borderStyle": "solid",
       "borderRadius": "5px",
-      "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px"
+      "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+      "width": "auto",
+      "height": "70px",
+      "minWidth": "120px",
+      "minHeight": "",
+      "padding": "10px 15px"
     },
     "topicStyle": {
       "color": "rgb(224, 224, 224)",
@@ -39,16 +45,22 @@
         "type": "child",
         "connectionType": "inherit",
         "position": {
-          "x": 4764,
-          "y": 2147
+          "x": 4085,
+          "y": 2344
         },
+        "canvasColor": "rgb(26, 26, 26)",
         "style": {
           "backgroundColor": "rgb(45, 45, 45)",
           "borderColor": "rgb(64, 64, 64)",
           "borderWidth": "1px",
           "borderStyle": "solid",
           "borderRadius": "5px",
-          "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px"
+          "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+          "width": "auto",
+          "height": "59px",
+          "minWidth": "120px",
+          "minHeight": "",
+          "padding": "10px 15px"
         },
         "topicStyle": {
           "color": "rgb(224, 224, 224)",
@@ -66,21 +78,27 @@
             "type": "child",
             "connectionType": "inherit",
             "position": {
-              "x": 4497,
-              "y": 2316
+              "x": 3647,
+              "y": 2210
             },
+            "canvasColor": "rgb(26, 26, 26)",
             "style": {
               "backgroundColor": "rgb(45, 45, 45)",
               "borderColor": "rgb(64, 64, 64)",
               "borderWidth": "1px",
               "borderStyle": "solid",
               "borderRadius": "5px",
-              "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px"
+              "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+              "width": "fit-content",
+              "height": "fit-content",
+              "minWidth": "400px",
+              "minHeight": "69px",
+              "padding": "0px"
             },
             "topicStyle": {
               "color": "rgb(224, 224, 224)",
               "fontSize": "21px",
-              "fontFamily": "\"Courier New\", monospace",
+              "fontFamily": "",
               "fontWeight": "normal",
               "fontStyle": "italic",
               "textDecoration": "line-through"
@@ -93,16 +111,22 @@
                 "type": "child",
                 "connectionType": "inherit",
                 "position": {
-                  "x": 4558,
-                  "y": 2739
+                  "x": 3749,
+                  "y": 2336
                 },
+                "canvasColor": "rgb(26, 26, 26)",
                 "style": {
                   "backgroundColor": "rgb(45, 45, 45)",
                   "borderColor": "rgb(64, 64, 64)",
                   "borderWidth": "1px",
                   "borderStyle": "solid",
                   "borderRadius": "5px",
-                  "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px"
+                  "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+                  "width": "auto",
+                  "height": "59px",
+                  "minWidth": "120px",
+                  "minHeight": "",
+                  "padding": "10px 15px"
                 },
                 "topicStyle": {
                   "color": "rgb(224, 224, 224)",
@@ -125,16 +149,22 @@
         "type": "child",
         "connectionType": "inherit",
         "position": {
-          "x": 5009,
-          "y": 2726
+          "x": 3822,
+          "y": 2753
         },
+        "canvasColor": "rgb(26, 26, 26)",
         "style": {
           "backgroundColor": "rgb(45, 45, 45)",
           "borderColor": "rgb(64, 64, 64)",
           "borderWidth": "1px",
           "borderStyle": "solid",
           "borderRadius": "5px",
-          "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px"
+          "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+          "width": "auto",
+          "height": "59px",
+          "minWidth": "120px",
+          "minHeight": "",
+          "padding": "10px 15px"
         },
         "topicStyle": {
           "color": "rgb(224, 224, 224)",
@@ -153,16 +183,22 @@
         "type": "child",
         "connectionType": "inherit",
         "position": {
-          "x": 4955,
-          "y": 2390
+          "x": 3947,
+          "y": 2542
         },
+        "canvasColor": "rgb(26, 26, 26)",
         "style": {
           "backgroundColor": "rgb(45, 45, 45)",
           "borderColor": "rgb(64, 64, 64)",
           "borderWidth": "1px",
-          "borderStyle": "solid",
-          "borderRadius": "5px",
-          "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px"
+          "borderStyle": "dashed",
+          "borderRadius": "15px",
+          "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+          "width": "fit-content",
+          "height": "fit-content",
+          "minWidth": "152px",
+          "minHeight": "59px",
+          "padding": "0px"
         },
         "topicStyle": {
           "color": "rgb(224, 224, 224)",

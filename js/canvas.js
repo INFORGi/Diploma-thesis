@@ -309,6 +309,12 @@ async function handleUnsavedChanges() {
 }
 
 function initJsMind() {
+    // Добавим проверку на наличие MIND_MAP_THEMES
+    if (!MIND_MAP_THEMES) {
+        console.error('MIND_MAP_THEMES not loaded');
+        return;
+    }
+    
     const container = document.getElementById('jsmind_container');
     if (!container) {
         console.error('Container not found: jsmind_container');

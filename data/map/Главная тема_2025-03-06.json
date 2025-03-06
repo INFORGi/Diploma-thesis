@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "name": "Главная тема",
+    "author": "user",
+    "version": "1.0"
+  },
+  "format": "node_tree",
+  "data": {
+    "id": "root",
+    "topic": "Главная тема",
+    "direction": "right",
+    "type": "main",
+    "children": [
+      {
+        "id": "node_1741243527076",
+        "topic": "Текст",
+        "direction": "right",
+        "type": "child",
+        "children": [
+          {
+            "id": "node_1741243528387",
+            "topic": "Текст",
+            "direction": "right",
+            "type": "child",
+            "children": [],
+            "style": {
+              "backgroundColor": "#ffffff",
+              "borderColor": "#cccccc",
+              "borderWidth": "1px",
+              "boxShadow": "0 2px 5px rgba(0,0,0,0.1)"
+            },
+            "topicStyle": {
+              "color": "#333333"
+            }
+          }
+        ],
+        "style": {
+          "backgroundColor": "#ffffff",
+          "borderColor": "#cccccc",
+          "borderWidth": "1px",
+          "boxShadow": "0 2px 5px rgba(0,0,0,0.1)"
+        },
+        "topicStyle": {
+          "color": "#333333"
+        }
+      }
+    ],
+    "style": {
+      "backgroundColor": "#f0f0f0",
+      "borderColor": "#d0d0d0",
+      "borderWidth": "2px",
+      "boxShadow": "0 2px 5px rgba(0,0,0,0.1)"
+    },
+    "topicStyle": {
+      "color": "#333333"
+    }
+  }
+}

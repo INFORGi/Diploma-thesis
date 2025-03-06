@@ -1,0 +1,120 @@
+{
+  "meta": {
+    "name": "Не главная тема",
+    "author": "user",
+    "version": "1.0"
+  },
+  "format": "node_tree",
+  "data": {
+    "id": "root",
+    "topic": "Не главная тема",
+    "direction": "right",
+    "type": "main",
+    "children": [
+      {
+        "id": "node_1741243210279",
+        "topic": "Текст",
+        "direction": "right",
+        "type": "child",
+        "children": [],
+        "style": {
+          "backgroundColor": "#e3f2fd",
+          "borderColor": "#90caf9",
+          "borderWidth": "1px",
+          "boxShadow": "0 2px 5px rgba(25,118,210,0.1)"
+        },
+        "topicStyle": {
+          "color": "#1976d2"
+        }
+      },
+      {
+        "id": "node_1741243212091",
+        "topic": "Текст",
+        "direction": "left",
+        "type": "child",
+        "children": [
+          {
+            "id": "node_1741243511701",
+            "topic": "Текст",
+            "direction": "left",
+            "type": "child",
+            "children": [],
+            "style": {
+              "minWidth": "154px",
+              "minHeight": "61px",
+              "backgroundColor": "#e3f2fd",
+              "borderWidth": "1px",
+              "borderStyle": "dashed",
+              "borderColor": "#90caf9",
+              "borderRadius": "5px",
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "width": "fit-content",
+              "height": "fit-content",
+              "padding": "0",
+              "boxShadow": "0 2px 5px rgba(25,118,210,0.1)"
+            },
+            "topicStyle": {
+              "color": "#1976d2",
+              "fontFamily": "Arial, sans-serif",
+              "fontSize": "14px",
+              "fontWeight": "normal",
+              "fontStyle": "normal",
+              "textDecoration": "none",
+              "textAlign": "center",
+              "whiteSpace": "normal",
+              "width": "100%",
+              "padding": "8px 15px",
+              "boxSizing": "border-box",
+              "margin": "0",
+              "height": "100%",
+              "overflowWrap": "break-word"
+            }
+          }
+        ],
+        "style": {
+          "minWidth": "154px",
+          "minHeight": "61px",
+          "backgroundColor": "#e3f2fd",
+          "borderWidth": "1px",
+          "borderStyle": "dashed",
+          "borderColor": "#90caf9",
+          "borderRadius": "5px",
+          "display": "flex",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "width": "fit-content",
+          "height": "fit-content",
+          "padding": "0",
+          "boxShadow": "0 2px 5px rgba(25,118,210,0.1)"
+        },
+        "topicStyle": {
+          "color": "#1976d2",
+          "fontFamily": "Arial, sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "normal",
+          "fontStyle": "normal",
+          "textDecoration": "none",
+          "textAlign": "center",
+          "whiteSpace": "normal",
+          "width": "100%",
+          "padding": "8px 15px",
+          "boxSizing": "border-box",
+          "margin": "0",
+          "height": "100%",
+          "overflowWrap": "break-word"
+        }
+      }
+    ],
+    "style": {
+      "backgroundColor": "#1976d2",
+      "borderColor": "#1565c0",
+      "borderWidth": "2px",
+      "boxShadow": "0 2px 5px rgba(25,118,210,0.1)"
+    },
+    "topicStyle": {
+      "color": "#ffffff"
+    }
+  }
+}

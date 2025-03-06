@@ -28,7 +28,24 @@ function createWindow() {
         webPreferences: {
             preload: path.join(__dirname, 'js/preload.js'),
             contextIsolation: true,
+            webSecurity: true,
+            allowRunningInsecureContent: false
         },
+    });
+
+    // Добавляем CSP заголовки
+    win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+        callback({
+            responseHeaders: {
+                ...details.responseHeaders,
+                'Content-Security-Policy': [
+                    "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;" +
+                    "img-src 'self' data: blob:;" +
+                    "script-src 'self' 'unsafe-inline' 'unsafe-eval';" +
+                    "style-src 'self' 'unsafe-inline';"
+                ]
+            }
+        });
     });
 
     win.loadFile('html/new_menu.html');
@@ -130,19 +147,22 @@ ipcMain.handle('show-input-dialog', async (event) => {
     });
 });
 
-ipcMain.handle('save-map', async (event, { mapData, mapPath, isExisting }) => {
+ipcMain.handle('save-map', async (event, { mapData, mapPath, isExisting, imageData }) => {
     try {
         console.log('Saving map:', mapPath);
         const dataDir = path.join(__dirname, 'data', 'map');
+        const imgDir = path.join(dataDir, 'img');
         
         await fs.mkdir(dataDir, { recursive: true });
+        await fs.mkdir(imgDir, { recursive: true });
         
         let finalPath;
+        let imgPath;
+        
         if (isExisting) {
-            // Если файл существует, используем тот же путь
             finalPath = mapPath;
+            imgPath = path.join(imgDir, path.basename(mapPath, '.json'));
         } else {
-            // Для нового файла обеспечиваем уникальность имени
             let tempPath = mapPath;
             let counter = 1;
             while (await fs.access(path.join(dataDir, `${tempPath}.json`))
@@ -152,14 +172,15 @@ ipcMain.handle('save-map', async (event, { mapData, mapPath, isExisting }) => {
                 counter++;
             }
             finalPath = path.join(dataDir, `${tempPath}.json`);
+            imgPath = path.join(imgDir, tempPath);
+        }
+
+        await fs.writeFile(finalPath, JSON.stringify(mapData, null, 2));
+
+        if (imageData && imageData.svg) {
+            await fs.writeFile(`${imgPath}.svg`, imageData.svg);
         }
         
-        await fs.writeFile(
-            isExisting ? mapPath : finalPath,
-            JSON.stringify(mapData, null, 2)
-        );
-        
-        console.log('Saved successfully to:', finalPath);
         return { success: true, path: finalPath };
     } catch (error) {
         console.error('Save error:', error);

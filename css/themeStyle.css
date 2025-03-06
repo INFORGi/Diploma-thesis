@@ -118,8 +118,8 @@ main.dark { background-color: var(--dark-bg); }
 .button-card.dark { background-color: var(--dark-button-bg); color: var(--dark-button-text); }
 
 /* Стили для элементов в style-sidebar */
-#style-sidebar.dark { background-color: var(--dark-bg); }
-#style-sidebar.light { background-color: var(--light-bg); }
+.style-sidebar.dark { background-color: var(--dark-bg); border-left: 1px solid var(--border-color); }
+.style-sidebar.light { background-color: var(--light-bg); border-left: 1px solid var(--border-color); }
 
 .style-header.light { background-color: var(--light-header-bg); color: var(--light-header-text); }
 .style-header.dark { background-color: var(--dark-header-bg); color: var(--dark-header-text); }

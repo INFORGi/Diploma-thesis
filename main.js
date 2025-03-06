@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs').promises;
 
 
 const settingsPath = path.join(__dirname, 'data', 'settings.json');
@@ -39,7 +39,7 @@ function createWindow() {
         win.webContents.send('load-settings', settings);
     });
     
-    // win.webContents.openDevTools();
+    win.webContents.openDevTools();
 }
 
 
@@ -109,12 +109,6 @@ ipcMain.on('open-canvas', (event) => {
     win.setFullScreen(true);
 });
 
-ipcMain.on('go-back', (event) => {
-    const win = BrowserWindow.fromWebContents(event.sender);
-    win.setFullScreen(false);
-    win.loadFile('html/new_menu.html');
-});
-
 ipcMain.handle('show-input-dialog', async (event) => {
     inputDialog = new BrowserWindow({
         width: 300,
@@ -134,4 +128,150 @@ ipcMain.handle('show-input-dialog', async (event) => {
             resolve(input); 
         });
     });
+});
+
+ipcMain.handle('save-map', async (event, { mapData, mapPath, isExisting }) => {
+    try {
+        console.log('Saving map:', mapPath);
+        const dataDir = path.join(__dirname, 'data', 'map');
+        
+        await fs.mkdir(dataDir, { recursive: true });
+        
+        let finalPath;
+        if (isExisting) {
+            // Если файл существует, используем тот же путь
+            finalPath = mapPath;
+        } else {
+            // Для нового файла обеспечиваем уникальность имени
+            let tempPath = mapPath;
+            let counter = 1;
+            while (await fs.access(path.join(dataDir, `${tempPath}.json`))
+                .then(() => true)
+                .catch(() => false)) {
+                tempPath = `${mapPath}_${counter}`;
+                counter++;
+            }
+            finalPath = path.join(dataDir, `${tempPath}.json`);
+        }
+        
+        await fs.writeFile(
+            isExisting ? mapPath : finalPath,
+            JSON.stringify(mapData, null, 2)
+        );
+        
+        console.log('Saved successfully to:', finalPath);
+        return { success: true, path: finalPath };
+    } catch (error) {
+        console.error('Save error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.on('show-notification', (event, message, type) => {
+    const window = BrowserWindow.getFocusedWindow();
+    if (window) {
+        dialog.showMessageBox(window, {
+            message,  // Исправляем синтаксис
+            type,     // Исправляем синтаксис
+            buttons: ['OK']
+        });
+    }
+});
+
+ipcMain.handle('show-save-dialog', async () => {
+    const window = BrowserWindow.getFocusedWindow();
+    if (!window) return 'cancel';
+
+    const result = await dialog.showMessageBox(window, {
+        type: 'question',
+        buttons: ['Сохранить', 'Не сохранять', 'Отмена'],
+        title: 'Сохранение изменений',
+        message: 'Хотите сохранить изменения?',
+        noLink: true, // Предотвращает зависание диалога
+        defaultId: 0,
+        cancelId: 2
+    });
+
+    const responses = ['save', 'dont-save', 'cancel'];
+    return responses[result.response];
+});
+
+let isClosing = false;
+
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
+});
+
+ipcMain.on('confirm-close', (event, canClose) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (isClosing) {
+        if (canClose) {
+            win.close(); // Меняем app.quit() на win.close()
+        }
+        isClosing = false;
+    }
+});
+
+app.on('before-quit', (event) => {
+    const window = BrowserWindow.getFocusedWindow();
+    if (!isClosing && window) {
+        event.preventDefault();
+        isClosing = true;
+        window.webContents.send('before-close');
+    }
+});
+
+let isNavigating = false;
+
+ipcMain.handle('go-back', async (event) => {
+    if (isNavigating) {
+        console.log('Navigation already in progress');
+        return false;
+    }
+
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (!win || win.isDestroyed()) {
+        console.error('Window not found or destroyed');
+        return false;
+    }
+
+    isNavigating = true;
+
+    try {
+        // Ждем подтверждения от рендерера перед навигацией
+        const canNavigate = await new Promise((resolve) => {
+            win.webContents.send('check-navigation');
+            ipcMain.once('navigation-response', (_, response) => {
+                resolve(response);
+            });
+        });
+
+        if (!canNavigate) {
+            console.log('Navigation cancelled by user');
+            return false;
+        }
+
+        if (!win.isDestroyed()) {
+            console.log('Starting navigation sequence...');
+            
+            if (win.isFullScreen()) {
+                win.setFullScreen(false);
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+
+            if (!win.isDestroyed()) {
+                await win.loadFile('html/new_menu.html');
+                console.log('Navigation completed successfully');
+                return true;
+            }
+        }
+        return false;
+    } catch (error) {
+        console.error('Navigation failed:', error);
+        return false;
+    } finally {
+        isNavigating = false;
+    }
 });

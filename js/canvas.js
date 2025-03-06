@@ -5,6 +5,114 @@ import { MIND_MAP_THEMES } from '../data/constants.js';
 
 let jm = null;
 let styleManager = null;
+let isMapModified = false;
+let currentMapPath = null;
+let currentFilePath = null; // Добавляем переменную для хранения пути текущего файла
+
+function markMapAsModified() {
+    isMapModified = true;
+}
+
+async function saveMap() {
+    if (!jm) {
+        console.error('jsMind instance is not initialized');
+        return false;
+    }
+
+    try {
+        const rootNode = jm.nodes.get(jm.get_root());
+        if (!rootNode) {
+            throw new Error('Root node not found');
+        }
+
+        const mapData = {
+            meta: {
+                name: rootNode.data.topic || 'Mindmap',
+                author: 'user',
+                version: '1.0'
+            },
+            format: 'node_tree',
+            data: collectNodeData(jm.get_root())
+        };
+
+        const saveData = {
+            mapData,
+            mapPath: currentFilePath || `${rootNode.data.topic || 'Mindmap'}_${new Date().toISOString().slice(0, 10)}`,
+            isExisting: Boolean(currentFilePath)
+        };
+
+        const result = await window.electron.saveMap(saveData);
+
+        if (result.success) {
+            isMapModified = false;
+            if (!currentFilePath) {
+                currentFilePath = result.path;
+                window.electron.showNotification('Карта сохранена: ' + rootNode.data.topic);
+            }
+            return true;
+        }
+        throw new Error(result.error);
+    } catch (error) {
+        console.error('Save error:', error);
+        window.electron.showNotification('Ошибка при сохранении: ' + error.message, 'error');
+        return false;
+    }
+}
+
+// Вспомогательная функция для сбора данных узлов
+function collectNodeData(nodeId) {
+    console.log('-> collectNodeData for nodeId:', nodeId);
+    const node = jm.nodes.get(nodeId);
+    if (!node) {
+        console.log('-> Node not found for id:', nodeId);
+        return null;
+    }
+
+    console.log('-> Found node:', node);
+    const nodeData = {
+        id: nodeId,
+        topic: node.data.topic || '',
+        direction: node.data.direction || 'right',
+        type: node.data.type || 'node',
+        children: []
+    };
+
+    // Если у узла есть стили, сохраняем их
+    if (node.element && node.element.nodeData) {
+        console.log('-> Node has style data');
+        nodeData.style = node.element.nodeData.nodeStyle || {};
+        nodeData.topicStyle = node.element.nodeData.topicStyle || {};
+    }
+
+    console.log('-> Processing children for node:', nodeId);
+    // Рекурсивно собираем данные дочерних узлов
+    node.children.forEach(childId => {
+        const childData = collectNodeData(childId);
+        if (childData) {
+            nodeData.children.push(childData);
+        }
+    });
+
+    console.log('-> Returning data for node:', nodeId);
+    return nodeData;
+}
+
+async function handleUnsavedChanges() {
+    if (isMapModified) {
+        const choice = await window.electron.showSaveDialog();
+        console.log('Save dialog choice:', choice);
+        
+        if (choice === 'save') {
+            const saveResult = await saveMap();
+            // Возвращаем результат сохранения
+            return saveResult;
+        } else if (choice === 'dont-save') {
+            return true;
+        }
+        return false;
+    }
+    return true;
+}
 
 function initJsMind() {
     const container = document.getElementById('jsmind_container');
@@ -97,6 +205,13 @@ function initJsMind() {
     try {
         jm = new jsMind(options);
         jm.show(mind);
+
+        // Теперь этот метод должен работать
+        jm.add_event_listener((type, data) => {
+            if (['node_changed', 'node_created', 'node_removed'].includes(type)) {
+                markMapAsModified();
+            }
+        });
 
         setTimeout(() => {
             const canvas = document.querySelector('.canvas');
@@ -252,21 +367,78 @@ function applyTheme(themeName) {
 }
 
 function initMapThemeMenu() {
-    window.changeMapTheme = function(themeName) {
-        if (!MIND_MAP_THEMES[themeName]) return;
-        
-        if (jm) {
-            jm.options.theme = themeName;
-            applyTheme(themeName);
-        }
-    };
+    const themeButtons = document.querySelectorAll('.map-theme-button');
+    themeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const themeName = button.dataset.theme;
+            if (themeName && MIND_MAP_THEMES[themeName] && jm) {
+                console.log('Changing theme to:', themeName);
+                jm.options.theme = themeName;
+                applyTheme(themeName);
+            }
+        });
+    });
 }
 
-function init(){
+// Добавляем блокировку навигации
+let navigationLock = null;
+
+async function navigateBack() {
+    if (navigationLock) return;
+
+    const backButton = document.getElementById('back-button');
+    if (!backButton) return;
+    
+    backButton.disabled = true;
+
+    try {
+        if (isMapModified) {
+            const choice = await window.electron.showSaveDialog();
+            console.log('User choice:', choice);
+
+            if (choice === 'save') {
+                const saveSuccess = await saveMap();
+                if (!saveSuccess) {
+                    backButton.disabled = false;
+                    return;
+                }
+                await new Promise(resolve => setTimeout(resolve, 100)); // Уменьшаем задержку
+            } else if (choice === 'cancel') {
+                backButton.disabled = false;
+                return;
+            }
+            // Принудительно убираем фокус с кнопки после выбора
+            backButton.blur();
+        }
+
+        const navigationResult = await window.electron.goBack();
+        console.log('Navigation result:', navigationResult);
+    } catch (error) {
+        console.error('Navigation error:', error);
+    } finally {
+        navigationLock = null;
+        backButton.disabled = false;
+    }
+}
+
+function init() {
+    console.log('Initializing application...');
     initWindowDragging();
     initButtonHandlers(); // Используем импортированную функцию
     initDropdownStyleMenu();
     initJsMind();
+
+    console.log('Adding event listeners...');
+    
+    // Оставляем только один обработчик для всех сочетаний клавиш
+    window.addEventListener('keydown', async (e) => {
+        if (e.ctrlKey && (e.key.toLowerCase() === 's' || e.key.toLowerCase() === 'ы')) {
+            console.log('Save hotkey detected:', e.key);
+            e.preventDefault();
+            e.stopPropagation();
+            await saveMap();
+        }
+    }, true);
 
     document.getElementById('jsmind_container').addEventListener('dblclick', async function(e) {
         const node = e.target.closest('.jsmind-node');
@@ -278,6 +450,44 @@ function init(){
             }
         }
     });
+
+    window.electron.onBeforeClose(async () => {
+        console.log('Before close handler triggered');
+        const canClose = await handleUnsavedChanges();
+        console.log('Can close:', canClose);
+        window.electron.confirmClose(canClose);
+    });
+
+    window.electron.onCheckNavigation(async () => {
+        let canNavigate = true;
+        
+        if (isMapModified) {
+            const choice = await window.electron.showSaveDialog();
+            if (choice === 'save') {
+                const saveSuccess = await saveMap();
+                if (saveSuccess) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                canNavigate = saveSuccess;
+            } else if (choice === 'cancel') {
+                canNavigate = false;
+            }
+        }
+        
+        window.electron.sendNavigationResponse(canNavigate);
+    });
+
+    const backButton = document.getElementById('back-button');
+    if (backButton) {
+        backButton.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            // Проверяем блокировку перед вызовом
+            if (!navigationLock && !backButton.disabled) {
+                await navigateBack();
+            }
+        });
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -296,8 +506,4 @@ document.addEventListener("DOMContentLoaded", function() {
             changeMapTheme(settings.MapTheme);
         }
     });
-});
-
-window.electron.onLoadSettings((settings) => {
-    setTheme(settings.Theme);
 });

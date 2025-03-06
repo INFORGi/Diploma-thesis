@@ -80,7 +80,7 @@ function initDropdownStyleMenu(){
 
     // Обработчик для показа/скрытия выпадающего меню тем
     themeButton.addEventListener('click', function(event) {
-        event.stopPropagation(); // Остановить всплытие события
+        event.stopPropagation();
         const isVisible = themeSwitch.style.display === 'block';
         themeSwitch.style.display = isVisible ? 'none' : 'block';
     });
@@ -118,17 +118,17 @@ function initDropdownStyleMenu(){
 
     // Обработчик для кнопки светлой темы
     themeSwithButtonLight.addEventListener('click', function(event) {
-        event.stopPropagation(); // Остановить всплытие события
+        event.stopPropagation();
         toggleTheme('light');
-        themeSwitch.style.display = 'none'; // Скрываем меню выбора темы
+        themeSwitch.style.display = 'none';
         divDropdown.style.display = 'none';
     });
 
     // Обработчик для кнопки темной темы
     themeSwithButtonDark.addEventListener('click', function(event) {
-        event.stopPropagation(); // Остановить всплытие события
+        event.stopPropagation();
         toggleTheme('dark');
-        themeSwitch.style.display = 'none'; // Скрываем меню выбора темы
+        themeSwitch.style.display = 'none';
         divDropdown.style.display = 'none';
     });
 }

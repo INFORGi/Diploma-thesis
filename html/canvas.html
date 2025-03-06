@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:">
     <title>Main HTML file</title>
     <link rel="stylesheet" href="../css/canvasStyle.css">
     <link rel="stylesheet" href="../css/menuStyle.css">
@@ -8,7 +9,7 @@
     <link rel="stylesheet" href="../lib/jsmind/style/jsmind.css">
     <link rel="stylesheet" href="../css/styleMenu.css">
     <script type="module" src="../lib/jsmind/js/jsmind.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsPlumb/2.15.5/js/jsplumb.min.js" defer></script>
+    <!-- Удаляем ненужную ссылку на jsPlumb -->
 </head>
 <body class="entry-point">
     <div class="window entry-point">
@@ -135,9 +136,9 @@
                 </form>
                 <div class="style-header entry-point">Тема карты</div>
                 <div class="theme-buttons entry-point">
-                    <button type="button" onclick="changeMapTheme('default')" class="map-theme-button entry-point">Стандартная</button>
-                    <button type="button" onclick="changeMapTheme('dark')" class="map-theme-button entry-point">Тёмная</button>
-                    <button type="button" onclick="changeMapTheme('blue')" class="map-theme-button entry-point">Синяя</button>
+                    <button type="button" class="map-theme-button entry-point" data-theme="default">Стандартная</button>
+                    <button type="button" class="map-theme-button entry-point" data-theme="dark">Тёмная</button>
+                    <button type="button" class="map-theme-button entry-point" data-theme="blue">Синяя</button>
                 </div>
             </div>
 

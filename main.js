@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
-const fs = require('fs').promises;
+const fs = require('fs');
+const fsPromises = require('fs').promises;
 
 
 const settingsPath = path.join(__dirname, 'data', 'settings.json');
@@ -155,7 +156,11 @@ ipcMain.on('switch-theme', (event, newTheme) => {
  */
 ipcMain.on('open-canvas', (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);
+    // const settings = readSettings();
     win.loadFile('html/canvas.html');
+    // win.webContents.on('did-finish-load', () => {
+    //     win.webContents.send('load-settings', settings); // Передаем настройки
+    // });
     win.setFullScreen(true);
 });
 
@@ -201,8 +206,8 @@ ipcMain.handle('save-map', async (event, { mapData, mapPath, isExisting, imageDa
         const dataDir = path.join(__dirname, 'data', 'map');
         const imgDir = path.join(dataDir, 'img');
         
-        await fs.mkdir(dataDir, { recursive: true });
-        await fs.mkdir(imgDir, { recursive: true });
+        await fsPromises.mkdir(dataDir, { recursive: true });
+        await fsPromises.mkdir(imgDir, { recursive: true });
         
         let finalPath;
         let imgPath;
@@ -213,7 +218,7 @@ ipcMain.handle('save-map', async (event, { mapData, mapPath, isExisting, imageDa
         } else {
             let tempPath = mapPath;
             let counter = 1;
-            while (await fs.access(path.join(dataDir, `${tempPath}.json`))
+            while (await fsPromises.access(path.join(dataDir, `${tempPath}.json`))
                 .then(() => true)
                 .catch(() => false)) {
                 tempPath = `${mapPath}_${counter}`;
@@ -223,10 +228,10 @@ ipcMain.handle('save-map', async (event, { mapData, mapPath, isExisting, imageDa
             imgPath = path.join(imgDir, tempPath);
         }
 
-        await fs.writeFile(finalPath, JSON.stringify(mapData, null, 2));
+        await fsPromises.writeFile(finalPath, JSON.stringify(mapData, null, 2));
 
         if (imageData && imageData.svg) {
-            await fs.writeFile(`${imgPath}.svg`, imageData.svg);
+            await fsPromises.writeFile(`${imgPath}.svg`, imageData.svg);
         }
         
         return { success: true, path: finalPath };
@@ -368,7 +373,7 @@ ipcMain.handle('go-back', async (event) => {
 ipcMain.handle('get-existing-maps', async () => {
     try {
         const mapDir = path.join(__dirname, 'data/map');
-        const files = await fs.readdir(mapDir);
+        const files = await fsPromises.readdir(mapDir);
         
         const maps = [];
         for (const file of files) {
@@ -391,9 +396,8 @@ ipcMain.handle('get-existing-maps', async () => {
 ipcMain.handle('open-existing-map', async (event, filename) => {
     try {
         const mapPath = path.join(__dirname, 'data/map', filename);
-        const mapData = await fs.readFile(mapPath, 'utf-8');
+        const mapData = await fsPromises.readFile(mapPath, 'utf-8');
         createCanvasWindow();
-        // После создания окна отправляем данные карты
         canvasWindow.webContents.on('did-finish-load', () => {
             canvasWindow.webContents.send('load-map-data', JSON.parse(mapData));
         });

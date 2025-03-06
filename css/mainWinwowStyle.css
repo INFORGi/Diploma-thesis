@@ -36,7 +36,7 @@ main {
     height: 28vh;
     border: none;
     margin: 1vh;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
 }
 
@@ -46,6 +46,7 @@ main {
     justify-items: center;
     margin: 1vh;
     box-sizing: border-box;
+    flex: 0 0 auto;
 }
 
 .button-card {
@@ -54,13 +55,19 @@ main {
     margin: 1vh;
 }
 
+.block-history {
+    height: 100%;
+    overflow-y: auto;
+}
+
 #create-map, #existing-maps {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
     gap: 1vh;
     overflow-y: auto;
-    max-height: calc(100vh - 4vh);
+    height: auto;
     margin: 0;
-    padding: 0;
+    padding: 10px;
+    box-sizing: border-box;
 }

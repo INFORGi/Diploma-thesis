@@ -30,6 +30,8 @@
     --dark-card-text: #ffffff;
     --dark-card-border: #6b6e75;
     --dark-dropdown-hover: #4b4d52;
+    --dark-scrollbar-bg: #6d7077;
+    --dark-scrollbar-bg-hover: #7d8087;
     
     --dropdown-bg: var(--light-bg);
     --close-button-hover: #54565c;
@@ -140,7 +142,7 @@ label.light { color: var(--light-text); }
 label.dark { color: var(--dark-text); }
 
 .map-theme-button.light { background-color: var(--light-button-bg); color: var(--light-button-text); border: 1px solid var(--light-card-border); }
-.map-theme-button.dark { background-color: var(--dark-button-bg); color: var(--dark-button-text); border: 1px solid var(--dark-card-border); }
+.map-theme-button.dark { background-color: var(--dark-button-bg); color: var (--dark-button-text); border: 1px solid var(--dark-card-border); }
 
 .map-theme-button.light:hover { background-color: var(--light-button-hover); }
 .map-theme-button.dark:hover { background-color: var(--dark-button-hover); }
@@ -152,3 +154,45 @@ label.dark { color: var(--dark-text); }
 .side-button svg { color: #333; }
 .side-button:hover { background-color: var(--accent); transform: scale(1.1); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); }
 .side-button:hover svg { color: white; }
+
+/* Стили для скроллбаров в WebKit-браузерах */
+*::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--light-button-bg);
+    border-radius: 6px;
+}
+
+*::-webkit-scrollbar-track.dark {
+    background: var(--dark-button-bg);
+}
+
+*::-webkit-scrollbar-thumb {
+    background: var(--light-header-bg);
+    border-radius: 6px;
+}
+
+*::-webkit-scrollbar-thumb.dark {
+    background: var(--dark-header-bg);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: var(--light-header-button-hover-bg);
+}
+
+*::-webkit-scrollbar-thumb.dark:hover {
+    background: var(--dark-header-button-hover-bg);
+}
+
+/* Стили для скроллбаров в Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--light-header-bg) var(--light-button-bg);
+}
+
+.dark {
+    scrollbar-color: var(--dark-header-bg) var(--dark-button-bg);
+}

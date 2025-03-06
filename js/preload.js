@@ -39,5 +39,8 @@ contextBridge.exposeInMainWorld('electron', {
     onBeforeClose: (callback) => {
         ipcRenderer.on('before-close', () => callback());
     },
-    confirmClose: (canClose) => ipcRenderer.send('confirm-close', canClose)
+    confirmClose: (canClose) => ipcRenderer.send('confirm-close', canClose),
+    
+    getExistingMaps: () => ipcRenderer.invoke('get-existing-maps'),
+    openExistingMap: (filename) => ipcRenderer.invoke('open-existing-map', filename)
 });

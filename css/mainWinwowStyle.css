@@ -8,10 +8,11 @@ body {
     height: 100vh;
 }
 
-main{
+main {
     display: grid;
     grid-template-columns: 25% 75%;
     height: 100%;
+    overflow: hidden;
 }
 
 .window {
@@ -30,22 +31,36 @@ main{
     height: 50px;
 }
 
-.img-card{
+.img-card {
     width: 35vh;
     height: 28vh;
     border: none;
     margin: 1vh;
+    object-fit: cover;
+    object-position: center;
 }
 
-.card{
+.card {
     width: 50vh;
-    /* height: 40vh; */
+    height: auto;
     justify-items: center;
-    margin: 1vh 1vh 0vh 1vh;
+    margin: 1vh;
+    box-sizing: border-box;
 }
 
-.button-card{
+.button-card {
     width: 20vh;
     height: 10vh;
     margin: 1vh;
+}
+
+#create-map, #existing-maps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 1vh;
+    overflow-y: auto;
+    max-height: calc(100vh - 4vh);
+    margin: 0;
+    padding: 0;
 }

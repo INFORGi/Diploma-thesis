@@ -5,7 +5,10 @@ const fs = require('fs').promises;
 
 const settingsPath = path.join(__dirname, 'data', 'settings.json');
 
-
+/**
+ * Читает настройки приложения из файла settings.json
+ * @returns {Object} Объект с настройками или настройки по умолчанию
+ */
 function readSettings() {
     try {
         const data = fs.readFileSync(settingsPath);
@@ -16,7 +19,9 @@ function readSettings() {
     }
 }
 
-
+/**
+ * Создает и настраивает главное окно приложения
+ */
 function createWindow() {
     const win = new BrowserWindow({
         width: 800,
@@ -33,7 +38,6 @@ function createWindow() {
         },
     });
 
-    // Добавляем CSP заголовки
     win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
         callback({
             responseHeaders: {
@@ -59,30 +63,42 @@ function createWindow() {
     win.webContents.openDevTools();
 }
 
-
+/**
+ * Инициализация приложения при готовности
+ */
 app.whenReady().then(createWindow);
 
-
+/**
+ * Обработчик закрытия всех окон приложения
+ */
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
 });
 
-
+/**
+ * Обработчик активации приложения
+ */
 app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         createWindow();
     }
 });
 
-
+/**
+ * Обработчик минимизации окна
+ * @param {Event} event - Событие Electron
+ */
 ipcMain.on('minimize-window', (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     win.minimize();
 });
 
-
+/**
+ * Обработчик переключения полноэкранного режима
+ * @param {Event} event - Событие Electron
+ */
 ipcMain.on('maximize-window', (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (win.isFullScreen()) {
@@ -92,20 +108,33 @@ ipcMain.on('maximize-window', (event) => {
     }
 });
 
-
+/**
+ * Обработчик закрытия окна
+ * @param {Event} event - Событие Electron
+ */
 ipcMain.on('close-window', (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     win.close();
 });
 
-
+/**
+ * Обработчик перемещения окна
+ * @param {Event} event - Событие Electron
+ * @param {Object} coords - Координаты перемещения
+ * @param {number} coords.x - Смещение по X
+ * @param {number} coords.y - Смещение по Y
+ */
 ipcMain.on('move-window', (event, { x, y }) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     const currentPosition = win.getPosition();
     win.setPosition(currentPosition[0] + x, currentPosition[1] + y);
 });
 
-
+/**
+ * Обработчик переключения темы
+ * @param {Event} event - Событие Electron
+ * @param {string} newTheme - Новая тема
+ */
 ipcMain.on('switch-theme', (event, newTheme) => {
     try {
         
@@ -120,12 +149,21 @@ ipcMain.on('switch-theme', (event, newTheme) => {
     }
 });
 
+/**
+ * Обработчик открытия холста
+ * @param {Event} event - Событие Electron
+ */
 ipcMain.on('open-canvas', (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     win.loadFile('html/canvas.html');
     win.setFullScreen(true);
 });
 
+/**
+ * Обработчик показа диалога ввода
+ * @param {Event} event - Событие Electron
+ * @returns {Promise<string>} Введенное значение
+ */
 ipcMain.handle('show-input-dialog', async (event) => {
     inputDialog = new BrowserWindow({
         width: 300,
@@ -147,6 +185,16 @@ ipcMain.handle('show-input-dialog', async (event) => {
     });
 });
 
+/**
+ * Обработчик сохранения карты
+ * @param {Event} event - Событие Electron
+ * @param {Object} params - Параметры сохранения
+ * @param {Object} params.mapData - Данные карты
+ * @param {string} params.mapPath - Путь сохранения
+ * @param {boolean} params.isExisting - Флаг существующей карты
+ * @param {Object} params.imageData - Данные изображения
+ * @returns {Promise<Object>} Результат сохранения
+ */
 ipcMain.handle('save-map', async (event, { mapData, mapPath, isExisting, imageData }) => {
     try {
         console.log('Saving map:', mapPath);
@@ -192,13 +240,17 @@ ipcMain.on('show-notification', (event, message, type) => {
     const window = BrowserWindow.getFocusedWindow();
     if (window) {
         dialog.showMessageBox(window, {
-            message,  // Исправляем синтаксис
-            type,     // Исправляем синтаксис
+            message,  
+            type,     
             buttons: ['OK']
         });
     }
 });
 
+/**
+ * Показывает диалог подтверждения сохранения
+ * @returns {Promise<string>} Результат выбора пользователя ('save'|'dont-save'|'cancel')
+ */
 ipcMain.handle('show-save-dialog', async () => {
     const window = BrowserWindow.getFocusedWindow();
     if (!window) return 'cancel';
@@ -208,7 +260,7 @@ ipcMain.handle('show-save-dialog', async () => {
         buttons: ['Сохранить', 'Не сохранять', 'Отмена'],
         title: 'Сохранение изменений',
         message: 'Хотите сохранить изменения?',
-        noLink: true, // Предотвращает зависание диалога
+        noLink: true, 
         defaultId: 0,
         cancelId: 2
     });
@@ -219,22 +271,34 @@ ipcMain.handle('show-save-dialog', async () => {
 
 let isClosing = false;
 
+/**
+ * Обработчик закрытия всех окон приложения
+ */
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
 });
 
+/**
+ * Обработчик подтверждения закрытия
+ * @param {Event} event - Событие Electron
+ * @param {boolean} canClose - Флаг разрешения закрытия
+ */
 ipcMain.on('confirm-close', (event, canClose) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (isClosing) {
         if (canClose) {
-            win.close(); // Меняем app.quit() на win.close()
+            win.close(); 
         }
         isClosing = false;
     }
 });
 
+/**
+ * Обработчик события перед закрытием приложения
+ * @param {Event} event - Событие Electron
+ */
 app.on('before-quit', (event) => {
     const window = BrowserWindow.getFocusedWindow();
     if (!isClosing && window) {
@@ -246,6 +310,11 @@ app.on('before-quit', (event) => {
 
 let isNavigating = false;
 
+/**
+ * Обработчик навигации назад
+ * @param {Event} event - Событие Electron
+ * @returns {Promise<boolean>} Успешность навигации
+ */
 ipcMain.handle('go-back', async (event) => {
     if (isNavigating) {
         console.log('Navigation already in progress');
@@ -261,7 +330,6 @@ ipcMain.handle('go-back', async (event) => {
     isNavigating = true;
 
     try {
-        // Ждем подтверждения от рендерера перед навигацией
         const canNavigate = await new Promise((resolve) => {
             win.webContents.send('check-navigation');
             ipcMain.once('navigation-response', (_, response) => {
@@ -294,5 +362,42 @@ ipcMain.handle('go-back', async (event) => {
         return false;
     } finally {
         isNavigating = false;
+    }
+});
+
+ipcMain.handle('get-existing-maps', async () => {
+    try {
+        const mapDir = path.join(__dirname, 'data/map');
+        const files = await fs.readdir(mapDir);
+        
+        const maps = [];
+        for (const file of files) {
+            if (file.endsWith('.json')) {
+                const name = path.parse(file).name;
+                maps.push({
+                    name: name,
+                    file: file,
+                    image: `${name}.svg`
+                });
+            }
+        }
+        return maps;
+    } catch (error) {
+        console.error('Error reading maps:', error);
+        return [];
+    }
+});
+
+ipcMain.handle('open-existing-map', async (event, filename) => {
+    try {
+        const mapPath = path.join(__dirname, 'data/map', filename);
+        const mapData = await fs.readFile(mapPath, 'utf-8');
+        createCanvasWindow();
+        // После создания окна отправляем данные карты
+        canvasWindow.webContents.on('did-finish-load', () => {
+            canvasWindow.webContents.send('load-map-data', JSON.parse(mapData));
+        });
+    } catch (error) {
+        console.error('Error opening map:', error);
     }
 });

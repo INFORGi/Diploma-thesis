@@ -9,4 +9,5 @@ contextBridge.exposeInMainWorld('electron', {
     switchtheme: (theme) => ipcRenderer.send('switch-theme', theme),
     opencanvas: () => ipcRenderer.send('open-canvas'),
     showdialog: async () => await ipcRenderer.invoke('show-input-dialog'),
+    goBack: () => ipcRenderer.send('go-back'),
 });

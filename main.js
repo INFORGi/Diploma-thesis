@@ -109,6 +109,11 @@ ipcMain.on('open-canvas', (event) => {
     win.setFullScreen(true);
 });
 
+ipcMain.on('go-back', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    win.setFullScreen(false);
+    win.loadFile('html/new_menu.html');
+});
 
 ipcMain.handle('show-input-dialog', async (event) => {
     inputDialog = new BrowserWindow({

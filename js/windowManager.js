@@ -40,20 +40,26 @@ function initWindowDragging() {
 }
 
 // Функция для инициализации обработчиков кнопок
-function initButtonHandlers() {
-    document.getElementById('minimize').onclick = function() {
+export function initButtonHandlers() {
+    document.getElementById('minimize').addEventListener('click', () => {
         window.electron.minimize();
-    };
+    });
 
-    document.getElementById('maximize').onclick = function() {
+    document.getElementById('maximize').addEventListener('click', () => {
         window.electron.maximize();
+    });
 
-        console.log('click');
-    };
-
-    document.getElementById('close').onclick = function() {
+    document.getElementById('close').addEventListener('click', () => {
         window.electron.close();
-    };
+    });
+
+    // Добавляем обработчик для кнопки назад
+    const backButton = document.getElementById('back-button');
+    if (backButton) {
+        backButton.addEventListener('click', () => {
+            window.electron.goBack();
+        });
+    }
 }
 
 function initDropdownStyleMenu(){
@@ -142,4 +148,4 @@ function setTheme(theme) {
 }
 
 // Экспортируем функции
-export { initWindowDragging, initButtonHandlers, initDropdownStyleMenu, setTheme};
+export { initWindowDragging, initDropdownStyleMenu, setTheme };

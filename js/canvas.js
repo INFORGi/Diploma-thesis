@@ -264,7 +264,7 @@ function initMapThemeMenu() {
 
 function init(){
     initWindowDragging();
-    initButtonHandlers();
+    initButtonHandlers(); // Используем импортированную функцию
     initDropdownStyleMenu();
     initJsMind();
 

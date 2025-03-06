@@ -30,9 +30,11 @@
     --dark-card-text: #ffffff;
     --dark-card-border: #6b6e75;
     --dark-dropdown-hover: #4b4d52;
+    
     --dropdown-bg: var(--light-bg);
     --close-button-hover: #54565c;
     --border-color: #6b6e75;
+    --accent: rgb(206, 222, 255);
 }
 
 body.light { background-color: var(--light-bg); color: var(--light-text); }
@@ -145,3 +147,8 @@ label.dark { color: var(--dark-text); }
 
 .checkbox-label.light { color: var(--light-text); }
 .checkbox-label.dark { color: var(--dark-text); }
+
+.side-button { background-color: white; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border: 1px solid rgba(0, 0, 0, 0.1); }
+.side-button svg { color: #333; }
+.side-button:hover { background-color: var(--accent); transform: scale(1.1); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); }
+.side-button:hover svg { color: white; }

@@ -154,13 +154,25 @@ ipcMain.on('switch-theme', (event, newTheme) => {
  * Обработчик открытия холста
  * @param {Event} event - Событие Electron
  */
-ipcMain.on('open-canvas', (event) => {
+ipcMain.on('open-canvas', async (event, mapPath) => {
     const win = BrowserWindow.fromWebContents(event.sender);
-    // const settings = readSettings();
     win.loadFile('html/canvas.html');
-    // win.webContents.on('did-finish-load', () => {
-    //     win.webContents.send('load-settings', settings); // Передаем настройки
-    // });
+    
+    if (mapPath) {
+        try {
+            const fullPath = path.join(__dirname, 'data/map', mapPath);
+            const mapData = await fsPromises.readFile(fullPath, 'utf-8');
+            const parsedData = JSON.parse(mapData);
+            // Добавляем путь к файлу в meta данные
+            parsedData.meta.path = fullPath;
+            win.webContents.on('did-finish-load', () => {
+                win.webContents.send('load-map-data', parsedData);
+            });
+        } catch (error) {
+            console.error('Error loading map:', error);
+        }
+    }
+    
     win.setFullScreen(true);
 });
 
@@ -213,9 +225,11 @@ ipcMain.handle('save-map', async (event, { mapData, mapPath, isExisting, imageDa
         let imgPath;
         
         if (isExisting) {
+            // Для существующей карты используем текущий путь
             finalPath = mapPath;
             imgPath = path.join(imgDir, path.basename(mapPath, '.json'));
         } else {
+            // Для новой карты создаем новый путь
             let tempPath = mapPath;
             let counter = 1;
             while (await fsPromises.access(path.join(dataDir, `${tempPath}.json`))
@@ -228,10 +242,12 @@ ipcMain.handle('save-map', async (event, { mapData, mapPath, isExisting, imageDa
             imgPath = path.join(imgDir, tempPath);
         }
 
-        await fsPromises.writeFile(finalPath, JSON.stringify(mapData, null, 2));
+        // Полностью перезаписываем файл карты
+        await fsPromises.writeFile(finalPath, JSON.stringify(mapData, null, 2), { flag: 'w' });
 
+        // Обновляем SVG изображение
         if (imageData && imageData.svg) {
-            await fsPromises.writeFile(`${imgPath}.svg`, imageData.svg);
+            await fsPromises.writeFile(`${imgPath}.svg`, imageData.svg, { flag: 'w' });
         }
         
         return { success: true, path: finalPath };
@@ -344,6 +360,7 @@ ipcMain.handle('go-back', async (event) => {
 
         if (!canNavigate) {
             console.log('Navigation cancelled by user');
+            isNavigating = false;
             return false;
         }
 
@@ -352,11 +369,13 @@ ipcMain.handle('go-back', async (event) => {
             
             if (win.isFullScreen()) {
                 win.setFullScreen(false);
-                await new Promise(resolve => setTimeout(resolve, 200));
             }
 
+            // Добавляем небольшую задержку перед загрузкой нового окна
+            await new Promise(resolve => setTimeout(resolve, 100));
+
             if (!win.isDestroyed()) {
-                await win.loadFile('html/new_menu.html');
+                win.loadFile('html/new_menu.html');
                 console.log('Navigation completed successfully');
                 return true;
             }
@@ -390,18 +409,5 @@ ipcMain.handle('get-existing-maps', async () => {
     } catch (error) {
         console.error('Error reading maps:', error);
         return [];
-    }
-});
-
-ipcMain.handle('open-existing-map', async (event, filename) => {
-    try {
-        const mapPath = path.join(__dirname, 'data/map', filename);
-        const mapData = await fsPromises.readFile(mapPath, 'utf-8');
-        createCanvasWindow();
-        canvasWindow.webContents.on('did-finish-load', () => {
-            canvasWindow.webContents.send('load-map-data', JSON.parse(mapData));
-        });
-    } catch (error) {
-        console.error('Error opening map:', error);
     }
 });

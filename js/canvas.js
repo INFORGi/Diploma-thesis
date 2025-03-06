@@ -8,6 +8,7 @@ let styleManager = null;
 let isMapModified = false;
 let currentMapPath = null;
 let currentFilePath = null; // Добавляем переменную для хранения пути текущего файла
+let navigationLock = null; // Добавляем переменную для блокировки навигации
 
 function markMapAsModified() {
     isMapModified = true;
@@ -176,17 +177,19 @@ async function saveMap() {
             throw new Error('Root node not found');
         }
 
+        // Создаем полностью новые данные карты
         const mapData = {
             meta: {
                 name: rootNode.data.topic || 'Mindmap',
                 author: 'user',
-                version: '1.0'
+                version: '1.0',
+                path: currentFilePath
             },
             format: 'node_tree',
-            data: collectNodeData(jm.get_root())
+            data: jm.getNodeData(jm.get_root())
         };
 
-        // Получаем изображения карты
+        // Получаем изображение карты
         const imageData = await exportMapImage();
 
         const saveData = {
@@ -216,30 +219,67 @@ async function saveMap() {
 
 // Вспомогательная функция для сбора данных узлов
 function collectNodeData(nodeId) {
-    console.log('-> collectNodeData for nodeId:', nodeId);
     const node = jm.nodes.get(nodeId);
     if (!node) {
-        console.log('-> Node not found for id:', nodeId);
         return null;
     }
 
-    console.log('-> Found node:', node);
+    // Создаем базовую структуру данных узла
     const nodeData = {
         id: nodeId,
         topic: node.data.topic || '',
         direction: node.data.direction || 'right',
         type: node.data.type || 'node',
+        expanded: node.expanded,
         children: []
     };
 
-    // Если у узла есть стили, сохраняем их
-    if (node.element && node.element.nodeData) {
-        console.log('-> Node has style data');
-        nodeData.style = node.element.nodeData.nodeStyle || {};
-        nodeData.topicStyle = node.element.nodeData.topicStyle || {};
+    // Сохраняем все свойства из node.data
+    if (node.data) {
+        Object.assign(nodeData, Object.assign({}, node.data));
     }
 
-    console.log('-> Processing children for node:', nodeId);
+    // Собираем актуальные стили из DOM
+    if (node.element) {
+        const computedStyle = window.getComputedStyle(node.element);
+        const nodeStyle = {
+            backgroundColor: computedStyle.backgroundColor,
+            borderColor: computedStyle.borderColor,
+            borderWidth: computedStyle.borderWidth,
+            borderStyle: computedStyle.borderStyle,
+            borderRadius: computedStyle.borderRadius,
+            boxShadow: computedStyle.boxShadow
+        };
+
+        // Объединяем с существующими стилями, если они есть
+        nodeData.style = Object.assign(
+            {},
+            nodeStyle,
+            node.element.nodeData?.nodeStyle || {}
+        );
+
+        // Собираем стили текста
+        const topic = node.element.querySelector('.node-topic');
+        if (topic) {
+            const computedTopicStyle = window.getComputedStyle(topic);
+            const topicStyle = {
+                color: computedTopicStyle.color,
+                fontSize: computedTopicStyle.fontSize,
+                fontFamily: computedTopicStyle.fontFamily,
+                fontWeight: computedTopicStyle.fontWeight,
+                fontStyle: computedTopicStyle.fontStyle,
+                textDecoration: computedTopicStyle.textDecoration
+            };
+
+            // Объединяем с существующими стилями текста
+            nodeData.topicStyle = Object.assign(
+                {},
+                topicStyle,
+                node.element.nodeData?.topicStyle || {}
+            );
+        }
+    }
+
     // Рекурсивно собираем данные дочерних узлов
     node.children.forEach(childId => {
         const childData = collectNodeData(childId);
@@ -248,7 +288,6 @@ function collectNodeData(nodeId) {
         }
     });
 
-    console.log('-> Returning data for node:', nodeId);
     return nodeData;
 }
 
@@ -359,10 +398,21 @@ function initJsMind() {
 
     try {
         jm = new jsMind(options);
+        
+        // Добавляем слушатель для загрузки данных карты
+        window.electron.onLoadMapData((mapData) => {
+            if (mapData) {
+                currentFilePath = mapData.meta?.path;
+                jm.show(mapData);
+            } else {
+                jm.show(mind);
+            }
+        });
+
         jm.show(mind);
 
         // Теперь этот метод должен работать
-        jm.add_event_listener((type, data) => {
+        jm.add_event_listener((type) => {
             if (['node_changed', 'node_created', 'node_removed'].includes(type)) {
                 markMapAsModified();
             }
@@ -535,42 +585,28 @@ function initMapThemeMenu() {
     });
 }
 
-// Добавляем блокировку навигации
-let navigationLock = null;
-
 async function navigateBack() {
     if (navigationLock) return;
+    navigationLock = true;
 
     const backButton = document.getElementById('back-button');
-    if (!backButton) return;
+    if (!backButton) {
+        navigationLock = null;
+        return;
+    }
     
     backButton.disabled = true;
 
     try {
-        if (isMapModified) {
-            const choice = await window.electron.showSaveDialog();
-            console.log('User choice:', choice);
-
-            if (choice === 'save') {
-                const saveSuccess = await saveMap();
-                if (!saveSuccess) {
-                    backButton.disabled = false;
-                    return;
-                }
-                await new Promise(resolve => setTimeout(resolve, 100)); // Уменьшаем задержку
-            } else if (choice === 'cancel') {
-                backButton.disabled = false;
-                return;
-            }
-            // Принудительно убираем фокус с кнопки после выбора
-            backButton.blur();
-        }
-
         const navigationResult = await window.electron.goBack();
         console.log('Navigation result:', navigationResult);
+        
+        if (!navigationResult) {
+            navigationLock = null;
+            backButton.disabled = false;
+        }
     } catch (error) {
         console.error('Navigation error:', error);
-    } finally {
         navigationLock = null;
         backButton.disabled = false;
     }
@@ -581,6 +617,15 @@ function init() {
     initWindowDragging();
     initButtonHandlers(); // Используем импортированную функцию
     initDropdownStyleMenu();
+
+    // Добавляем обработчик загрузки карты перед инициализацией jsMind
+    window.electron.onLoadMapData((mapData) => {
+        if (mapData && mapData.meta.path) {
+            currentFilePath = mapData.meta.path;
+            console.log('Loading existing map:', currentFilePath);
+        }
+    });
+
     initJsMind();
 
     console.log('Adding event listeners...');
@@ -620,9 +665,6 @@ function init() {
             const choice = await window.electron.showSaveDialog();
             if (choice === 'save') {
                 const saveSuccess = await saveMap();
-                if (saveSuccess) {
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                }
                 canNavigate = saveSuccess;
             } else if (choice === 'cancel') {
                 canNavigate = false;

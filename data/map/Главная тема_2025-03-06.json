@@ -2,57 +2,178 @@
   "meta": {
     "name": "Главная тема",
     "author": "user",
-    "version": "1.0"
+    "version": "1.0",
+    "path": "C:\\Users\\shulg\\Desktop\\Diplom\\diplom\\data\\map\\Главная тема_2025-03-06.json"
   },
   "format": "node_tree",
   "data": {
     "id": "root",
     "topic": "Главная тема",
-    "direction": "right",
     "type": "main",
+    "connectionType": "straight",
+    "position": {
+      "x": 4678,
+      "y": 2528
+    },
+    "style": {
+      "backgroundColor": "rgb(64, 64, 64)",
+      "borderColor": "rgb(80, 80, 80)",
+      "borderWidth": "2px",
+      "borderStyle": "solid",
+      "borderRadius": "5px",
+      "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px"
+    },
+    "topicStyle": {
+      "color": "rgb(224, 224, 224)",
+      "fontSize": "20px",
+      "fontFamily": "Arial, sans-serif",
+      "fontWeight": "normal",
+      "fontStyle": "normal",
+      "textDecoration": "line-through"
+    },
     "children": [
       {
-        "id": "node_1741243527076",
+        "id": "node_1741301988568",
         "topic": "Текст",
         "direction": "right",
         "type": "child",
-        "children": [
-          {
-            "id": "node_1741243528387",
-            "topic": "Текст",
-            "direction": "right",
-            "type": "child",
-            "children": [],
-            "style": {
-              "backgroundColor": "#ffffff",
-              "borderColor": "#cccccc",
-              "borderWidth": "1px",
-              "boxShadow": "0 2px 5px rgba(0,0,0,0.1)"
-            },
-            "topicStyle": {
-              "color": "#333333"
-            }
-          }
-        ],
+        "connectionType": "inherit",
+        "position": {
+          "x": 4764,
+          "y": 2147
+        },
         "style": {
-          "backgroundColor": "#ffffff",
-          "borderColor": "#cccccc",
+          "backgroundColor": "rgb(45, 45, 45)",
+          "borderColor": "rgb(64, 64, 64)",
           "borderWidth": "1px",
-          "boxShadow": "0 2px 5px rgba(0,0,0,0.1)"
+          "borderStyle": "solid",
+          "borderRadius": "5px",
+          "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px"
         },
         "topicStyle": {
-          "color": "#333333"
-        }
+          "color": "rgb(224, 224, 224)",
+          "fontSize": "14px",
+          "fontFamily": "Arial, sans-serif",
+          "fontWeight": "normal",
+          "fontStyle": "normal",
+          "textDecoration": "line-through"
+        },
+        "children": [
+          {
+            "id": "node_1741301710392",
+            "topic": "Как дела?",
+            "direction": "right",
+            "type": "child",
+            "connectionType": "inherit",
+            "position": {
+              "x": 4497,
+              "y": 2316
+            },
+            "style": {
+              "backgroundColor": "rgb(45, 45, 45)",
+              "borderColor": "rgb(64, 64, 64)",
+              "borderWidth": "1px",
+              "borderStyle": "solid",
+              "borderRadius": "5px",
+              "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px"
+            },
+            "topicStyle": {
+              "color": "rgb(224, 224, 224)",
+              "fontSize": "21px",
+              "fontFamily": "\"Courier New\", monospace",
+              "fontWeight": "normal",
+              "fontStyle": "italic",
+              "textDecoration": "line-through"
+            },
+            "children": [
+              {
+                "id": "node_1741301971754",
+                "topic": "Привет",
+                "direction": "right",
+                "type": "child",
+                "connectionType": "inherit",
+                "position": {
+                  "x": 4558,
+                  "y": 2739
+                },
+                "style": {
+                  "backgroundColor": "rgb(45, 45, 45)",
+                  "borderColor": "rgb(64, 64, 64)",
+                  "borderWidth": "1px",
+                  "borderStyle": "solid",
+                  "borderRadius": "5px",
+                  "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px"
+                },
+                "topicStyle": {
+                  "color": "rgb(224, 224, 224)",
+                  "fontSize": "14px",
+                  "fontFamily": "Arial, sans-serif",
+                  "fontWeight": "normal",
+                  "fontStyle": "normal",
+                  "textDecoration": "line-through"
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "node_1741302007754",
+        "topic": "Текст",
+        "direction": "right",
+        "type": "child",
+        "connectionType": "inherit",
+        "position": {
+          "x": 5009,
+          "y": 2726
+        },
+        "style": {
+          "backgroundColor": "rgb(45, 45, 45)",
+          "borderColor": "rgb(64, 64, 64)",
+          "borderWidth": "1px",
+          "borderStyle": "solid",
+          "borderRadius": "5px",
+          "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px"
+        },
+        "topicStyle": {
+          "color": "rgb(224, 224, 224)",
+          "fontSize": "14px",
+          "fontFamily": "Arial, sans-serif",
+          "fontWeight": "normal",
+          "fontStyle": "normal",
+          "textDecoration": "line-through"
+        },
+        "children": []
+      },
+      {
+        "id": "node_1741302013445",
+        "topic": "Текст",
+        "direction": "right",
+        "type": "child",
+        "connectionType": "inherit",
+        "position": {
+          "x": 4955,
+          "y": 2390
+        },
+        "style": {
+          "backgroundColor": "rgb(45, 45, 45)",
+          "borderColor": "rgb(64, 64, 64)",
+          "borderWidth": "1px",
+          "borderStyle": "solid",
+          "borderRadius": "5px",
+          "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px"
+        },
+        "topicStyle": {
+          "color": "rgb(224, 224, 224)",
+          "fontSize": "14px",
+          "fontFamily": "Arial, sans-serif",
+          "fontWeight": "normal",
+          "fontStyle": "normal",
+          "textDecoration": "line-through"
+        },
+        "children": []
       }
-    ],
-    "style": {
-      "backgroundColor": "#f0f0f0",
-      "borderColor": "#d0d0d0",
-      "borderWidth": "2px",
-      "boxShadow": "0 2px 5px rgba(0,0,0,0.1)"
-    },
-    "topicStyle": {
-      "color": "#333333"
-    }
+    ]
   }
 }

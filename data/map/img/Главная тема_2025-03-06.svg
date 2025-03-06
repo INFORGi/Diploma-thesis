@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="653" height="161.96875" viewBox="0 0 653 161.96875"><defs><style>
+<svg xmlns="http://www.w3.org/2000/svg" width="764" height="751" viewBox="0 0 764 751"><defs><style>
             path {
                 fill: none;
                 stroke-linecap: round;
@@ -6,8 +6,8 @@
             }
             
                 path {
-                    stroke: #555555;
+                    stroke: #606060;
                     stroke-width: 2pxpx;
                 }
             
-        </style></defs><rect width="100%" height="100%" fill="rgb(255, 255, 255)"/><g transform="translate(-574, -474.03125)"><g><rect x="624" y="524.03125" width="154" height="61" rx="5px" ry="5px" fill="rgb(240, 240, 240)" stroke="rgb(208, 208, 208)" stroke-width="2px"/><text x="634" y="559.53125" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Главная тема</text></g><g><rect x="825" y="527" width="152" height="59" rx="5px" ry="5px" fill="rgb(255, 255, 255)" stroke="rgb(204, 204, 204)" stroke-width="1px"/><text x="835" y="561.5" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Текст</text></g><g><rect x="1025" y="527" width="152" height="59" rx="5px" ry="5px" fill="rgb(255, 255, 255)" stroke="rgb(204, 204, 204)" stroke-width="1px"/><text x="1035" y="561.5" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Текст</text></g></g></svg>
+        </style></defs><rect width="100%" height="100%" fill="rgb(26, 26, 26)"/><g transform="translate(-630, -92)"><g><rect x="861" y="523" width="190.625" height="70" rx="5px" ry="5px" fill="rgb(64, 64, 64)" stroke="rgb(80, 80, 80)" stroke-width="2px"/><text x="871" y="563" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Главная тема</text></g><g><rect x="947" y="142" width="152" height="59" rx="5px" ry="5px" fill="rgb(45, 45, 45)" stroke="rgb(64, 64, 64)" stroke-width="1px"/><text x="957" y="176.5" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Текст</text></g><g><rect x="680" y="311" width="175.421875" height="69.5" rx="5px" ry="5px" fill="rgb(45, 45, 45)" stroke="rgb(64, 64, 64)" stroke-width="1px"/><text x="690" y="350.75" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Как дела?</text></g><g><rect x="741" y="734" width="152" height="59" rx="5px" ry="5px" fill="rgb(45, 45, 45)" stroke="rgb(64, 64, 64)" stroke-width="1px"/><text x="751" y="768.5" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Привет</text></g><g><rect x="1192" y="721" width="152" height="59" rx="5px" ry="5px" fill="rgb(45, 45, 45)" stroke="rgb(64, 64, 64)" stroke-width="1px"/><text x="1202" y="755.5" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Текст</text></g><g><rect x="1138" y="385" width="152" height="59" rx="5px" ry="5px" fill="rgb(45, 45, 45)" stroke="rgb(64, 64, 64)" stroke-width="1px"/><text x="1148" y="419.5" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Текст</text></g></g></svg>

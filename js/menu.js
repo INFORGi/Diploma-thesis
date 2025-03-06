@@ -22,7 +22,7 @@ document.getElementById('new-map').onclick = function() {
 
 
 document.getElementById('create').onclick = function() {
-    window.electron.opencanvas();
+    window.electron.opencanvas(null); // null для новой карты
 };
 
 
@@ -54,7 +54,7 @@ document.getElementById('open-map').onclick = function() {
             // Добавляем обработчик для кнопки открытия
             const button = cardDiv.querySelector('button');
             button.onclick = function() {
-                window.electron.openExistingMap(this.dataset.map);
+                window.electron.opencanvas(this.dataset.map);
             };
         });
         

@@ -7,7 +7,7 @@ contextBridge.exposeInMainWorld('electron', {
     move: ({ x, y }) => ipcRenderer.send('move-window', { x, y }),
     onLoadSettings: (callback) => ipcRenderer.on('load-settings', (event, settings) => callback(settings)),
     switchtheme: (theme) => ipcRenderer.send('switch-theme', theme),
-    opencanvas: () => ipcRenderer.send('open-canvas'),
+    opencanvas: (mapData) => ipcRenderer.send('open-canvas', mapData),
     showdialog: async () => await ipcRenderer.invoke('show-input-dialog'),
     goBack: () => {
         if (!window.isNavigating) {
@@ -40,7 +40,6 @@ contextBridge.exposeInMainWorld('electron', {
         ipcRenderer.on('before-close', () => callback());
     },
     confirmClose: (canClose) => ipcRenderer.send('confirm-close', canClose),
-    
     getExistingMaps: () => ipcRenderer.invoke('get-existing-maps'),
-    openExistingMap: (filename) => ipcRenderer.invoke('open-existing-map', filename)
+    onLoadMapData: (callback) => ipcRenderer.on('load-map-data', (_, data) => callback(data))
 });

@@ -21,7 +21,7 @@
     --dark-header-text: #ffffff;      
     --dark-header-button-bg: #424449;
     --dark-header-button-text: #ffffff; 
-    --dark-header-button-hover-bg: #bac5db;
+    --dark-header-button-hover-bg: #bac5db; 
     --dark-button-bg: #54565c;
     --dark-button-text: #ffffff;    
     --dark-button-hover: #5e6066;
@@ -48,6 +48,9 @@ main.dark { background-color: var(--dark-bg); }
 
 .window.light { background-color: var(--light-bg); }
 .window.dark { background-color: var(--dark-bg); }
+
+.img-card.light { background-color: var(--light-bg); border: 1px solid var(--border-color); }
+.img-card.dark { background-color: var(--dark-bg); border: 1px solid var(--border-color); }
 
 /* Кнопки управления окном (свернуть, развернуть, закрыть) */
 .button-minimize-style.light{ background-image:url(../image/minimize_window.svg); filter: invert(0); }
@@ -91,7 +94,7 @@ main.dark { background-color: var(--dark-bg); }
 .block-history.dark { background-color: var(--dark-bg); }
 
 /* Левая панель с кнопками создания и открытия карты */
-.block-menu.light { background-color: var (--light-bg); border-right: 2px solid var(--border-color); } 
+.block-menu.light { background-color: var(--light-bg); border-right: 2px solid var(--border-color); } 
 .block-menu.dark { background-color: var(--dark-bg); border-right: 2px solid var(--border-color); } 
 
 .button-main-menu.light { background-color: var(--light-button-bg); color: var(--light-button-text); }

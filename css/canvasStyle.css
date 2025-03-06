@@ -38,6 +38,7 @@ main {
     align-items: center;
     background: inherit;
     z-index: 1;
+    width: 100%; /* Явно указываем ширину */
 }
 
 .context-menu {
@@ -114,7 +115,7 @@ main {
 
 .style-sidebar {
     position: fixed;
-    left: 0;
+    right: 0;  /* Changed from left: 0 */
     top: 30px;
     bottom: 0;
     z-index: 2;

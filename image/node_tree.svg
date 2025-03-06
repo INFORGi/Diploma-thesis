@@ -1,0 +1,23 @@
+<svg width="500" height="400" xmlns="http://www.w3.org/2000/svg">
+    <!-- Линии между узлами -->
+    <line x1="250" y1="200" x2="150" y2="100" stroke="black" stroke-width="2"/>
+    <line x1="250" y1="200" x2="350" y2="100" stroke="black" stroke-width="2"/>
+    <line x1="250" y1="200" x2="250" y2="300" stroke="black" stroke-width="2"/>
+    <line x1="150" y1="100" x2="100" y2="200" stroke="black" stroke-width="2"/>
+    
+    <!-- Узлы -->
+    <rect x="190" y="180" width="120" height="40" rx="5" ry="5" fill="lightgray" stroke="black"/>
+    <text x="250" y="205" font-size="14" text-anchor="middle" fill="black">Главная тема</text>
+    
+    <rect x="125" y="80" width="80" height="40" rx="5" ry="5" fill="lightgray" stroke="black"/>
+    <text x="165" y="105" font-size="14" text-anchor="middle" fill="black">Текст</text>
+    
+    <rect x="325" y="80" width="80" height="40" rx="5" ry="5" fill="lightgray" stroke="black"/>
+    <text x="365" y="105" font-size="14" text-anchor="middle" fill="black">Текст</text>
+    
+    <rect x="225" y="280" width="80" height="40" rx="5" ry="5" fill="lightgray" stroke="black"/>
+    <text x="265" y="305" font-size="14" text-anchor="middle" fill="black">Текст</text>
+    
+    <rect x="75" y="180" width="80" height="40" rx="5" ry="5" fill="lightgray" stroke="black"/>
+    <text x="115" y="205" font-size="14" text-anchor="middle" fill="black">Текст</text>
+</svg>

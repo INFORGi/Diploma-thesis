@@ -12,8 +12,8 @@
     "type": "main",
     "connectionType": "straight",
     "position": {
-      "x": 4672,
-      "y": 2522
+      "x": -5228,
+      "y": -38438
     },
     "canvasColor": "rgb(245, 249, 255)",
     "style": {
@@ -25,14 +25,14 @@
       "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
       "width": "fit-content",
       "height": "fit-content",
-      "minWidth": "20000px",
-      "minHeight": "82000px",
+      "minWidth": "200px",
+      "minHeight": "82px",
       "padding": "0px"
     },
     "topicStyle": {
       "color": "rgb(255, 0, 0)",
       "fontSize": "24px",
-      "fontFamily": "\"Times New Roman\", serif",
+      "fontFamily": "",
       "fontWeight": "bold",
       "fontStyle": "italic",
       "textDecoration": "line-through",

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20100" height="82109" viewBox="0 0 20100 82109"><defs><style>
+            path {
+                fill: none;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+            }
+            
+                path {
+                    stroke: #64b5f6;
+                    stroke-width: 2pxpx;
+                }
+            
+        </style></defs><rect width="100%" height="100%" fill="rgb(245, 249, 255)"/><g transform="translate(-453, -424)"><g><rect x="503" y="483" width="20000" height="82000" rx="5px" ry="5px" fill="rgb(255, 31, 225)" stroke="rgb(21, 101, 192)" stroke-width="20px"/><text x="513" y="41488" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Варианты казни для Степы</text></g><g><rect x="802" y="474" width="192.03125" height="59" rx="5px" ry="5px" fill="rgb(227, 242, 253)" stroke="rgb(144, 202, 249)" stroke-width="1px"/><text x="812" y="508.5" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Электрический стул</text></g><g><rect x="755" y="584" width="177.234375" height="59" rx="5px" ry="5px" fill="rgb(227, 242, 253)" stroke="rgb(144, 202, 249)" stroke-width="1px"/><text x="765" y="618.5" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Сжигание на огне</text></g><g><rect x="955" y="584" width="152" height="59" rx="5px" ry="5px" fill="rgb(227, 242, 253)" stroke="rgb(144, 202, 249)" stroke-width="1px"/><text x="965" y="618.5" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Текст</text></g></g></svg>

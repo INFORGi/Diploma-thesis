@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "name": "Главная тема",
+    "author": "user",
+    "version": "1.0",
+    "path": null
+  },
+  "format": "node_tree",
+  "data": {
+    "id": "root",
+    "topic": "Главная тема",
+    "type": "main",
+    "connectionType": "straight",
+    "position": {
+      "x": 4696,
+      "y": 2533
+    },
+    "canvasColor": "rgb(255, 255, 255)",
+    "style": {
+      "backgroundColor": "rgb(255, 255, 255)",
+      "borderColor": "rgb(204, 204, 204)",
+      "borderWidth": "1px",
+      "borderStyle": "solid",
+      "borderRadius": "5px",
+      "boxShadow": "rgba(0, 0, 0, 0.1) 0px 2px 4px",
+      "width": "auto",
+      "height": "59px",
+      "minWidth": "120px",
+      "minHeight": "",
+      "padding": "10px 15px"
+    },
+    "topicStyle": {
+      "color": "",
+      "fontSize": "",
+      "fontFamily": "",
+      "fontWeight": "",
+      "fontStyle": "",
+      "textDecoration": "",
+      "textAlign": "center",
+      "verticalAlign": "center"
+    },
+    "children": [
+      {
+        "id": "node_1741314645431",
+        "topic": "Текст",
+        "direction": "right",
+        "type": "child",
+        "connectionType": "inherit",
+        "position": {
+          "x": 4896,
+          "y": 2533
+        },
+        "canvasColor": "rgb(255, 255, 255)",
+        "style": {
+          "backgroundColor": "rgb(255, 255, 255)",
+          "borderColor": "rgb(204, 204, 204)",
+          "borderWidth": "1px",
+          "borderStyle": "solid",
+          "borderRadius": "5px",
+          "boxShadow": "rgba(0, 0, 0, 0.1) 0px 2px 4px",
+          "width": "auto",
+          "height": "59px",
+          "minWidth": "120px",
+          "minHeight": "",
+          "padding": "10px 15px"
+        },
+        "topicStyle": {
+          "color": "",
+          "fontSize": "",
+          "fontFamily": "",
+          "fontWeight": "",
+          "fontStyle": "",
+          "textDecoration": "",
+          "textAlign": "center",
+          "verticalAlign": "center"
+        },
+        "children": []
+      }
+    ]
+  }
+}

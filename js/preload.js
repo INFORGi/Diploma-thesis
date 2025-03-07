@@ -1,5 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+let isNavigating = false;
+
 contextBridge.exposeInMainWorld('electron', {
     minimize: () => ipcRenderer.send('minimize-window'),
     maximize: () => ipcRenderer.send('maximize-window'),
@@ -10,10 +12,18 @@ contextBridge.exposeInMainWorld('electron', {
     opencanvas: (mapData) => ipcRenderer.send('open-canvas', mapData),
     showdialog: async () => await ipcRenderer.invoke('show-input-dialog'),
     goBack: () => {
-        if (!window.isNavigating) {
-            window.isNavigating = true;
+        if (!isNavigating) {
+            isNavigating = true;
             console.log('Preload: Sending go-back signal');
-            return ipcRenderer.invoke('go-back');
+            return ipcRenderer.invoke('go-back').then(result => {
+                if (!result) {
+                    isNavigating = false;
+                }
+                return result;
+            }).catch(error => {
+                isNavigating = false;
+                throw error;
+            });
         }
         return Promise.resolve(false);
     },
@@ -21,6 +31,9 @@ contextBridge.exposeInMainWorld('electron', {
         ipcRenderer.on('check-navigation', () => callback());
     },
     sendNavigationResponse: (response) => {
+        if (!response) {
+            isNavigating = false;
+        }
         ipcRenderer.send('navigation-response', response);
     },
     saveMap: (data) => {

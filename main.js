@@ -150,8 +150,6 @@ ipcMain.on('switch-theme', (event, newTheme) => {
     }
 });
 
-let lastMapPath = null;  // Добавляем переменную для хранения последнего пути
-
 /**
  * Обработчик открытия холста
  * @param {Event} event - Событие Electron
@@ -160,28 +158,26 @@ ipcMain.on('open-canvas', async (event, mapPath) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     win.loadFile('html/canvas.html');
     
-    // Сохраняем путь во временную переменную и сразу очищаем входной параметр
-    lastMapPath = mapPath;
-    mapPath = null;
-    
-    win.webContents.on('did-finish-load', () => {
-        if (lastMapPath) {
-            try {
-                const fullPath = path.join(__dirname, 'data/map', lastMapPath);
-                const mapData = fs.readFileSync(fullPath, 'utf-8');
-                const parsedData = JSON.parse(mapData);
-                parsedData.meta.path = fullPath;
+    if (mapPath) {
+        try {
+            const fullPath = path.join(__dirname, 'data/map', mapPath);
+            const mapData = await fsPromises.readFile(fullPath, 'utf-8');
+            const parsedData = JSON.parse(mapData);
+            parsedData.meta.path = fullPath;
+            win.webContents.on('did-finish-load', () => {
                 win.webContents.send('load-map-data', parsedData);
-            } catch (error) {
-                console.error('Error loading map:', error);
+            });
+        } catch (error) {
+            console.error('Error loading map:', error);
+            win.webContents.on('did-finish-load', () => {
                 win.webContents.send('load-map-data', null);
-            }
-        } else {
-            win.webContents.send('load-map-data', null);
+            });
         }
-        // Очищаем путь после отправки данных
-        lastMapPath = null;
-    });
+    } else {
+        win.webContents.on('did-finish-load', () => {
+            win.webContents.send('load-map-data', null);
+        });
+    }
     
     win.setFullScreen(true);
 });
@@ -348,17 +344,13 @@ let isNavigating = false;
  */
 ipcMain.handle('go-back', async (event) => {
     if (isNavigating) {
-        console.log('Navigation already in progress');
         return false;
     }
-
+    
     const win = BrowserWindow.fromWebContents(event.sender);
     if (!win || win.isDestroyed()) {
-        console.error('Window not found or destroyed');
         return false;
     }
-
-    isNavigating = true;
 
     try {
         const canNavigate = await new Promise((resolve) => {
@@ -369,24 +361,16 @@ ipcMain.handle('go-back', async (event) => {
         });
 
         if (!canNavigate) {
-            console.log('Navigation cancelled by user');
-            isNavigating = false;
             return false;
         }
 
         if (!win.isDestroyed()) {
-            console.log('Starting navigation sequence...');
-            
             if (win.isFullScreen()) {
                 win.setFullScreen(false);
             }
-
-            // Добавляем небольшую задержку перед загрузкой нового окна
             await new Promise(resolve => setTimeout(resolve, 100));
-
             if (!win.isDestroyed()) {
                 win.loadFile('html/new_menu.html');
-                console.log('Navigation completed successfully');
                 return true;
             }
         }
@@ -394,8 +378,6 @@ ipcMain.handle('go-back', async (event) => {
     } catch (error) {
         console.error('Navigation failed:', error);
         return false;
-    } finally {
-        isNavigating = false;
     }
 });
 

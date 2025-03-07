@@ -183,20 +183,22 @@ async function saveMap() {
                 name: rootNode.data.topic || 'Mindmap',
                 author: 'user',
                 version: '1.0',
-                path: currentFilePath
+                path: currentFilePath // Может быть null для новой карты
             },
             format: 'node_tree',
             data: jm.getNodeData(jm.get_root())
         };
 
-        // Получаем изображение карты
-        const imageData = await exportMapImage();
+        // Очищаем название от временных меток перед сохранением
+        const cleanedTopic = rootNode.data.topic.replace(/_\d+$/, '');
+        // Для новой карты генерируем уникальный путь с временной меткой
+        const savePath = currentFilePath || `${cleanedTopic}_${Date.now()}`;
 
         const saveData = {
             mapData,
-            mapPath: currentFilePath || `${rootNode.data.topic || 'Mindmap'}_${new Date().toISOString().slice(0, 10)}`,
+            mapPath: savePath,
             isExisting: Boolean(currentFilePath),
-            imageData
+            imageData: await exportMapImage()
         };
 
         const result = await window.electron.saveMap(saveData);
@@ -298,10 +300,15 @@ async function handleUnsavedChanges() {
         
         if (choice === 'save') {
             const saveResult = await saveMap();
-            // Возвращаем результат сохранения
             return saveResult;
         } else if (choice === 'dont-save') {
             return true;
+        }
+        
+        // Разблокируем кнопку перед возвратом false
+        const backButton = document.getElementById('back-button');
+        if (backButton) {
+            backButton.disabled = false;
         }
         return false;
     }
@@ -309,12 +316,6 @@ async function handleUnsavedChanges() {
 }
 
 function initJsMind() {
-    // Добавим проверку на наличие MIND_MAP_THEMES
-    if (!MIND_MAP_THEMES) {
-        console.error('MIND_MAP_THEMES not loaded');
-        return;
-    }
-    
     const container = document.getElementById('jsmind_container');
     if (!container) {
         console.error('Container not found: jsmind_container');
@@ -413,7 +414,9 @@ function initJsMind() {
             } else {
                 // Очищаем путь при создании новой карты
                 currentFilePath = null;
+                currentMapPath = null; // Очищаем обе переменные пути
                 jm.show(mind);
+                isMapModified = false; // Сбрасываем флаг модификации
             }
         });
 
@@ -593,29 +596,28 @@ function initMapThemeMenu() {
     });
 }
 
-async function navigateBack() {
-    if (navigationLock) return;
-    navigationLock = true;
-
+// Добавляем функцию для разблокировки кнопки
+function unlockBackButton() {
     const backButton = document.getElementById('back-button');
-    if (!backButton) {
+    if (backButton) {
+        backButton.disabled = false;
         navigationLock = null;
-        return;
     }
+}
+
+async function navigateBack() {
+    const backButton = document.getElementById('back-button');
+    if (!backButton) return;
     
     backButton.disabled = true;
 
     try {
-        const navigationResult = await window.electron.goBack();
-        console.log('Navigation result:', navigationResult);
-        
-        if (!navigationResult) {
-            navigationLock = null;
+        const result = await window.electron.goBack();
+        if (!result) {
             backButton.disabled = false;
         }
     } catch (error) {
         console.error('Navigation error:', error);
-        navigationLock = null;
         backButton.disabled = false;
     }
 }
@@ -672,8 +674,7 @@ function init() {
         if (isMapModified) {
             const choice = await window.electron.showSaveDialog();
             if (choice === 'save') {
-                const saveSuccess = await saveMap();
-                canNavigate = saveSuccess;
+                canNavigate = await saveMap();
             } else if (choice === 'cancel') {
                 canNavigate = false;
             }

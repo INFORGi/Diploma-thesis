@@ -41,11 +41,12 @@ document.getElementById('open-map').onclick = function() {
             const cardDiv = document.createElement('div');
             cardDiv.className = 'card entry-point';
 
-            const cleanedNames = map.name.replace(/_\d{4}-\d{2}-\d{2}(_\d+)?$/, '')
- 
+            // Очищаем имя от временной метки
+            const cleanedName = map.name.replace(/_\d+$/, '');
+
             cardDiv.innerHTML = `
                 <img class="img-card entry-point" src="../data/map/img/${map.image}">
-                <p class="p-card entry-point">${cleanedNames}</p>
+                <p class="p-card entry-point">${cleanedName}</p>
                 <button class="button-card button-transform entry-point" data-map="${map.file}" type="button">Открыть</button>
             `;
             

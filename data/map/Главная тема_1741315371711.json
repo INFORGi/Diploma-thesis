@@ -3,7 +3,7 @@
     "name": "Главная тема",
     "author": "user",
     "version": "1.0",
-    "path": "C:\\Users\\shulg\\Desktop\\Diplom\\diplom\\data\\map\\Главная тема_1741315052655.json"
+    "path": "C:\\Users\\shulg\\Desktop\\Diplom\\diplom\\data\\map\\Главная тема_1741315371711.json"
   },
   "format": "node_tree",
   "data": {
@@ -41,14 +41,14 @@
     },
     "children": [
       {
-        "id": "node_1741315046669",
+        "id": "node_1741315363225",
         "topic": "Текст",
         "direction": "right",
         "type": "child",
         "connectionType": "inherit",
         "position": {
-          "x": 4896,
-          "y": 2533
+          "x": 5019,
+          "y": 2320
         },
         "canvasColor": "rgb(245, 249, 255)",
         "style": {
@@ -76,7 +76,7 @@
         },
         "children": [
           {
-            "id": "node_1741315047825",
+            "id": "node_1741315366469",
             "topic": "Текст",
             "direction": "right",
             "type": "child",
@@ -84,6 +84,79 @@
             "position": {
               "x": 5096,
               "y": 2533
+            },
+            "canvasColor": "rgb(245, 249, 255)",
+            "style": {
+              "backgroundColor": "rgb(227, 242, 253)",
+              "borderColor": "rgb(144, 202, 249)",
+              "borderWidth": "1px",
+              "borderStyle": "solid",
+              "borderRadius": "5px",
+              "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
+              "width": "auto",
+              "height": "59px",
+              "minWidth": "120px",
+              "minHeight": "",
+              "padding": "10px 15px"
+            },
+            "topicStyle": {
+              "color": "rgb(25, 118, 210)",
+              "fontSize": "",
+              "fontFamily": "",
+              "fontWeight": "",
+              "fontStyle": "",
+              "textDecoration": "",
+              "textAlign": "center",
+              "verticalAlign": "center"
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "node_1741315364079",
+        "topic": "Текст",
+        "direction": "left",
+        "type": "child",
+        "connectionType": "inherit",
+        "position": {
+          "x": 4388,
+          "y": 2532
+        },
+        "canvasColor": "rgb(245, 249, 255)",
+        "style": {
+          "backgroundColor": "rgb(227, 242, 253)",
+          "borderColor": "rgb(144, 202, 249)",
+          "borderWidth": "1px",
+          "borderStyle": "solid",
+          "borderRadius": "5px",
+          "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
+          "width": "auto",
+          "height": "59px",
+          "minWidth": "120px",
+          "minHeight": "",
+          "padding": "10px 15px"
+        },
+        "topicStyle": {
+          "color": "rgb(25, 118, 210)",
+          "fontSize": "",
+          "fontFamily": "",
+          "fontWeight": "",
+          "fontStyle": "",
+          "textDecoration": "",
+          "textAlign": "center",
+          "verticalAlign": "center"
+        },
+        "children": [
+          {
+            "id": "node_1741315365626",
+            "topic": "Текст",
+            "direction": "left",
+            "type": "child",
+            "connectionType": "inherit",
+            "position": {
+              "x": 4188,
+              "y": 2532
             },
             "canvasColor": "rgb(245, 249, 255)",
             "style": {

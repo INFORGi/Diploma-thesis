@@ -3,7 +3,7 @@
     "name": "Главная тема",
     "author": "user",
     "version": "1.0",
-    "path": "C:\\Users\\shulg\\Desktop\\Diplom\\diplom\\data\\map\\Главная тема_1741315052655.json"
+    "path": "C:\\Users\\shulg\\Desktop\\Diplom\\diplom\\data\\map\\Главная тема_1741315415020.json"
   },
   "format": "node_tree",
   "data": {
@@ -12,7 +12,7 @@
     "type": "main",
     "connectionType": "straight",
     "position": {
-      "x": 4695,
+      "x": 4693,
       "y": 2532
     },
     "canvasColor": "rgb(245, 249, 255)",
@@ -23,32 +23,32 @@
       "borderStyle": "solid",
       "borderRadius": "5px",
       "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
-      "width": "auto",
-      "height": "61px",
-      "minWidth": "120px",
-      "minHeight": "",
-      "padding": "10px 15px"
+      "width": "fit-content",
+      "height": "fit-content",
+      "minWidth": "154px",
+      "minHeight": "61px",
+      "padding": "0px"
     },
     "topicStyle": {
       "color": "rgb(255, 255, 255)",
-      "fontSize": "",
-      "fontFamily": "",
-      "fontWeight": "",
-      "fontStyle": "",
-      "textDecoration": "",
+      "fontSize": "14px",
+      "fontFamily": "Arial, sans-serif",
+      "fontWeight": "normal",
+      "fontStyle": "italic",
+      "textDecoration": "line-through",
       "textAlign": "center",
       "verticalAlign": "center"
     },
     "children": [
       {
-        "id": "node_1741315046669",
+        "id": "node_1741315396985",
         "topic": "Текст",
         "direction": "right",
         "type": "child",
         "connectionType": "inherit",
         "position": {
-          "x": 4896,
-          "y": 2533
+          "x": 4912,
+          "y": 2640
         },
         "canvasColor": "rgb(245, 249, 255)",
         "style": {
@@ -76,7 +76,7 @@
         },
         "children": [
           {
-            "id": "node_1741315047825",
+            "id": "node_1741315398729",
             "topic": "Текст",
             "direction": "right",
             "type": "child",
@@ -112,6 +112,42 @@
             "children": []
           }
         ]
+      },
+      {
+        "id": "node_1741315399641",
+        "topic": "Текст",
+        "direction": "right",
+        "type": "child",
+        "connectionType": "inherit",
+        "position": {
+          "x": 4290,
+          "y": 2522
+        },
+        "canvasColor": "rgb(245, 249, 255)",
+        "style": {
+          "backgroundColor": "rgb(227, 242, 253)",
+          "borderColor": "rgb(144, 202, 249)",
+          "borderWidth": "1px",
+          "borderStyle": "solid",
+          "borderRadius": "5px",
+          "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
+          "width": "fit-content",
+          "height": "fit-content",
+          "minWidth": "152px",
+          "minHeight": "59px",
+          "padding": "0px"
+        },
+        "topicStyle": {
+          "color": "rgb(149, 58, 161)",
+          "fontSize": "14px",
+          "fontFamily": "Arial, sans-serif",
+          "fontWeight": "normal",
+          "fontStyle": "normal",
+          "textDecoration": "none",
+          "textAlign": "center",
+          "verticalAlign": "center"
+        },
+        "children": []
       }
     ]
   }

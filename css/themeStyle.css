@@ -1,91 +1,198 @@
 :root {
-    --light-bg: #f0f0f0;
-    --light-header-bg: #523f9e;
-    --light-header-button-bg: #CCCCFF;
-    --light-header-button-hover-bg: #1e1ea3;
-    --light-color: #000000;
-    --light-button-bg: #24b16a;
-    --light-card-bg: #f08e3f;
+    --light-bg: #f8fafc;
+    --light-text: #1a1a1a;           
+    --light-header-bg: #cdd8eb;
+    --light-header-text: #1a1a1a;    
+    --light-header-button-bg: #a3a8b7;
+    --light-header-button-text: #241b1d;
+    --light-header-button-hover-bg: #c2c6d4;
+    --light-button-bg: #b0b5c3;
+    --light-button-text: #1a1a1a;    
+    --light-button-hover: #d9dce2;
+    --light-card-bg: #e8ebf2;
+    --light-card-text: #1a1a1a;      
+    --light-card-border: #e3e7f0;
+    --light-dropdown-hover: #f4f6fa;
 
-
-    --dark-bg: #333333;
-    --dark-header-bg: #31255e;
-    --dark-header-button-bg: #003153;
-    --dark-header-button-hover-bg: #1988d8;
-    --dark-color: #ffffff;
-    --dark-button-bg: #9c9c9c;
-    --dark-border-color: #636363;
-    --dark-card-bg: #728820;
+    /* Тёмная тема */
+    --dark-bg: #2d2f33;
+    --dark-text: #ffffff;             
+    --dark-header-bg: #393b40;
+    --dark-header-text: #ffffff;      
+    --dark-header-button-bg: #424449;
+    --dark-header-button-text: #ffffff; 
+    --dark-header-button-hover-bg: #bac5db; 
+    --dark-button-bg: #54565c;
+    --dark-button-text: #ffffff;    
+    --dark-button-hover: #5e6066;
+    --dark-border-color: var(--dark-button-bg);
+    --dark-card-bg: #393b40;
+    --dark-card-text: #ffffff;
+    --dark-card-border: #6b6e75;
+    --dark-dropdown-hover: #4b4d52;
+    --dark-scrollbar-bg: #6d7077;
+    --dark-scrollbar-bg-hover: #7d8087;
     
-    --dropdown-button-bg: #9c29d8;
-    --header-button-close-hover-bg: #e32636;
-    --border-color: #ccc;
+    --dropdown-bg: var(--light-bg);
+    --close-button-hover: #54565c;
+    --border-color: #6b6e75;
+    --accent: rgb(206, 222, 255);
 }
 
-body.light { background-color: var(--light-bg); color: var(--light-color); }
-body.dark { background-color: var(--dark-bg); color: var(--dark-color); }
+body.light { background-color: var(--light-bg); color: var(--light-text); }
+body.dark { background-color: var(--dark-bg); color: var(--dark-text); }
 
+/* Верхняя панель с кнопками */
 header.light{ background-color: var(--light-header-bg); }
 header.dark{ background-color: var(--dark-header-bg); }
 
+/* Основной фон */
 main.light { background-color: var(--light-bg); }
 main.dark { background-color: var(--dark-bg); }
 
 .window.light { background-color: var(--light-bg); }
 .window.dark { background-color: var(--dark-bg); }
 
-.button-minimize-style.light{ background-image:url(../image/minimize_window.png); }
-.button-minimize-style.dark{ background-image:url(../image/minimize_window.png); }
+.img-card.light { background-color: var(--light-bg); border: 1px solid var(--border-color); }
+.img-card.dark { background-color: var(--dark-bg); border: 1px solid var(--border-color); }
+
+/* Кнопки управления окном (свернуть, развернуть, закрыть) */
+.button-minimize-style.light{ background-image:url(../image/minimize_window.svg); filter: invert(0); }
+.button-minimize-style.dark{ background-image:url(../image/minimize_window.svg); filter: invert(1); }
 
 .button-minimize-style.light:hover{ background-color: var(--dark-header-button-hover-bg); border: 1px solid var(--border-color); border-radius: 3px; }
 .button-minimize-style.dark:hover{ background-color: var(--light-header-button-hover-bg); border: 1px solid var(--border-color); border-radius: 3px; }
 
-.button-maximize-style.light{ background-image:url(../image/expand_window.png); }
-.button-maximize-style.dark{ background-image:url(../image/expand_window.png); }
+.button-maximize-style.light{ background-image:url(../image/expand_window.svg); filter: invert(0); }
+.button-maximize-style.dark{ background-image:url(../image/expand_window.svg); filter: invert(1); }
 
 .button-maximize-style.light:hover{ background-color: var(--dark-header-button-hover-bg); border: 1px solid var(--border-color); border-radius: 3px; }
 .button-maximize-style.dark:hover{ background-color: var(--light-header-button-hover-bg); border: 1px solid var(--border-color); border-radius: 3px; }
 
-.button-close-style.light{ background-image:url(../image/close_window.png); } 
-.button-close-style.dark{ background-image:url(../image/close_window.png); }
+.button-close-style.light{ background-image:url(../image/close_window.svg); filter: invert(0); } 
+.button-close-style.dark{ background-image:url(../image/close_window.svg); filter: invert(1); }
 
-.button-close-style.light:hover{ background-color: var(--header-button-close-hover-bg); border-radius: 3px; }
-.button-close-style.dark:hover{ background-color: var(--header-button-close-hover-bg); border-radius: 3px; }
+.button-close-style.light:hover{ background-color: var(--dark-header-button-hover-bg); border: 1px solid var(--border-color); border-radius: 3px; }
+.button-close-style.dark:hover{ background-color: var(--light-header-button-hover-bg); border: 1px solid var(--border-color); border-radius: 3px; }
 
-.style-button-menu.light{ background-color: var(--light-header-bg); color: var(--dark-color); }
-.style-button-menu.dark{ background-color: var(--dark-header-bg); color: var(--dark-color); }
+/* Меню с тремя точками */
+.style-button-menu.light{ background-color: var(--light-header-bg); color: var(--light-header-text); }
+.style-button-menu.dark{ background-color: var(--dark-header-bg); color: var(--dark-header-text); }
 
+/* Выпадающее меню */
 .style-dropdown.light { background-color: var(--light-bg); border: 1px solid var(--border-color); border-radius: 4px; }
 .style-dropdown.dark { background-color: var(--dark-bg); border: 1px solid var(--border-color); border-radius: 4px; }
 
-.dropdown-button-style.light { color: var(--light-color); }
-.dropdown-button-style.dark { color: var(--dark-color); }
+.dropdown-button-style.light { color: var(--light-text); }
+.dropdown-button-style.dark { color: var(--dark-text); }
 
-.dropdown-button-style.dark:hover { background-color: var(--dropdown-button-bg); color: var(--dark-color); }
-.dropdown-button-style.light:hover { background-color: var(--dropdown-button-bg); color: var(--dark-color); }
+.dropdown-button-style.dark:hover { background-color: var(--dark-dropdown-hover); color: var(--dark-text); }
+.dropdown-button-style.light:hover { background-color: var(--light-dropdown-hover); color: var(--light-text); }
 
+/* Левая панель с кнопками создания и открытия карты */
 .theme-dropdown.light { background-color: var(--light-bg); border: 1px solid var(--border-color); border-radius: 4px;}
 .theme-dropdown.dark { background-color: var(--dark-bg); border: 1px solid var(--border-color); border-radius: 4px; }
 
+/* Область с карточками шаблонов */
 .block-history.light { background-color: var(--light-bg); }
 .block-history.dark { background-color: var(--dark-bg); }
 
+/* Левая панель с кнопками создания и открытия карты */
 .block-menu.light { background-color: var(--light-bg); border-right: 2px solid var(--border-color); } 
-.block-menu.dark { background-color: var(--dark-bg); border-right: 2px solid var(--dark-border-color); } 
+.block-menu.dark { background-color: var(--dark-bg); border-right: 2px solid var(--border-color); } 
 
-.button-main-menu.light { background-color: var(--light-button-bg); color: var(--light-color); }
-.button-main-menu.dark { background-color: var(--dark-button-bg); color: var(--dark-color);  }
+.button-main-menu.light { background-color: var(--light-button-bg); color: var(--light-button-text); }
+.button-main-menu.dark { background-color: var(--dark-button-bg); color: var(--dark-button-text);  }
 
-/* Трансформация кнопок */
+/* Эффект при наведении на кнопки */
 .button-transform { border: none; border-radius: 1px; cursor: pointer; transition: background-color 0.3s, transform 0.2s; }
 .button-transform:hover { transform: translateY(-2px); }
 .button-transform:active { transform: translateY(0); }
 
-.card.light{ background-color: var(--light-card-bg); border: 1px solid var(--dark-border-color); }
-.card.dark { background-color: var(--dark-card-bg); border: 1px solid var(--border-color); }
+/* Карточка шаблона */
+.card.light{ background-color: var(--light-card-bg); border: 1px solid var(--dark-card-border); }
+.card.dark { background-color: var(--dark-card-bg); border: 1px solid var(--light-card-border); }
 
-.p-card.light { color: var(--light-color); }
-.p-card.dark { color: var(--dark-color); }
+.p-card.light { color: var(--light-card-text); }
+.p-card.dark { color: var(--dark-card-text); }
 
-.button-card.light { background-color: var(--light-button-bg); color: var(--light-color); }
-.button-card.dark { background-color: var(--dark-button-bg); color: var(--dark-color); }
+.button-card.light { background-color: var(--light-button-bg); color: var(--light-button-text); }
+.button-card.dark { background-color: var(--dark-button-bg); color: var(--dark-button-text); }
+
+/* Стили для элементов в style-sidebar */
+.style-sidebar.dark { background-color: var(--dark-bg); border-left: 1px solid var(--border-color); }
+.style-sidebar.light { background-color: var(--light-bg); border-left: 1px solid var(--border-color); }
+
+.style-header.light { background-color: var(--light-header-bg); color: var(--light-header-text); }
+.style-header.dark { background-color: var(--dark-header-bg); color: var(--dark-header-text); }
+
+.style-form.light { background-color: var(--light-bg); }
+.style-form.dark { background-color: var(--dark-bg); }
+
+.style-input.light { background-color: var(--light-card-bg); color: var(--light-text); border: 1px solid var(--light-card-border); }
+.style-input.dark { background-color: var(--dark-card-bg); color: var(--dark-text); border: 1px solid var(--dark-card-border); }
+
+.select-input.light {background-color: var(--light-card-bg); color: var(--light-text); border: 1px solid var(--light-card-border); }
+.select-input.dark { background-color: var(--dark-card-bg); color: var(--dark-text); border: 1px solid var(--dark-card-border); }
+
+.color-input.light { border: 1px solid var(--light-card-border); }
+.color-input.dark { border: 1px solid var(--dark-card-border); }
+
+label.light { color: var(--light-text); }
+label.dark { color: var(--dark-text); }
+
+.map-theme-button.light { background-color: var(--light-button-bg); color: var(--light-button-text); border: 1px solid var(--light-card-border); }
+.map-theme-button.dark { background-color: var(--dark-button-bg); color: var (--dark-button-text); border: 1px solid var(--dark-card-border); }
+
+.map-theme-button.light:hover { background-color: var(--light-button-hover); }
+.map-theme-button.dark:hover { background-color: var(--dark-button-hover); }
+
+.checkbox-label.light { color: var(--light-text); }
+.checkbox-label.dark { color: var(--dark-text); }
+
+.side-button { background-color: white; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border: 1px solid rgba(0, 0, 0, 0.1); }
+.side-button svg { color: #333; }
+.side-button:hover { background-color: var(--accent); transform: scale(1.1); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); }
+.side-button:hover svg { color: white; }
+
+/* Стили для скроллбаров в WebKit-браузерах */
+*::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--light-button-bg);
+    border-radius: 6px;
+}
+
+*::-webkit-scrollbar-track.dark {
+    background: var(--dark-button-bg);
+}
+
+*::-webkit-scrollbar-thumb {
+    background: var(--light-header-bg);
+    border-radius: 6px;
+}
+
+*::-webkit-scrollbar-thumb.dark {
+    background: var(--dark-header-bg);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: var(--light-header-button-hover-bg);
+}
+
+*::-webkit-scrollbar-thumb.dark:hover {
+    background: var(--dark-header-button-hover-bg);
+}
+
+/* Стили для скроллбаров в Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--light-header-bg) var(--light-button-bg);
+}
+
+.dark {
+    scrollbar-color: var(--dark-header-bg) var(--dark-button-bg);
+}

@@ -1,10 +1,3 @@
-/* 
-
-    Это стиль меню с кнопками закрыть, свернуть и т.д. 
-    Я выняс эти стили для того чтобы можно было подключить стиль к другому HTML файлу, а именно canvas.html.
-
-*/
-
 header {
     display: flex;
     justify-content: space-between;
@@ -79,8 +72,8 @@ header {
 }
 
 .block-menu {
-    display: flex; /* Используем flexbox для выравнивания кнопок */
-    flex-direction: column; /* Располагаем кнопки вертикально */
+    display: flex;
+    flex-direction: column; 
 }
 
 .create-map-display {

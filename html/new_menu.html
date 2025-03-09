@@ -12,7 +12,7 @@
             <div style="position: relative;">
                 <button id="menu-button" class="style-button-menu entry-point">⋮</button>
                 <div id="div-dropdown" class="style-dropdown entry-point">
-                    <button class="dropdown-button-style button-transform entry-point" data-value="about">О программе</button>
+                    <!-- <button class="dropdown-button-style button-transform entry-point" data-value="about">О программе</button> -->
                     <div>
                         <button id="theme-button" class="dropdown-button-style button-transform entry-point">Темы</button>
                         <div id="theme-switch-menu" class="theme-dropdown entry-point">
@@ -31,16 +31,19 @@
         </header>
         <main class="menu-main-html entry-point">
             <div class="block-menu entry-point">
-                <button id="new-map" class="button-main-menu button-transform entry-point" type="type">fds</button>
-                <button id="open-map" class="button-main-menu button-transform entry-point" type="type">fds</button>
+                <button id="new-map" class="button-main-menu button-transform entry-point" type="type">Создать ментальную карту</button>
+                <button id="open-map" class="button-main-menu button-transform entry-point" type="type">Открыть ментальную карту</button>
             </div>
             <div class="block-history entry-point">
-                <div id="create-map" class="create-map-display entry-point">
+                <div id="create-map" class="create-map-display entry-point" style="display: none;">
                     <div class="card entry-point">
-                        <img class="img-card">
+                        <img class="img-card entry-point" src="../image/node_tree.svg">
                         <p class="p-card entry-point">Пустая карта</p>
                         <button id="create" class="button-card button-transform entry-point" type="button">Создать</button>
                     </div>
+                </div>
+                <div id="existing-maps" class="create-map-display entry-point" style="display: none;">
+                    
                 </div>
             </div>
         </main>

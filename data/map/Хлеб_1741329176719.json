@@ -189,8 +189,13 @@
                 "type": "child",
                 "connectionType": "inherit",
                 "position": {
+<<<<<<< HEAD
                   "x": 5540,
                   "y": 2635
+=======
+                  "x": 7526,
+                  "y": 2686
+>>>>>>> 0b5a7ec24a7459a697a5a1ff35273eb53aa5ba06
                 },
                 "canvasColor": "rgb(245, 249, 255)",
                 "style": {

@@ -1,6 +1,3 @@
-// const fs = require('fs');
-// const path = require('path');
-
 // Переменные для отслеживания состояния перетаскивания
 let isDragging = false;
 let startX;
@@ -43,20 +40,26 @@ function initWindowDragging() {
 }
 
 // Функция для инициализации обработчиков кнопок
-function initButtonHandlers() {
-    document.getElementById('minimize').onclick = function() {
+export function initButtonHandlers() {
+    document.getElementById('minimize').addEventListener('click', () => {
         window.electron.minimize();
-    };
+    });
 
-    document.getElementById('maximize').onclick = function() {
+    document.getElementById('maximize').addEventListener('click', () => {
         window.electron.maximize();
+    });
 
-        console.log('click');
-    };
-
-    document.getElementById('close').onclick = function() {
+    document.getElementById('close').addEventListener('click', () => {
         window.electron.close();
-    };
+    });
+
+    // Добавляем обработчик для кнопки назад
+    const backButton = document.getElementById('back-button');
+    if (backButton) {
+        backButton.addEventListener('click', () => {
+            window.electron.goBack();
+        });
+    }
 }
 
 function initDropdownStyleMenu(){
@@ -77,7 +80,7 @@ function initDropdownStyleMenu(){
 
     // Обработчик для показа/скрытия выпадающего меню тем
     themeButton.addEventListener('click', function(event) {
-        event.stopPropagation(); // Остановить всплытие события
+        event.stopPropagation();
         const isVisible = themeSwitch.style.display === 'block';
         themeSwitch.style.display = isVisible ? 'none' : 'block';
     });
@@ -115,17 +118,17 @@ function initDropdownStyleMenu(){
 
     // Обработчик для кнопки светлой темы
     themeSwithButtonLight.addEventListener('click', function(event) {
-        event.stopPropagation(); // Остановить всплытие события
+        event.stopPropagation();
         toggleTheme('light');
-        themeSwitch.style.display = 'none'; // Скрываем меню выбора темы
+        themeSwitch.style.display = 'none';
         divDropdown.style.display = 'none';
     });
 
     // Обработчик для кнопки темной темы
     themeSwithButtonDark.addEventListener('click', function(event) {
-        event.stopPropagation(); // Остановить всплытие события
+        event.stopPropagation();
         toggleTheme('dark');
-        themeSwitch.style.display = 'none'; // Скрываем меню выбора темы
+        themeSwitch.style.display = 'none';
         divDropdown.style.display = 'none';
     });
 }
@@ -145,4 +148,4 @@ function setTheme(theme) {
 }
 
 // Экспортируем функции
-export { initWindowDragging, initButtonHandlers, initDropdownStyleMenu, setTheme};
+export { initWindowDragging, initDropdownStyleMenu, setTheme };

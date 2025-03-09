@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1463.234375" height="505" viewBox="0 0 1463.234375 505"><defs><style>
+            path {
+                fill: none;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+            }
+            
+                path {
+                    stroke: #555555;
+                    stroke-width: 2pxpx;
+                }
+            
+        </style></defs><rect width="100%" height="100%" fill="rgb(26, 26, 26)"/><g transform="translate(-129, -316)"><g><rect x="878" y="523.03125" width="154" height="61" rx="5px" ry="5px" fill="rgb(64, 64, 64)" stroke="rgb(80, 80, 80)" stroke-width="2px"/><text x="888" y="558.53125" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Привет</text></g><g><rect x="1189" y="532" width="152" height="59" rx="5px" ry="5px" fill="rgb(45, 45, 45)" stroke="rgb(64, 64, 64)" stroke-width="1px"/><text x="1199" y="566.5" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Как жизнь?</text></g><g><rect x="1389" y="532" width="153.234375" height="59" rx="5px" ry="5px" fill="rgb(45, 45, 45)" stroke="rgb(64, 64, 64)" stroke-width="1px"/><text x="1399" y="566.5" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Скоро защита</text></g><g><rect x="1210" y="366" width="152" height="59" rx="5px" ry="5px" fill="rgb(45, 45, 45)" stroke="rgb(64, 64, 64)" stroke-width="1px"/><text x="1220" y="400.5" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Все плохо</text></g><g><rect x="486" y="440" width="174" height="100" rx="15px" ry="15px" fill="rgb(45, 45, 45)" stroke="rgb(64, 64, 64)" stroke-width="1px"/><text x="496" y="495" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Тест </text></g><g><rect x="179" y="671" width="174" height="100" rx="15px" ry="15px" fill="rgb(45, 45, 45)" stroke="rgb(64, 64, 64)" stroke-width="1px"/><text x="189" y="726" fill="rgb(51, 51, 51)" font-family="Arial, sans-serif" font-size="14px">Текст 2</text></g></g></svg>

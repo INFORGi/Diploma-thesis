@@ -1,0 +1,227 @@
+{
+  "meta": {
+    "name": "Привет",
+    "author": "user",
+    "version": "1.0",
+    "path": "C:\\Users\\shulg\\Desktop\\Diplom\\diplom\\data\\map\\Главная тема_1741314715288.json"
+  },
+  "format": "node_tree",
+  "data": {
+    "id": "root",
+    "topic": "Привет",
+    "type": "main",
+    "connectionType": "straight",
+    "position": {
+      "x": 4695,
+      "y": 2532
+    },
+    "canvasColor": "rgb(26, 26, 26)",
+    "style": {
+      "backgroundColor": "rgb(64, 64, 64)",
+      "borderColor": "rgb(80, 80, 80)",
+      "borderWidth": "2px",
+      "borderStyle": "solid",
+      "borderRadius": "5px",
+      "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+      "width": "auto",
+      "height": "59px",
+      "minWidth": "120px",
+      "minHeight": "",
+      "padding": "10px 15px"
+    },
+    "topicStyle": {
+      "color": "rgb(224, 224, 224)",
+      "fontSize": "",
+      "fontFamily": "",
+      "fontWeight": "",
+      "fontStyle": "",
+      "textDecoration": "",
+      "textAlign": "center",
+      "verticalAlign": "center"
+    },
+    "children": [
+      {
+        "id": "node_1741314713225",
+        "topic": "Как жизнь?",
+        "direction": "right",
+        "type": "child",
+        "connectionType": "inherit",
+        "position": {
+          "x": 5006,
+          "y": 2538
+        },
+        "canvasColor": "rgb(26, 26, 26)",
+        "style": {
+          "backgroundColor": "rgb(45, 45, 45)",
+          "borderColor": "rgb(64, 64, 64)",
+          "borderWidth": "1px",
+          "borderStyle": "solid",
+          "borderRadius": "5px",
+          "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+          "width": "auto",
+          "height": "59px",
+          "minWidth": "120px",
+          "minHeight": "",
+          "padding": "10px 15px"
+        },
+        "topicStyle": {
+          "color": "rgb(224, 224, 224)",
+          "fontSize": "",
+          "fontFamily": "",
+          "fontWeight": "",
+          "fontStyle": "",
+          "textDecoration": "",
+          "textAlign": "center",
+          "verticalAlign": "center"
+        },
+        "children": [
+          {
+            "id": "node_1741315257647",
+            "topic": "Скоро защита",
+            "direction": "right",
+            "type": "child",
+            "connectionType": "inherit",
+            "position": {
+              "x": 5206,
+              "y": 2538
+            },
+            "canvasColor": "rgb(26, 26, 26)",
+            "style": {
+              "backgroundColor": "rgb(45, 45, 45)",
+              "borderColor": "rgb(64, 64, 64)",
+              "borderWidth": "1px",
+              "borderStyle": "solid",
+              "borderRadius": "5px",
+              "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+              "width": "auto",
+              "height": "59px",
+              "minWidth": "120px",
+              "minHeight": "",
+              "padding": "10px 15px"
+            },
+            "topicStyle": {
+              "color": "rgb(224, 224, 224)",
+              "fontSize": "",
+              "fontFamily": "",
+              "fontWeight": "",
+              "fontStyle": "",
+              "textDecoration": "",
+              "textAlign": "center",
+              "verticalAlign": "center"
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "node_1741315246906",
+        "topic": "Все плохо",
+        "direction": "right",
+        "type": "child",
+        "connectionType": "inherit",
+        "position": {
+          "x": 5027,
+          "y": 2372
+        },
+        "canvasColor": "rgb(26, 26, 26)",
+        "style": {
+          "backgroundColor": "rgb(45, 45, 45)",
+          "borderColor": "rgb(64, 64, 64)",
+          "borderWidth": "1px",
+          "borderStyle": "solid",
+          "borderRadius": "5px",
+          "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+          "width": "auto",
+          "height": "59px",
+          "minWidth": "120px",
+          "minHeight": "",
+          "padding": "10px 15px"
+        },
+        "topicStyle": {
+          "color": "rgb(224, 224, 224)",
+          "fontSize": "",
+          "fontFamily": "",
+          "fontWeight": "",
+          "fontStyle": "",
+          "textDecoration": "",
+          "textAlign": "center",
+          "verticalAlign": "center"
+        },
+        "children": []
+      },
+      {
+        "id": "node_1741315264948",
+        "topic": "Тест ",
+        "direction": "left",
+        "type": "child",
+        "connectionType": "inherit",
+        "position": {
+          "x": 4303,
+          "y": 2446
+        },
+        "canvasColor": "rgb(26, 26, 26)",
+        "style": {
+          "backgroundColor": "rgb(45, 45, 45)",
+          "borderColor": "rgb(64, 64, 64)",
+          "borderWidth": "1px",
+          "borderStyle": "dashed",
+          "borderRadius": "15px",
+          "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+          "width": "fit-content",
+          "height": "fit-content",
+          "minWidth": "172px",
+          "minHeight": "100px",
+          "padding": "0px"
+        },
+        "topicStyle": {
+          "color": "rgb(224, 224, 224)",
+          "fontSize": "20px",
+          "fontFamily": "\"Times New Roman\", serif",
+          "fontWeight": "bold",
+          "fontStyle": "italic",
+          "textDecoration": "line-through",
+          "textAlign": "left",
+          "verticalAlign": "flex-end"
+        },
+        "children": [
+          {
+            "id": "node_1741315307535",
+            "topic": "Текст 2",
+            "direction": "left",
+            "type": "child",
+            "connectionType": "inherit",
+            "position": {
+              "x": 3996,
+              "y": 2677
+            },
+            "canvasColor": "rgb(26, 26, 26)",
+            "style": {
+              "backgroundColor": "rgb(45, 45, 45)",
+              "borderColor": "rgb(64, 64, 64)",
+              "borderWidth": "1px",
+              "borderStyle": "dashed",
+              "borderRadius": "15px",
+              "boxShadow": "rgba(0, 0, 0, 0.3) 0px 2px 5px",
+              "width": "fit-content",
+              "height": "fit-content",
+              "minWidth": "172px",
+              "minHeight": "100px",
+              "padding": "0px"
+            },
+            "topicStyle": {
+              "color": "rgb(224, 224, 224)",
+              "fontSize": "20px",
+              "fontFamily": "\"Times New Roman\", serif",
+              "fontWeight": "bold",
+              "fontStyle": "italic",
+              "textDecoration": "line-through",
+              "textAlign": "left",
+              "verticalAlign": "flex-end"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+}

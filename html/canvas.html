@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <title>Main HTML file</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';">
+    <title>Рабочая область</title>
     <link rel="stylesheet" href="../css/canvasStyle.css">
     <link rel="stylesheet" href="../css/menuStyle.css">
     <link rel="stylesheet" href="../css/themeStyle.css">
-    <!-- <link rel="stylesheet" href="../css/figure.css"> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsPlumb/2.15.5/js/jsplumb.min.js"></script>
+    <link rel="stylesheet" href="../lib/jsmind/style/jsmind.css">
+    <link rel="stylesheet" href="../css/styleMenu.css">
+    <script type="module" src="../data/constants.js"></script>
+    <script type="module" src="../lib/jsmind/js/jsmind.js"></script>
 </head>
 <body class="entry-point">
     <div class="window entry-point">
@@ -14,9 +18,9 @@
             <div style="position: relative;">
                 <button id="menu-button" class="style-button-menu entry-point">⋮</button>
                 <div id="div-dropdown" class="style-dropdown entry-point">
-                    <button class="dropdown-button-style button-transform entry-point" data-value="about">О программе</button>
+                    <!-- <button class="dropdown-button-style button-transform entry-point" data-value="about">О программе</button> -->
                     <div>
-                        <button id="theme-button" class="dropdown-button-style button-transform entry-point">Темы</button>
+                        <button id="theme-button" class="dropdown-button-style button-transform entry-point">Темы приложения</button>
                         <div id="theme-switch-menu" class="theme-dropdown entry-point">
                             <button class="dropdown-button-style button-transform entry-point" id="button-swith-theme-light" data-value="light">Светлая тема</button>
                             <button class="dropdown-button-style button-transform entry-point" id="button-swith-theme-dark" data-value="dark">Темная тема</button>
@@ -32,17 +36,120 @@
             </div>
         </header>
         <main class="entry-point">
-            <div id="mind-map-container" class="canvas entry-point">
-                <div id="canvas-inner">
-                </div>
-                <div id="context-menu" class="context-menu">
-                    <button id="create-rectangle">Создать Прямоугольник</button>
+            <div class="side-toolbar entry-point">
+                <button id="back-button" class="side-button entry-point" title="Вернуться на главную">
+                    <img src="../image/back_window.svg" alt="Назад">
+                </button>
+            </div>
+            <div id="style-sidebar" class="style-sidebar entry-point">
+                <div class="style-header entry-point">Стили узла</div>
+                <form class="style-form entry-point" id="nodeStyleForm">
+                    <div class="style-group entry-point">
+                        <label for="width" class="entry-point">Ширина (px)</label>
+                        <input type="number" id="width" class="style-input entry-point" min="100" max="500" value="120">
+                    </div>
+
+                    <div class="style-group entry-point">
+                        <label for="height" class="entry-point">Высота (px)</label>
+                        <input type="number" id="height" class="style-input entry-point" min="40" max="200" value="40">
+                    </div>
+
+                    <div class="style-group entry-point">
+                        <label class="entry-point">Стиль текста</label>
+                        <div class="text-style-options entry-point">
+                            <label class="checkbox-label entry-point">
+                                <input type="checkbox" id="textBold" class="entry-point"> Жирный
+                            </label>
+                            <label class="checkbox-label entry-point">
+                                <input type="checkbox" id="textItalic" class="entry-point"> Курсив
+                            </label>
+                            <label class="checkbox-label entry-point">
+                                <input type="checkbox" id="textStrike" class="entry-point"> Зачеркнутый
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="style-group entry-point">
+                        <label for="backgroundColor" class="entry-point">Цвет фона</label>
+                        <input type="color" id="backgroundColor" class="color-input entry-point" value="#ffffff">
+                    </div>
+                    
+                    <div class="style-group entry-point">
+                        <label for="color" class="entry-point">Цвет текста</label>
+                        <input type="color" id="color" class="color-input entry-point" value="#333333">
+                    </div>
+                    
+                    <div class="style-group entry-point">
+                        <label for="borderWidth" class="entry-point">Толщина границы (px)</label>
+                        <input type="number" id="borderWidth" class="style-input entry-point" min="0" max="10" value="1">
+                    </div>
+
+                    <div class="style-group entry-point">
+                        <label for="borderColor" class="entry-point">Цвет границы</label>
+                        <input type="color" id="borderColor" class="color-input entry-point" value="#cccccc">
+                    </div>
+
+                    <div class="style-group entry-point">
+                        <label for="borderStyle" class="entry-point">Стиль границы</label>
+                        <select id="borderStyle" class="select-input entry-point">
+                            <option value="solid">Сплошная</option>
+                            <option value="dashed">Пунктирная</option>
+                            <option value="dotted">Точечная</option>
+                        </select>
+                    </div>
+                    
+                    <div class="style-group entry-point">
+                        <label for="borderRadius" class="entry-point">Скругление углов (px)</label>
+                        <input type="number" id="borderRadius" class="style-input entry-point" min="0" max="50" value="5">
+                    </div>
+                    
+                    <div class="style-group entry-point">
+                        <label for="fontFamily" class="entry-point">Шрифт</label>
+                        <select id="fontFamily" class="select-input entry-point">
+                            <option value="Arial, sans-serif">Arial</option>
+                            <option value="Times New Roman, serif">Times New Roman</option>
+                            <option value="Courier New, monospace">Courier New</option>
+                        </select>
+                    </div>
+                    
+                    <div class="style-group entry-point">
+                        <label for="fontSize" class="entry-point">Размер шрифта (px)</label>
+                        <input type="number" id="fontSize" class="style-input entry-point" min="8" max="72" value="14">
+                    </div>
+
+                    <div class="style-group entry-point">
+                        <label for="textAlign" class="entry-point">Выравнивание текста</label>
+                        <select id="textAlign" class="select-input entry-point">
+                            <option value="left">По левому краю</option>
+                            <option value="center">По центру</option>
+                            <option value="right">По правому краю</option>
+                        </select>
+                    </div>
+
+                    <div class="style-group entry-point">
+                        <label for="verticalAlign" class="entry-point">Вертикальное выравнивание</label>
+                        <select id="verticalAlign" class="select-input entry-point">
+                            <option value="flex-start">По верху</option>
+                            <option value="center">По центру</option>
+                            <option value="flex-end">По низу</option>
+                        </select>
+                    </div>
+                </form>
+                <div class="style-header entry-point">Тема карты</div>
+                <div class="theme-buttons entry-point">
+                    <button type="button" class="map-theme-button entry-point" data-theme="default">Стандартная</button>
+                    <button type="button" class="map-theme-button entry-point" data-theme="dark">Тёмная</button>
+                    <button type="button" class="map-theme-button entry-point" data-theme="blue">Синяя</button>
                 </div>
             </div>
+
+            <div class="canvas entry-point">
+                <div id="jsmind_container" class="jsmind-container"></div>
+            </div>
+
             <div id="menu-settings" class="block-menu entry-point"></div>
         </main>
     </div>
-    <!-- <script type="module" src="../js/windowManager.js"></script> -->
     <script type="module" src="../js/canvas.js"></script>
 </body>
 </html>

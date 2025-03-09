@@ -1,9 +1,3 @@
-/* 
-
-    Это фал стилей для главного окна, который подгружается во время запуска проекта.
-
-*/
-
 body {
     margin: 0;
     padding: 0;
@@ -14,10 +8,11 @@ body {
     height: 100vh;
 }
 
-main{
+main {
     display: grid;
     grid-template-columns: 25% 75%;
     height: 100%;
+    overflow: hidden;
 }
 
 .window {
@@ -30,28 +25,49 @@ main{
 }
 
 .button-main-menu {
-    width: 97%; /* Кнопки занимают всю ширину родительского контейнера */
+    width: 97%;
     font-size: 16px;
-    margin: 10px 1.5% 0px 1.5%; /* Отступы сверху и снизу */
+    margin: 10px 1.5% 0px 1.5%;
     height: 50px;
 }
 
-.img-card{
+.img-card {
     width: 35vh;
     height: 28vh;
     border: none;
     margin: 1vh;
+    object-fit: contain;
+    object-position: center;
 }
 
-.card{
+.card {
     width: 50vh;
-    /* height: 40vh; */
+    height: auto;
     justify-items: center;
-    margin: 1vh 1vh 0vh 1vh;
+    margin: 1vh;
+    box-sizing: border-box;
+    flex: 0 0 auto;
 }
 
-.button-card{
+.button-card {
     width: 20vh;
     height: 10vh;
     margin: 1vh;
+}
+
+.block-history {
+    height: 100%;
+    overflow-y: auto;
+}
+
+#create-map, #existing-maps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1vh;
+    overflow-y: auto;
+    height: auto;
+    margin: 0;
+    padding: 10px;
+    box-sizing: border-box;
 }

@@ -1,0 +1,299 @@
+{
+  "meta": {
+    "name": "Кошмар, а не работа",
+    "author": "user",
+    "version": "1.0",
+    "path": "C:\\Users\\shulg\\Desktop\\Diplom\\diplom\\data\\map\\Хлеб_1741329176719.json"
+  },
+  "format": "node_tree",
+  "data": {
+    "id": "root",
+    "topic": "Кошмар, а не работа",
+    "type": "main",
+    "connectionType": "straight",
+    "position": {
+      "x": 4672,
+      "y": 2512
+    },
+    "canvasColor": "rgb(245, 249, 255)",
+    "style": {
+      "backgroundColor": "rgb(25, 118, 210)",
+      "borderColor": "rgb(21, 101, 192)",
+      "borderWidth": "2px",
+      "borderStyle": "dotted",
+      "borderRadius": "50px",
+      "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
+      "width": "fit-content",
+      "height": "fit-content",
+      "minWidth": "200px",
+      "minHeight": "100px",
+      "padding": "0px"
+    },
+    "topicStyle": {
+      "color": "rgb(255, 255, 255)",
+      "fontSize": "25px",
+      "fontFamily": "\"Courier New\", monospace",
+      "fontWeight": "bold",
+      "fontStyle": "italic",
+      "textDecoration": "line-through",
+      "textAlign": "left",
+      "verticalAlign": "flex-start"
+    },
+    "children": [
+      {
+        "id": "node_1741329151795",
+        "topic": "Рецепт",
+        "direction": "right",
+        "type": "child",
+        "connectionType": "inherit",
+        "position": {
+          "x": 4936,
+          "y": 2531
+        },
+        "canvasColor": "rgb(245, 249, 255)",
+        "style": {
+          "backgroundColor": "rgb(227, 242, 253)",
+          "borderColor": "rgb(144, 202, 249)",
+          "borderWidth": "1px",
+          "borderStyle": "dotted",
+          "borderRadius": "50px",
+          "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
+          "width": "fit-content",
+          "height": "fit-content",
+          "minWidth": "164px",
+          "minHeight": "70px",
+          "padding": "0px"
+        },
+        "topicStyle": {
+          "color": "rgb(177, 192, 155)",
+          "fontSize": "25px",
+          "fontFamily": "Arial, sans-serif",
+          "fontWeight": "bold",
+          "fontStyle": "italic",
+          "textDecoration": "line-through",
+          "textAlign": "center",
+          "verticalAlign": "center"
+        },
+        "children": [
+          {
+            "id": "node_1741329366510",
+            "topic": "Мука",
+            "direction": "right",
+            "type": "child",
+            "connectionType": "inherit",
+            "position": {
+              "x": 5255,
+              "y": 2358
+            },
+            "canvasColor": "rgb(245, 249, 255)",
+            "style": {
+              "backgroundColor": "rgb(227, 242, 253)",
+              "borderColor": "rgb(144, 202, 249)",
+              "borderWidth": "1px",
+              "borderStyle": "dotted",
+              "borderRadius": "50px",
+              "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
+              "width": "fit-content",
+              "height": "fit-content",
+              "minWidth": "162px",
+              "minHeight": "70px",
+              "padding": "0px"
+            },
+            "topicStyle": {
+              "color": "rgb(25, 118, 210)",
+              "fontSize": "25px",
+              "fontFamily": "Arial, sans-serif",
+              "fontWeight": "bold",
+              "fontStyle": "italic",
+              "textDecoration": "none",
+              "textAlign": "center",
+              "verticalAlign": "center"
+            },
+            "children": []
+          },
+          {
+            "id": "node_1741329374662",
+            "topic": "Вода",
+            "direction": "right",
+            "type": "child",
+            "connectionType": "inherit",
+            "position": {
+              "x": 5244,
+              "y": 2464
+            },
+            "canvasColor": "rgb(245, 249, 255)",
+            "style": {
+              "backgroundColor": "rgb(227, 242, 253)",
+              "borderColor": "rgb(144, 202, 249)",
+              "borderWidth": "1px",
+              "borderStyle": "dotted",
+              "borderRadius": "50px",
+              "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
+              "width": "fit-content",
+              "height": "fit-content",
+              "minWidth": "162px",
+              "minHeight": "70px",
+              "padding": "0px"
+            },
+            "topicStyle": {
+              "color": "rgb(25, 118, 210)",
+              "fontSize": "25px",
+              "fontFamily": "Arial, sans-serif",
+              "fontWeight": "bold",
+              "fontStyle": "italic",
+              "textDecoration": "none",
+              "textAlign": "center",
+              "verticalAlign": "center"
+            },
+            "children": []
+          },
+          {
+            "id": "node_1741329405539",
+            "topic": "Дрожьи",
+            "direction": "right",
+            "type": "child",
+            "connectionType": "inherit",
+            "position": {
+              "x": 5239,
+              "y": 2646
+            },
+            "canvasColor": "rgb(245, 249, 255)",
+            "style": {
+              "backgroundColor": "rgb(227, 242, 253)",
+              "borderColor": "rgb(144, 202, 249)",
+              "borderWidth": "1px",
+              "borderStyle": "dotted",
+              "borderRadius": "50px",
+              "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
+              "width": "fit-content",
+              "height": "fit-content",
+              "minWidth": "162px",
+              "minHeight": "70px",
+              "padding": "0px"
+            },
+            "topicStyle": {
+              "color": "rgb(25, 118, 210)",
+              "fontSize": "25px",
+              "fontFamily": "Arial, sans-serif",
+              "fontWeight": "bold",
+              "fontStyle": "italic",
+              "textDecoration": "none",
+              "textAlign": "center",
+              "verticalAlign": "center"
+            },
+            "children": [
+              {
+                "id": "node_1741329995720",
+                "topic": "Текст",
+                "direction": "right",
+                "type": "child",
+                "connectionType": "inherit",
+                "position": {
+                  "x": 7526,
+                  "y": 2686
+                },
+                "canvasColor": "rgb(245, 249, 255)",
+                "style": {
+                  "backgroundColor": "rgb(227, 242, 253)",
+                  "borderColor": "rgb(144, 202, 249)",
+                  "borderWidth": "1px",
+                  "borderStyle": "dotted",
+                  "borderRadius": "50px",
+                  "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
+                  "width": "fit-content",
+                  "height": "fit-content",
+                  "minWidth": "162px",
+                  "minHeight": "70px",
+                  "padding": "0px"
+                },
+                "topicStyle": {
+                  "color": "rgb(25, 118, 210)",
+                  "fontSize": "25px",
+                  "fontFamily": "Arial, sans-serif",
+                  "fontWeight": "bold",
+                  "fontStyle": "italic",
+                  "textDecoration": "line-through",
+                  "textAlign": "center",
+                  "verticalAlign": "center"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node_1741329385643",
+            "topic": "Яийцо",
+            "direction": "right",
+            "type": "child",
+            "connectionType": "inherit",
+            "position": {
+              "x": 5239,
+              "y": 2550
+            },
+            "canvasColor": "rgb(245, 249, 255)",
+            "style": {
+              "backgroundColor": "rgb(227, 242, 253)",
+              "borderColor": "rgb(144, 202, 249)",
+              "borderWidth": "1px",
+              "borderStyle": "dotted",
+              "borderRadius": "50px",
+              "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
+              "width": "fit-content",
+              "height": "fit-content",
+              "minWidth": "162px",
+              "minHeight": "70px",
+              "padding": "0px"
+            },
+            "topicStyle": {
+              "color": "rgb(25, 118, 210)",
+              "fontSize": "25px",
+              "fontFamily": "Arial, sans-serif",
+              "fontWeight": "bold",
+              "fontStyle": "italic",
+              "textDecoration": "none",
+              "textAlign": "center",
+              "verticalAlign": "center"
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "node_1741329485904",
+        "topic": "Текст",
+        "direction": "right",
+        "type": "child",
+        "connectionType": "inherit",
+        "position": {
+          "x": 4768,
+          "y": 2755
+        },
+        "canvasColor": "rgb(245, 249, 255)",
+        "style": {
+          "backgroundColor": "rgb(227, 242, 253)",
+          "borderColor": "rgb(144, 202, 249)",
+          "borderWidth": "1px",
+          "borderStyle": "dotted",
+          "borderRadius": "50px",
+          "boxShadow": "rgba(25, 118, 210, 0.1) 0px 2px 5px",
+          "width": "fit-content",
+          "height": "fit-content",
+          "minWidth": "180px",
+          "minHeight": "70px",
+          "padding": "0px"
+        },
+        "topicStyle": {
+          "color": "rgb(25, 118, 210)",
+          "fontSize": "25px",
+          "fontFamily": "\"Times New Roman\", serif",
+          "fontWeight": "bold",
+          "fontStyle": "italic",
+          "textDecoration": "none",
+          "textAlign": "center",
+          "verticalAlign": "center"
+        },
+        "children": []
+      }
+    ]
+  }
+}

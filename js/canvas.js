@@ -2,6 +2,7 @@ import { initWindowDragging, initButtonHandlers, initDropdownStyleMenu, setTheme
 import { jsMind } from '../lib/jsmind/js/jsmind.js';
 import { StyleManager } from './styleManager.js';
 import { MIND_MAP_THEMES } from '../data/constants.js';
+import { DEFAULT_NODE_DATA, TOPIC_STYLES, NODE_STYLES, LINE_STYLES } from '../data/constants.js';
 
 let jm = null;
 let styleManager = null;
@@ -12,6 +13,145 @@ let navigationLock = null; // Добавляем переменную для б�
 
 function markMapAsModified() {
     isMapModified = true;
+}
+
+function initJsMind() {
+    const container = document.getElementById('jsmind_container');
+    if (!container) {
+        console.error('Container not found: jsmind_container');
+        return;
+    }
+
+    container.style.position = 'absolute';
+    container.style.overflow = 'auto';
+    container.style.background = 'inherit';
+
+    const options = {
+        container: 'jsmind_container',
+        theme: 'default'
+    };
+
+    try {
+        jm = new jsMind(options);
+        
+        // Исправляем структуру начальных данных
+        const initialData = {
+            theme: 'default',
+            data: { 
+                id: 'root', 
+                topic: 'Главная тема', 
+                parent: null,
+                children: [{
+                    id: 'rodsot', 
+                    topic: 'тема', 
+                    parent: 'root',
+                    children: [],
+                    styleNode: { ...NODE_STYLES.RECTANGLE },
+                    styleTopic: { ...TOPIC_STYLES },
+                    styleLine: { ...LINE_STYLES.STRAIGHT },
+                    position: { x: 0, y: 0 },
+                    draggable: true,
+                }],
+                styleNode: { ...NODE_STYLES.RECTANGLE },
+                styleTopic: { ...TOPIC_STYLES },
+                styleLine: { ...LINE_STYLES.STRAIGHT },
+                position: { x: 0, y: 0 },
+                draggable: false,
+            }
+        };
+
+        jm.show(initialData);
+
+    } catch (error) {
+        console.error('Error initializing jsMind:', error);
+    }
+}
+
+function applyTheme(themeName) {
+    if (!MIND_MAP_THEMES[themeName]) return;
+    
+    const theme = MIND_MAP_THEMES[themeName];
+    
+    const container = document.getElementById('jsmind_container');
+    if (container) {
+        container.style.backgroundColor = theme.canvas.backgroundColor;
+    }
+
+    const nodes = document.querySelectorAll('.jsmind-node');
+    nodes.forEach(node => {
+        if (node.dataset.isroot === 'true') {
+            const styles = {
+                backgroundColor: theme.root.backgroundColor,
+                borderColor: theme.root.borderColor,
+                borderWidth: '2px',
+                boxShadow: theme.node.shadow
+            };
+            Object.assign(node.style, styles);
+            
+            const topic = node.querySelector('.node-topic');
+            if (topic) {
+                topic.style.color = theme.root.color || theme.node.color;
+            }
+            
+            if (!node.nodeData) node.nodeData = {};
+            if (!node.nodeData.nodeStyle) node.nodeData.nodeStyle = {};
+            if (!node.nodeData.topicStyle) node.nodeData.topicStyle = {};
+            
+            Object.assign(node.nodeData.nodeStyle, styles);
+            node.nodeData.topicStyle.color = theme.root.color || theme.node.color;
+        } else {
+            const styles = {
+                backgroundColor: theme.node.backgroundColor,
+                borderColor: theme.node.borderColor,
+                borderWidth: theme.node.borderWidth,
+                boxShadow: theme.node.shadow
+            };
+            Object.assign(node.style, styles);
+            
+            const topic = node.querySelector('.node-topic');
+            if (topic) {
+                topic.style.color = theme.node.color;
+            }
+            
+            if (!node.nodeData) node.nodeData = {};
+            Object.assign(node.nodeData.nodeStyle || {}, styles);
+            if (node.nodeData.topicStyle) {
+                node.nodeData.topicStyle.color = theme.node.color;
+            }
+        }
+    });
+
+    if (styleManager && styleManager.currentNode) {
+        styleManager.updateFormValues();
+    }
+
+    if (jm && jm.options) {
+        jm.options.view.line_color = theme.line.color;
+        jm.options.view.line_width = theme.line.width;
+        jm.drawLines();
+    }
+}
+
+function init() {
+    console.log('Initializing application...');
+    initWindowDragging();
+    initButtonHandlers();
+    initDropdownStyleMenu();
+    initJsMind();
+}
+
+function initMapThemeMenu() {
+    const themeButtons = document.querySelectorAll('.map-theme-button');
+    themeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const themeName = button.dataset.theme;
+            if (themeName && MIND_MAP_THEMES[themeName] && jm) {
+                console.log('Changing theme to:', themeName);
+                jm.options.theme = themeName;
+                applyTheme(themeName);
+            }
+        });
+    });
 }
 
 // Добавляем функцию для экспорта изображения
@@ -164,7 +304,7 @@ async function exportMapImage() {
         return null;
     }
 }
-
+// Изменяем функцию saveMap
 async function saveMap() {
     if (!jm) {
         console.error('jsMind instance is not initialized');
@@ -172,27 +312,13 @@ async function saveMap() {
     }
 
     try {
-        const rootNode = jm.nodes.get(jm.get_root());
-        if (!rootNode) {
-            throw new Error('Root node not found');
-        }
-
-        // Создаем полностью новые данные карты
+        // Упрощенная структура данных
         const mapData = {
-            meta: {
-                name: rootNode.data.topic || 'Mindmap',
-                author: 'user',
-                version: '1.0',
-                path: currentFilePath // Может быть null для новой карты
-            },
-            format: 'node_tree',
+            theme: jm.options.theme,
             data: jm.getNodeData(jm.get_root())
         };
 
-        // Очищаем название от временных меток перед сохранением
-        const cleanedTopic = rootNode.data.topic.replace(/_\d+$/, '');
-        // Для новой карты генерируем уникальный путь с временной меткой
-        const savePath = currentFilePath || `${cleanedTopic}_${Date.now()}`;
+        const savePath = currentFilePath || `mindmap_${Date.now()}`;
 
         const saveData = {
             mapData,
@@ -207,7 +333,7 @@ async function saveMap() {
             isMapModified = false;
             if (!currentFilePath) {
                 currentFilePath = result.path;
-                window.electron.showNotification('Карта сохранена: ' + rootNode.data.topic);
+                window.electron.showNotification('Карта сохранена');
             }
             return true;
         }
@@ -315,287 +441,6 @@ async function handleUnsavedChanges() {
     return true;
 }
 
-function initJsMind() {
-    const container = document.getElementById('jsmind_container');
-    if (!container) {
-        console.error('Container not found: jsmind_container');
-        return;
-    }
-
-    const mindContainer = document.getElementById('jsmind_container');
-
-    
-    const resizeContainer = () => {
-        const svg = container.querySelector('svg');
-        if (svg) {
-            svg.style.width = mindContainer.clientWidth + 'px';
-            svg.style.height = mindContainer.clientHeight + 'px';
-            svg.setAttribute('width', mindContainer.clientWidth + 'px');
-            svg.setAttribute('height', mindContainer.clientHeight + 'px');
-        }
-    };
-
-    const canvasElement = document.querySelector('.canvas');
-    if (canvasElement) {
-        
-        setTimeout(() => {
-            
-            const centerX = mindContainer.clientWidth / 2;
-            const centerY = mindContainer.clientHeight / 2;
-            
-            
-            canvasElement.scrollLeft = centerX - (canvasElement.clientWidth / 2);
-            canvasElement.scrollTop = centerY - (canvasElement.clientHeight / 2);
-            
-            console.log('Initial scroll position:', canvasElement.scrollLeft, canvasElement.scrollTop);
-        }, 0);
-    }
-
-    container.style.position = 'absolute';
-    container.style.overflow = 'auto';
-    container.style.background = 'inherit';
-    
-    container.addEventListener('scroll', () => {
-        if (jm) {
-            jm.drawLines();
-        }
-    });
-
-    const mind = {
-        meta: {
-            name: 'demo',
-            author: 'user',
-            version: '0.2',
-            nodeTypes: {
-                main: 'main',
-                sub: 'sub',
-                child: 'child'
-            }
-        },
-        format: 'node_tree',
-        data: {
-            id: 'root',
-            topic: 'Главная тема',
-            type: 'main',
-            connectionType: 'straight',
-            style: {},
-            children: []
-        }
-    };
-
-    const options = {
-        container: 'jsmind_container',
-        theme: 'default',
-        editable: true,
-        mode: 'side',
-        view: {
-            hmargin: 200,
-            vmargin: 100,
-            line_width: MIND_MAP_THEMES.default.line.width,
-            line_color: MIND_MAP_THEMES.default.line.color,
-            draggable: true,
-            engine: 'canvas'
-        },
-        layout: {
-            hspace: 200,
-            vspace: 200,
-            pspace: 13
-        }
-    };
-
-    try {
-        jm = new jsMind(options);
-        
-        // Добавляем слушатель для загрузки данных карты
-        window.electron.onLoadMapData((mapData) => {
-            if (mapData) {
-                currentFilePath = mapData.meta?.path;
-                jm.show(mapData);
-            } else {
-                // Очищаем путь при создании новой карты
-                currentFilePath = null;
-                currentMapPath = null; // Очищаем обе переменные пути
-                jm.show(mind);
-                isMapModified = false; // Сбрасываем флаг модификации
-            }
-        });
-
-        jm.show(mind);
-
-        // Теперь этот метод должен работать
-        jm.add_event_listener((type) => {
-            if (['node_changed', 'node_created', 'node_removed'].includes(type)) {
-                markMapAsModified();
-            }
-        });
-
-        setTimeout(() => {
-            const canvas = document.querySelector('.canvas');
-            if (canvas && jm) {
-                const rootElement = document.querySelector('.jsmind-node[data-isroot="true"]');
-                if (rootElement) {
-                    const mindContainer = document.getElementById('jsmind_container');
-                    
-                    
-                    const rootRect = rootElement.getBoundingClientRect();
-                    const containerRect = mindContainer.getBoundingClientRect();
-        
-                    
-                    const rootX = rootRect.left - containerRect.left + rootRect.width / 2;
-                    const rootY = rootRect.top - containerRect.top + rootRect.height / 2;
-        
-                    
-                    canvas.scrollLeft = rootX - canvas.clientWidth / 2;
-                    canvas.scrollTop = rootY - canvas.clientHeight / 2;
-        
-                    console.log('Centered at:', canvas.scrollLeft, canvas.scrollTop);
-                }
-            }
-        }, 100);
-        
-
-        
-        window.addEventListener('resize', () => {
-            if (jm) {
-                resizeContainer();
-                jm.resize();
-                jm.drawLines();
-            }
-        });
-
-        resizeContainer(); 
-
-        jm.initContextMenu(); 
-
-        document.getElementById('jsmind_container').addEventListener('contextmenu', (e) => {
-            const node = e.target.closest('.jsmind-node');
-            if (node) {
-                e.preventDefault();
-                jm.showContextMenu(e, node.id);
-            }
-        });
-
-        applyTheme(options.theme);
-        
-        styleManager = new StyleManager('nodeStyleForm');
-        initMapThemeMenu();
-        
-        document.getElementById('jsmind_container').addEventListener('click', (e) => {
-            const node = e.target.closest('.jsmind-node');
-            if (node) {
-                styleManager.setNode(node);
-            }
-        });
-
-        document.addEventListener('click', (e) => {
-            const node = e.target.closest('.jsmind-node');
-            const sidebar = document.querySelector('.style-sidebar');
-            
-            if (node) {
-                if (styleManager) {
-                    styleManager.setNode(node);
-                    sidebar.classList.add('visible');
-                }
-            } else if (!e.target.closest('.style-sidebar')) {
-                
-                sidebar.classList.remove('visible');
-                if (styleManager) {
-                    styleManager.setNode(null);
-                }
-            }
-        });
-
-        window.addEventListener('resize', () => {
-            if (jm) {
-                jm.layout();
-                jm.drawLines();
-            }
-        });
-
-    } catch (error) {
-        console.error('Error initializing jsMind:', error);
-    }
-}
-
-function applyTheme(themeName) {
-    if (!MIND_MAP_THEMES[themeName]) return;
-    
-    const theme = MIND_MAP_THEMES[themeName];
-    
-    const container = document.getElementById('jsmind_container');
-    if (container) {
-        container.style.backgroundColor = theme.canvas.backgroundColor;
-    }
-
-    const nodes = document.querySelectorAll('.jsmind-node');
-    nodes.forEach(node => {
-        if (node.dataset.isroot === 'true') {
-            const styles = {
-                backgroundColor: theme.root.backgroundColor,
-                borderColor: theme.root.borderColor,
-                borderWidth: '2px',
-                boxShadow: theme.node.shadow
-            };
-            Object.assign(node.style, styles);
-            
-            const topic = node.querySelector('.node-topic');
-            if (topic) {
-                topic.style.color = theme.root.color || theme.node.color;
-            }
-            
-            if (!node.nodeData) node.nodeData = {};
-            if (!node.nodeData.nodeStyle) node.nodeData.nodeStyle = {};
-            if (!node.nodeData.topicStyle) node.nodeData.topicStyle = {};
-            
-            Object.assign(node.nodeData.nodeStyle, styles);
-            node.nodeData.topicStyle.color = theme.root.color || theme.node.color;
-        } else {
-            const styles = {
-                backgroundColor: theme.node.backgroundColor,
-                borderColor: theme.node.borderColor,
-                borderWidth: theme.node.borderWidth,
-                boxShadow: theme.node.shadow
-            };
-            Object.assign(node.style, styles);
-            
-            const topic = node.querySelector('.node-topic');
-            if (topic) {
-                topic.style.color = theme.node.color;
-            }
-            
-            if (!node.nodeData) node.nodeData = {};
-            Object.assign(node.nodeData.nodeStyle || {}, styles);
-            if (node.nodeData.topicStyle) {
-                node.nodeData.topicStyle.color = theme.node.color;
-            }
-        }
-    });
-
-    if (styleManager && styleManager.currentNode) {
-        styleManager.updateFormValues();
-    }
-
-    if (jm && jm.options) {
-        jm.options.view.line_color = theme.line.color;
-        jm.options.view.line_width = theme.line.width;
-        jm.drawLines();
-    }
-}
-
-function initMapThemeMenu() {
-    const themeButtons = document.querySelectorAll('.map-theme-button');
-    themeButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const themeName = button.dataset.theme;
-            if (themeName && MIND_MAP_THEMES[themeName] && jm) {
-                console.log('Changing theme to:', themeName);
-                jm.options.theme = themeName;
-                applyTheme(themeName);
-            }
-        });
-    });
-}
-
 // Добавляем функцию для разблокировки кнопки
 function unlockBackButton() {
     const backButton = document.getElementById('back-button');
@@ -619,80 +464,6 @@ async function navigateBack() {
     } catch (error) {
         console.error('Navigation error:', error);
         backButton.disabled = false;
-    }
-}
-
-function init() {
-    console.log('Initializing application...');
-    initWindowDragging();
-    initButtonHandlers(); // Используем импортированную функцию
-    initDropdownStyleMenu();
-
-    // Добавляем обработчик загрузки карты перед инициализацией jsMind
-    window.electron.onLoadMapData((mapData) => {
-        if (mapData && mapData.meta.path) {
-            currentFilePath = mapData.meta.path;
-            console.log('Loading existing map:', currentFilePath);
-        }
-    });
-
-    initJsMind();
-
-    console.log('Adding event listeners...');
-    
-    // Оставляем только один обработчик для всех сочетаний клавиш
-    window.addEventListener('keydown', async (e) => {
-        if (e.ctrlKey && (e.key.toLowerCase() === 's' || e.key.toLowerCase() === 'ы')) {
-            console.log('Save hotkey detected:', e.key);
-            e.preventDefault();
-            e.stopPropagation();
-            await saveMap();
-        }
-    }, true);
-
-    document.getElementById('jsmind_container').addEventListener('dblclick', async function(e) {
-        const node = e.target.closest('.jsmind-node');
-
-        if (node) {
-            const topic = node.querySelector('.node-topic');
-            if (topic) {
-                topic.focus();
-            }
-        }
-    });
-
-    window.electron.onBeforeClose(async () => {
-        console.log('Before close handler triggered');
-        const canClose = await handleUnsavedChanges();
-        console.log('Can close:', canClose);
-        window.electron.confirmClose(canClose);
-    });
-
-    window.electron.onCheckNavigation(async () => {
-        let canNavigate = true;
-        
-        if (isMapModified) {
-            const choice = await window.electron.showSaveDialog();
-            if (choice === 'save') {
-                canNavigate = await saveMap();
-            } else if (choice === 'cancel') {
-                canNavigate = false;
-            }
-        }
-        
-        window.electron.sendNavigationResponse(canNavigate);
-    });
-
-    const backButton = document.getElementById('back-button');
-    if (backButton) {
-        backButton.addEventListener('click', async (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            // Проверяем блокировку перед вызовом
-            if (!navigationLock && !backButton.disabled) {
-                await navigateBack();
-            }
-        });
     }
 }
 

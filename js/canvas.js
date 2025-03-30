@@ -46,15 +46,17 @@ function initJsMind() {
                     topic: 'тема', 
                     parent: 'root',
                     children: [],
-                    styleNode: { ...NODE_STYLES.RECTANGLE },
-                    styleTopic: { ...TOPIC_STYLES },
-                    styleLine: { ...LINE_STYLES.STRAIGHT },
+                    // Глубокое копирование стилей
+                    styleNode: JSON.parse(JSON.stringify(NODE_STYLES.RECTANGLE)),
+                    styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
+                    styleLine: JSON.parse(JSON.stringify(LINE_STYLES.STRAIGHT)),
                     position: { x: 0, y: 0 },
                     draggable: true,
                 }],
-                styleNode: { ...NODE_STYLES.RECTANGLE },
-                styleTopic: { ...TOPIC_STYLES },
-                styleLine: { ...LINE_STYLES.STRAIGHT },
+                // Глубокое копирование стилей для корневого узла
+                styleNode: JSON.parse(JSON.stringify(NODE_STYLES.RECTANGLE)),
+                styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
+                styleLine: JSON.parse(JSON.stringify(LINE_STYLES.STRAIGHT)),
                 position: { x: 0, y: 0 },
                 draggable: false,
             }

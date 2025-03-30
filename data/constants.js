@@ -66,12 +66,27 @@ export const NODE_STYLES = {
             justifyContent: "center"
         }
     },
+    // RECTANGLE: {
+    //     styles: {
+    //         backgroundColor: "#ffffff", // Переопределяем прозрачность для прямоугольника
+    //         border: "1px solid #cccccc",
+    //         borderRadius: "5px",
+    //         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+    //     }
+    // },
     RECTANGLE: {
-        styles: {
-            backgroundColor: "#ffffff", // Переопределяем прозрачность для прямоугольника
-            border: "1px solid #cccccc",
-            borderRadius: "5px",
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+        shapeSvg: {
+            width: "120px",
+            height: "40px",
+            tag: "rect",
+            x: "0",
+            y: "0",
+            fill: "#ffffff",
+            stroke: "#cccccc",
+            strokeWidth: "1",
+            rx: "10",
+            filter: "none" // boxShadow
+            // filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))" // boxShadow
         }
     },
     TRAPEZOID: {
@@ -108,14 +123,15 @@ export const NODE_STYLES = {
         }
     }
 };
+
 export const DEFAULT_NODE_DATA = {
     id: null,
     topic: null,
     parent: null,
     children: {},
-    styleNode: NODE_STYLES.RECTANGLE,
-    styleTopic: TOPIC_STYLES,
-    styleLine: LINE_STYLES.DEFAULT,
+    styleNode: { ...NODE_STYLES.RECTANGLE },
+    styleTopic: { ...TOPIC_STYLES },
+    styleLine: { ...LINE_STYLES.DEFAULT },
     position: { x: 0, y: 0 },
     draggable: true
 };

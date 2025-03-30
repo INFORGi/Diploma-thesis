@@ -75,7 +75,8 @@
     height: fit-content !important;
     text-align: center;
     box-sizing: border-box;
-
+    z-index: 1;
+    transition: transform 0.2s;
 }
 
 .jsmind-node:hover,
@@ -185,11 +186,12 @@
 }
 
 .jsmind-node.dragging {
-    opacity: 0.8;
+    opacity: var(--dragging-opacity);
     cursor: grabbing !important;
-    z-index: 1000;
+    z-index: 1000 !important;
+    transform: scale(1.05);
     transition: none !important;
-    /* box-shadow: var(--node-hover-shadow); */
+    pointer-events: none;
 }
 
 .jsmind-node.dragging .node-topic {

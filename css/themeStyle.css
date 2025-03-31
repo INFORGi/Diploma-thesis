@@ -156,43 +156,21 @@ label.dark { color: var(--dark-text); }
 .side-button:hover svg { color: white; }
 
 /* Стили для скроллбаров в WebKit-браузерах */
-*::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
-}
+*::-webkit-scrollbar { width: 12px; height: 12px; }
 
-*::-webkit-scrollbar-track {
-    background: var(--light-button-bg);
-    border-radius: 6px;
-}
+*::-webkit-scrollbar-track { background: var(--light-button-bg); border-radius: 6px; }
 
-*::-webkit-scrollbar-track.dark {
-    background: var(--dark-button-bg);
-}
+*::-webkit-scrollbar-track.dark { background: var(--dark-button-bg); }
 
-*::-webkit-scrollbar-thumb {
-    background: var(--light-header-bg);
-    border-radius: 6px;
-}
+*::-webkit-scrollbar-thumb { background: var(--light-header-bg); border-radius: 6px; }
 
-*::-webkit-scrollbar-thumb.dark {
-    background: var(--dark-header-bg);
-}
+*::-webkit-scrollbar-thumb.dark { background: var(--dark-header-bg); }
 
-*::-webkit-scrollbar-thumb:hover {
-    background: var(--light-header-button-hover-bg);
-}
+*::-webkit-scrollbar-thumb:hover { background: var(--light-header-button-hover-bg); }
 
-*::-webkit-scrollbar-thumb.dark:hover {
-    background: var(--dark-header-button-hover-bg);
-}
+*::-webkit-scrollbar-thumb.dark:hover { background: var(--dark-header-button-hover-bg); }
 
 /* Стили для скроллбаров в Firefox */
-* {
-    scrollbar-width: thin;
-    scrollbar-color: var(--light-header-bg) var(--light-button-bg);
-}
+* { scrollbar-width: thin; scrollbar-color: var(--light-header-bg) var(--light-button-bg); }
 
-.dark {
-    scrollbar-color: var(--dark-header-bg) var(--dark-button-bg);
-}
+.dark { scrollbar-color: var(--dark-header-bg) var(--dark-button-bg); }

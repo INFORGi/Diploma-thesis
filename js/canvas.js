@@ -2,7 +2,7 @@ import { initWindowDragging, initButtonHandlers, initDropdownStyleMenu, setTheme
 import { jsMind } from '../lib/jsmind/js/jsmind.js';
 import { StyleManager } from './styleManager.js';
 import { MIND_MAP_THEMES } from '../data/constants.js';
-import { DEFAULT_NODE_DATA, TOPIC_STYLES, NODE_STYLES, LINE_STYLES } from '../data/constants.js';
+import { DEFAULT_NODE_DATA, TOPIC_STYLES, FIGURE, LINE_STYLES } from '../data/constants.js';
 
 let jm = null;
 let styleManager = null;
@@ -46,15 +46,13 @@ function initJsMind() {
                     topic: 'тема', 
                     parent: 'root',
                     children: [],
-                    // Глубокое копирование стилей
-                    styleNode: JSON.parse(JSON.stringify(NODE_STYLES.RECTANGLE)),
+                    styleNode: JSON.parse(JSON.stringify(FIGURE.RECTANGLE)),
                     styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
                     styleLine: JSON.parse(JSON.stringify(LINE_STYLES.STRAIGHT)),
                     position: { x: 0, y: 0 },
                     draggable: true,
                 }],
-                // Глубокое копирование стилей для корневого узла
-                styleNode: JSON.parse(JSON.stringify(NODE_STYLES.RECTANGLE)),
+                styleNode: JSON.parse(JSON.stringify(FIGURE.RECTANGLE)),
                 styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
                 styleLine: JSON.parse(JSON.stringify(LINE_STYLES.STRAIGHT)),
                 position: { x: 0, y: 0 },

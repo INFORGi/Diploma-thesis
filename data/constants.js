@@ -32,9 +32,13 @@ export const LINE_STYLES = {
 };
 
 export const TOPIC_STYLES = {
+    position: "relative",
+    zIndex: "2",
     width: "100%",
     height: "100%",
-    padding: "8px 15px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     color: "#333333",
     fontFamily: "Arial, sans-serif",
     fontSize: "14px",
@@ -43,56 +47,40 @@ export const TOPIC_STYLES = {
     whiteSpace: "pre-wrap",
     wordWrap: "break-word",
     overflow: "hidden",
-    textOverflow: "ellipsis"
+    textOverflow: "ellipsis",
+    boxSizing: "border-box"
 };
 
 export const NODE_STYLES = {
-    BASE_NODE: {
-        type: "div",
-        styles: {
-            position: "absolute",
-            backgroundColor: "transparent", // Прозрачный фон для всех узлов
-            minWidth: "120px",
-            minHeight: "40px",
-            padding: "0",
-            margin: "5px",
-            cursor: "pointer",
-            transition: "all 0.3s ease",
-            userSelect: "none", 
-            outline: "none",
-            zIndex: "1",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-        }
-    },
-    // RECTANGLE: {
-    //     styles: {
-    //         backgroundColor: "#ffffff", // Переопределяем прозрачность для прямоугольника
-    //         border: "1px solid #cccccc",
-    //         borderRadius: "5px",
-    //         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-    //     }
-    // },
+    position: "absolute",
+    backgroundColor: "transparent",
+    width: "130px",
+    height: "50px",
+    border: "3px solid #000",
+    margin: "0px",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    userSelect: "none", 
+    outline: "none",
+    zIndex: "1",
+    display: "flex",
+    alignItems: "center",
+    padding: '10px',
+    justifyContent: "center"
+}
+
+export const FIGURE = {
     RECTANGLE: {
         shapeSvg: {
-            width: "120px",
-            height: "40px",
             tag: "rect",
-            x: "0",
-            y: "0",
             fill: "#ffffff",
             stroke: "#cccccc",
             strokeWidth: "1",
             rx: "10",
-            filter: "none" // boxShadow
-            // filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))" // boxShadow
         }
     },
     TRAPEZOID: {
         shapeSvg: {
-            width: "120px",
-            height: "40px",
             tag: "polygon",
             points: "24,0 96,0 120,40 0,40", // Трапеция
             fill: "#ffffff",
@@ -102,8 +90,6 @@ export const NODE_STYLES = {
     },
     SKEWED_RECTANGLE: {
         shapeSvg: {
-            width: "120px",
-            height: "40px",
             tag: "polygon",
             points: "12,0 120,0 108,40 0,40", // Скошенный прямоугольник
             fill: "#ffffff",
@@ -113,8 +99,6 @@ export const NODE_STYLES = {
     },
     NOTCHED_RECTANGLE: {
         shapeSvg: {
-            width: "120px",
-            height: "40px",
             tag: "polygon",
             points: "0,0 120,0 120,40 24,40 0,32", // Вырез
             fill: "#ffffff",
@@ -129,7 +113,7 @@ export const DEFAULT_NODE_DATA = {
     topic: null,
     parent: null,
     children: {},
-    styleNode: { ...NODE_STYLES.RECTANGLE },
+    styleNode: { ...FIGURE.RECTANGLE },
     styleTopic: { ...TOPIC_STYLES },
     styleLine: { ...LINE_STYLES.DEFAULT },
     position: { x: 0, y: 0 },

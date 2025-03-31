@@ -43,6 +43,46 @@
             
             <div class="canvas entry-point">
                 <div id="jsmind_container" class="jsmind-container"></div>
+                
+                <!-- Меню для работы с узлом -->
+                <div id="node-actions-menu" class="context-menu" style="display: none;">
+                    <button class="menu-btn" data-action="add-child">Добавить</button>
+                    <button class="menu-btn" data-action="remove">Удалить</button>
+                    <button class="menu-btn" data-action="show-text-menu">Стиль текста</button>
+                    <button class="menu-btn" data-action="show-node-menu">Стиль блока</button>
+                    <button class="menu-btn" data-action="show-line-menu">Стиль линии</button>
+                </div>
+
+                <!-- Меню стилей текста -->
+                <div id="text-style-menu" class="context-menu" style="display: none;">
+                    <div class="style-group">
+                        <input type="color" id="textColor" title="Цвет текста">
+                        <button class="style-btn" data-style="bold">B</button>
+                        <button class="style-btn" data-style="italic">I</button>
+                        <button class="style-btn" data-style="underline">U</button>
+                    </div>
+                </div>
+
+                <!-- Меню стилей блока -->
+                <div id="node-style-menu" class="context-menu" style="display: none;">
+                    <div class="style-group">
+                        <input type="color" id="nodeBgColor" title="Цвет фона">
+                        <input type="color" id="nodeBorderColor" title="Цвет границы">
+                    </div>
+                    <div class="shape-group">
+                        <button class="shape-btn" data-shape="RECTANGLE">Прямоугольник</button>
+                        <button class="shape-btn" data-shape="TRAPEZOID">Трапеция</button>
+                        <button class="shape-btn" data-shape="SKEWED_RECTANGLE">Скошенный</button>
+                        <button class="shape-btn" data-shape="NOTCHED_RECTANGLE">С вырезом</button>
+                    </div>
+                </div>
+
+                <!-- Меню стилей линии -->
+                <div id="line-style-menu" class="context-menu" style="display: none;">
+                    <button class="line-btn" data-line="STRAIGHT">Прямая</button>
+                    <button class="line-btn" data-line="CURVED">Изогнутая</button>
+                    <button class="line-btn" data-line="BEZIER">Безье</button>
+                </div>
             </div>
         </main>
     </div>

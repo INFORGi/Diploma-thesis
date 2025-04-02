@@ -1,8 +1,7 @@
 import { initWindowDragging, initButtonHandlers, initDropdownStyleMenu, setTheme } from './windowManager.js';
 import { jsMind } from '../lib/jsmind/js/jsmind.js';
-import { StyleManager } from './styleManager.js';
 import { MIND_MAP_THEMES, NODE_STYLES } from '../data/constants.js';
-import { DEFAULT_NODE_DATA, TOPIC_STYLES, FIGURE, LINE_STYLES } from '../data/constants.js';
+import { TOPIC_STYLES, FIGURE, LINE_STYLES } from '../data/constants.js';
 
 let jm = null;
 let styleManager = null;
@@ -37,11 +36,21 @@ function initJsMind() {
             theme: 'default',
             data: { 
                 id: 'root', 
-                topic: 'Главная тема', 
+                topic: {
+                    text: '### Главная тема',
+                    color: "#333333",
+                    fontSize: "14px",
+                    fontFamily: "Arial, sans-serif"
+                },
                 parent: null,
                 children: [{
                     id: 'rodsot', 
-                    topic: 'тема', 
+                    topic: {
+                        text: '### Текст',
+                        color: "#333333",
+                        fontSize: "14px",
+                        fontFamily: "Arial, sans-serif"
+                    },
                     parent: 'root',
                     children: [],
                     styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),

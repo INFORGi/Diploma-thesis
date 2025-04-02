@@ -38,10 +38,7 @@ export const TOPIC_STYLES = {
     height: "100%",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
-    color: "#333333",
-    fontFamily: "Arial, sans-serif",
-    fontSize: "14px",
+    justifyContent: "center",  
     fontWeight: "normal",
     textAlign: "center",
     whiteSpace: "pre-wrap",
@@ -120,7 +117,12 @@ export const FIGURE = {
 
 export const DEFAULT_NODE_DATA = {
     id: null,
-    topic: null,
+    topic: {
+        text: '### Текст',
+        color: "#333333",
+        fontSize: "14px",
+        fontFamely: "Arial, sans-serif"
+    },
     parent: null,
     children: {},
     styleNode: { ...NODE_STYLES },

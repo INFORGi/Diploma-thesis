@@ -1,15 +1,15 @@
 import { initWindowDragging, initButtonHandlers, initDropdownStyleMenu, setTheme } from './windowManager.js';
 import { jsMind } from '../lib/jsmind/js/jsmind.js';
 import { StyleManager } from './styleManager.js';
-import { MIND_MAP_THEMES } from '../data/constants.js';
+import { MIND_MAP_THEMES, NODE_STYLES } from '../data/constants.js';
 import { DEFAULT_NODE_DATA, TOPIC_STYLES, FIGURE, LINE_STYLES } from '../data/constants.js';
 
 let jm = null;
 let styleManager = null;
 let isMapModified = false;
 let currentMapPath = null;
-let currentFilePath = null; // Добавляем переменную для хранения пути текущего файла
-let navigationLock = null; // Добавляем переменную для блокировки навигации
+let currentFilePath = null;
+let navigationLock = null;
 
 function markMapAsModified() {
     isMapModified = true;
@@ -33,8 +33,6 @@ function initJsMind() {
 
     try {
         jm = new jsMind(options);
-        
-        // Исправляем структуру начальных данных
         const initialData = {
             theme: 'default',
             data: { 
@@ -46,13 +44,15 @@ function initJsMind() {
                     topic: 'тема', 
                     parent: 'root',
                     children: [],
-                    styleNode: JSON.parse(JSON.stringify(FIGURE.RECTANGLE)),
+                    styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
+                    figure: JSON.parse(JSON.stringify(FIGURE.SKEWED_RECTANGLE)),
                     styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
                     styleLine: JSON.parse(JSON.stringify(LINE_STYLES.STRAIGHT)),
                     position: { x: 0, y: 0 },
                     draggable: true,
                 }],
-                styleNode: JSON.parse(JSON.stringify(FIGURE.RECTANGLE)),
+                styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
+                figure: JSON.parse(JSON.stringify(FIGURE.RECTANGLE)),
                 styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
                 styleLine: JSON.parse(JSON.stringify(LINE_STYLES.STRAIGHT)),
                 position: { x: 0, y: 0 },
@@ -61,7 +61,6 @@ function initJsMind() {
         };
 
         jm.show(initialData);
-
     } catch (error) {
         console.error('Error initializing jsMind:', error);
     }
@@ -154,20 +153,16 @@ function initMapThemeMenu() {
     });
 }
 
-// Добавляем функцию для экспорта изображения
 async function exportMapImage() {
     if (!jm) return null;
-    
     try {
         const container = document.querySelector('#jsmind_container');
         const svgElement = container.querySelector('svg');
         if (!svgElement || !container) return null;
 
-        // Находим реальные границы содержимого
         const nodes = container.querySelectorAll('.jsmind-node');
         let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
         
-        // Учитываем и линии при расчете границ
         const lines = svgElement.querySelectorAll('path');
         [...nodes, ...lines].forEach(element => {
             const rect = element.getBoundingClientRect();
@@ -177,7 +172,6 @@ async function exportMapImage() {
             maxY = Math.max(maxY, rect.bottom);
         });
 
-        // Добавляем отступы
         const padding = 50;
         minX -= padding;
         minY -= padding;
@@ -187,13 +181,11 @@ async function exportMapImage() {
         const width = maxX - minX;
         const height = maxY - minY;
 
-        // Создаем новый SVG с оптимальными размерами
         const newSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         newSvg.setAttribute('width', width);
         newSvg.setAttribute('height', height);
         newSvg.setAttribute('viewBox', `0 0 ${width} ${height}`);
 
-        // Добавляем фон
         const bgColor = window.getComputedStyle(container).backgroundColor;
         const background = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         background.setAttribute('width', '100%');
@@ -201,27 +193,22 @@ async function exportMapImage() {
         background.setAttribute('fill', bgColor);
         newSvg.appendChild(background);
 
-        // Создаем группу для содержимого с правильным смещением
         const contentGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
         contentGroup.setAttribute('transform', `translate(${-minX}, ${-minY})`);
 
-        // Копируем линии связей с сохранением всех атрибутов
         const linesGroup = svgElement.querySelector('g');
         if (linesGroup) {
             const newGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
             
-            // Копируем все атрибуты группы
             Array.from(linesGroup.attributes).forEach(attr => {
                 newGroup.setAttribute(attr.name, attr.value);
             });
 
-            // Копируем все линии с их атрибутами
             linesGroup.querySelectorAll('path').forEach(path => {
                 const newPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 Array.from(path.attributes).forEach(attr => {
                     newPath.setAttribute(attr.name, attr.value);
                 });
-                // Убеждаемся, что линии видны
                 newPath.setAttribute('stroke', path.getAttribute('stroke') || '#666');
                 newPath.setAttribute('stroke-width', path.getAttribute('stroke-width') || '1');
                 newPath.setAttribute('fill', 'none');
@@ -231,13 +218,11 @@ async function exportMapImage() {
             contentGroup.appendChild(newGroup);
         }
 
-        // Добавляем узлы
         nodes.forEach(node => {
             const rect = node.getBoundingClientRect();
             const nodeGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
             const computedStyle = window.getComputedStyle(node);
             
-            // Создаем прямоугольник узла
             const nodeRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             nodeRect.setAttribute('x', rect.left);
             nodeRect.setAttribute('y', rect.top);
@@ -249,7 +234,6 @@ async function exportMapImage() {
             nodeRect.setAttribute('stroke', computedStyle.borderColor);
             nodeRect.setAttribute('stroke-width', computedStyle.borderWidth);
             
-            // Добавляем текст
             const topic = node.querySelector('.node-topic');
             if (topic) {
                 const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -276,7 +260,6 @@ async function exportMapImage() {
 
         newSvg.appendChild(contentGroup);
 
-        // Добавляем стили для линий
         const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
         const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
         style.textContent = `
@@ -295,7 +278,6 @@ async function exportMapImage() {
         defs.appendChild(style);
         newSvg.insertBefore(defs, newSvg.firstChild);
 
-        // Возвращаем только SVG данные
         return {
             svg: new XMLSerializer().serializeToString(newSvg)
         };
@@ -304,7 +286,7 @@ async function exportMapImage() {
         return null;
     }
 }
-// Изменяем функцию saveMap
+
 async function saveMap() {
     if (!jm) {
         console.error('jsMind instance is not initialized');
@@ -312,14 +294,12 @@ async function saveMap() {
     }
 
     try {
-        // Упрощенная структура данных
         const mapData = {
             theme: jm.options.theme,
             data: jm.getNodeData(jm.get_root())
         };
 
         const savePath = currentFilePath || `mindmap_${Date.now()}`;
-
         const saveData = {
             mapData,
             mapPath: savePath,
@@ -345,14 +325,12 @@ async function saveMap() {
     }
 }
 
-// Вспомогательная функция для сбора данных узлов
 function collectNodeData(nodeId) {
     const node = jm.nodes.get(nodeId);
     if (!node) {
         return null;
     }
 
-    // Создаем базовую структуру данных узла
     const nodeData = {
         id: nodeId,
         topic: node.data.topic || '',
@@ -362,12 +340,10 @@ function collectNodeData(nodeId) {
         children: []
     };
 
-    // Сохраняем все свойства из node.data
     if (node.data) {
         Object.assign(nodeData, Object.assign({}, node.data));
     }
 
-    // Собираем актуальные стили из DOM
     if (node.element) {
         const computedStyle = window.getComputedStyle(node.element);
         const nodeStyle = {
@@ -379,14 +355,12 @@ function collectNodeData(nodeId) {
             boxShadow: computedStyle.boxShadow
         };
 
-        // Объединяем с существующими стилями, если они есть
         nodeData.style = Object.assign(
             {},
             nodeStyle,
             node.element.nodeData?.nodeStyle || {}
         );
 
-        // Собираем стили текста
         const topic = node.element.querySelector('.node-topic');
         if (topic) {
             const computedTopicStyle = window.getComputedStyle(topic);
@@ -399,7 +373,6 @@ function collectNodeData(nodeId) {
                 textDecoration: computedTopicStyle.textDecoration
             };
 
-            // Объединяем с существующими стилями текста
             nodeData.topicStyle = Object.assign(
                 {},
                 topicStyle,
@@ -408,7 +381,6 @@ function collectNodeData(nodeId) {
         }
     }
 
-    // Рекурсивно собираем данные дочерних узлов
     node.children.forEach(childId => {
         const childData = collectNodeData(childId);
         if (childData) {
@@ -422,16 +394,11 @@ function collectNodeData(nodeId) {
 async function handleUnsavedChanges() {
     if (isMapModified) {
         const choice = await window.electron.showSaveDialog();
-        console.log('Save dialog choice:', choice);
-        
         if (choice === 'save') {
-            const saveResult = await saveMap();
-            return saveResult;
+            return await saveMap();
         } else if (choice === 'dont-save') {
             return true;
         }
-        
-        // Разблокируем кнопку перед возвратом false
         const backButton = document.getElementById('back-button');
         if (backButton) {
             backButton.disabled = false;
@@ -441,7 +408,6 @@ async function handleUnsavedChanges() {
     return true;
 }
 
-// Добавляем функцию для разблокировки кнопки
 function unlockBackButton() {
     const backButton = document.getElementById('back-button');
     if (backButton) {
@@ -455,7 +421,6 @@ async function navigateBack() {
     if (!backButton) return;
     
     backButton.disabled = true;
-
     try {
         const result = await window.electron.goBack();
         if (!result) {

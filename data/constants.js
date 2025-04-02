@@ -71,40 +71,50 @@ export const NODE_STYLES = {
 
 export const FIGURE = {
     RECTANGLE: {
-        shapeSvg: {
-            tag: "rect",
-            fill: "#ffffff",
-            stroke: "#cccccc",
-            strokeWidth: "1",
-            rx: "10",
-        }
+        tag: "rect",
+        fill: "#ffffff",
+        stroke: "#cccccc",
+        strokeWidth: "1",
+        rx: "10",
+        width: "100%",
+        height: "100%"
     },
     TRAPEZOID: {
-        shapeSvg: {
-            tag: "polygon",
-            points: "24,0 96,0 120,40 0,40", // Трапеция
-            fill: "#ffffff",
-            stroke: "#cccccc",
-            strokeWidth: "1"
-        }
+        tag: "path",
+        dNormalized: [
+            { x: 0.2, y: 0 },
+            { x: 0.8, y: 0 },
+            { x: 1, y: 1 },
+            { x: 0, y: 1 }
+        ],
+        fill: "#ffffff",
+        stroke: "#cccccc",
+        strokeWidth: "1"
     },
     SKEWED_RECTANGLE: {
-        shapeSvg: {
-            tag: "polygon",
-            points: "12,0 120,0 108,40 0,40", // Скошенный прямоугольник
-            fill: "#ffffff",
-            stroke: "#cccccc",
-            strokeWidth: "1"
-        }
+        tag: "path",
+        dNormalized: [
+            { x: 0.1, y: 0 },
+            { x: 1, y: 0 },
+            { x: 0.9, y: 1 },
+            { x: 0, y: 1 }
+        ],
+        fill: "#ffffff",
+        stroke: "#cccccc",
+        strokeWidth: "1"
     },
     NOTCHED_RECTANGLE: {
-        shapeSvg: {
-            tag: "polygon",
-            points: "0,0 120,0 120,40 24,40 0,32", // Вырез
-            fill: "#ffffff",
-            stroke: "#cccccc",
-            strokeWidth: "1"
-        }
+        tag: "path",
+        dNormalized: [
+            { x: 0, y: 0 },
+            { x: 1, y: 0 },
+            { x: 1, y: 1 },
+            { x: 0.2, y: 1 },
+            { x: 0, y: 0.8 }
+        ],
+        fill: "#ffffff",
+        stroke: "#cccccc",
+        strokeWidth: "1"
     }
 };
 
@@ -113,7 +123,8 @@ export const DEFAULT_NODE_DATA = {
     topic: null,
     parent: null,
     children: {},
-    styleNode: { ...FIGURE.RECTANGLE },
+    styleNode: { ...NODE_STYLES },
+    figure: { ...FIGURE.RECTANGLE },
     styleTopic: { ...TOPIC_STYLES },
     styleLine: { ...LINE_STYLES.DEFAULT },
     position: { x: 0, y: 0 },

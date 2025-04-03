@@ -1,7 +1,6 @@
 import { initWindowDragging, initButtonHandlers, initDropdownStyleMenu, setTheme } from './windowManager.js';
 import { jsMind } from '../lib/jsmind/js/jsmind.js';
-import { MIND_MAP_THEMES, NODE_STYLES } from '../data/constants.js';
-import { TOPIC_STYLES, FIGURE, LINE_STYLES, INDENTATION_BETWEEN_BUTTON_NODE } from '../data/constants.js';
+import { TOPIC_STYLES, FIGURE, LINE_STYLES, INDENTATION_BETWEEN_BUTTON_NODE, MIND_MAP_THEMES, NODE_STYLES } from '../data/constants.js';
 
 let jm = null;
 let styleManager = null;
@@ -24,11 +23,6 @@ function initJsMind() {
     container.style.position = 'absolute';
     container.style.overflow = 'auto';
     container.style.background = 'inherit';
-
-    // const options = {
-    //     container: 'jsmind_container',
-    //     theme: 'default'
-    // };
 
     const options = {
         container: 'jsmind_container',
@@ -448,8 +442,8 @@ async function navigateBack() {
     }
 }
 
-function nodeAddButtonActive(selectNode) {
-    const node = jm.nodes.get(selectNode.id)?.element; // Получаем DOM-элемент узла
+function nodeAddButtonActive(nodeId) {
+    const node = jm.nodes.get(nodeId)?.element; // Получаем DOM-элемент узла
     if (!node) return;
     
     const buttonAdd = document.getElementById("create-node");
@@ -463,14 +457,12 @@ function nodeAddButtonActive(selectNode) {
     const nodeData = jm.nodes.get(node.id);
 
     if (!nodeData.parent) {
-        // Для root узла всегда размещаем кнопку справа
         buttonX = nodeRect.right + offsetX;
     } else {
         const parentNode = document.getElementById(nodeData.parent);
         if (!parentNode) return;
         
         const parentRect = parentNode.getBoundingClientRect();
-        // Для остальных узлов определяем положение относительно родителя
         if (parentRect.left - nodeRect.left > 0) {
             buttonX = nodeRect.left - offsetX - buttonRect.width;
         } else {
@@ -493,10 +485,17 @@ function nodeAddButtonDisable() {
 document.addEventListener("DOMContentLoaded", function() {
     init();
     
-    document.addEventListener('click', (e) => {
+    document.addEventListener('mousedown', (e) => {
         const clickedNode = e.target.closest('.jsmind-node');
-        if (clickedNode) nodeAddButtonActive(clickedNode);
-        else nodeAddButtonDisable();
+        if (clickedNode) {
+            // Устанавливаем активный узел через jsMind
+            jm.setActiveNode(clickedNode);
+            nodeAddButtonActive(clickedNode.id);
+        } else {
+            // Сбрасываем активный узел и скрываем кнопку при клике вне узлов
+            jm.setActiveNode(null);
+            nodeAddButtonDisable();
+        }
     });
 
     window.electron.onLoadSettings((settings) => {

@@ -53,7 +53,8 @@ export const NODE_STYLES = {
     backgroundColor: "transparent",
     width: "130px",
     height: "50px",
-    border: "3px solid #000",
+    // border: "3px solid #000",
+    borderRadius: '5px',
     margin: "0px",
     cursor: "pointer",
     // transition: "all 0.3s ease",
@@ -62,7 +63,7 @@ export const NODE_STYLES = {
     zIndex: "1",
     display: "flex",
     alignItems: "center",
-    padding: '10px',
+    padding: '5px',
     justifyContent: "center"
 }
 
@@ -143,7 +144,8 @@ export const MIND_MAP_THEMES = {
         canvas: { backgroundColor: '#ffffff' },
         node: { backgroundColor: '#ffffff', borderColor: '#cccccc' },
         topic: { color: '#333333' },
-        line: { color: '#555555', width: '2px' }
+        line: { color: '#555555', width: '2px' },
+        borderColorNode: '2px solid #0267fd' 
     },
     dark: {
         canvas: { backgroundColor: '#1a1a1a' },

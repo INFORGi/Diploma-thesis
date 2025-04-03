@@ -40,12 +40,13 @@ export const TOPIC_STYLES = {
     alignItems: "center",
     justifyContent: "center",  
     fontWeight: "normal",
-    textAlign: "center",
+    textAlign: "justify",
     whiteSpace: "pre-wrap",
     wordWrap: "break-word",
     overflow: "hidden",
     textOverflow: "ellipsis",
-    boxSizing: "border-box"
+    boxSizing: "border-box",
+    padding: "1px"
 };
 
 export const NODE_STYLES = {
@@ -53,11 +54,9 @@ export const NODE_STYLES = {
     backgroundColor: "transparent",
     width: "130px",
     height: "50px",
-    // border: "3px solid #000",
     borderRadius: '5px',
     margin: "0px",
     cursor: "pointer",
-    // transition: "all 0.3s ease",
     userSelect: "none", 
     outline: "none",
     zIndex: "1",
@@ -119,7 +118,7 @@ export const FIGURE = {
 export const DEFAULT_NODE_DATA = {
     id: null,
     topic: {
-        text: '### Текст',
+        text: 'Текст',
         color: "#333333",
         fontSize: "14px",
         fontFamely: "Arial, sans-serif"
@@ -156,3 +155,5 @@ export const MIND_MAP_THEMES = {
 };
 
 export const INDENTATION_BETWEEN_BUTTON_NODE = 20;
+export const SPACING_WIDTH = 100;
+export const SPACING_HEIGHT = 50;

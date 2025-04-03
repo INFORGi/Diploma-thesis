@@ -59,8 +59,55 @@ function initJsMind() {
                     styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
                     styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
                     position: { x: 0, y: 0 },
-                    draggable: true,
-                }],
+                    draggable: true
+                },{                    
+                    id: 'rodsot2', 
+                    topic: {
+                        text: "## Под тема",
+                        color: "#333333",
+                        fontSize: "14px",
+                        fontFamily: "Arial, sans-serif"
+                    },
+                    parent: 'root',
+                    children: [],
+                    styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
+                    figure: JSON.parse(JSON.stringify(FIGURE.SKEWED_RECTANGLE)),
+                    styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
+                    styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
+                    position: { x: 0, y: 0 },
+                    draggable: true},{
+                        id: 'rodsot3', 
+                        topic: {
+                            text: "## Под тема",
+                            color: "#333333",
+                            fontSize: "14px",
+                            fontFamily: "Arial, sans-serif"
+                        },
+                        parent: 'root',
+                        children: [],
+                        styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
+                        figure: JSON.parse(JSON.stringify(FIGURE.SKEWED_RECTANGLE)),
+                        styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
+                        styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
+                        position: { x: 0, y: 0 },
+                        draggable: true,
+                    },{
+                        id: 'rodsot4', 
+                        topic: {
+                            text: "## Под тема",
+                            color: "#333333",
+                            fontSize: "14px",
+                            fontFamily: "Arial, sans-serif"
+                        },
+                        parent: 'root',
+                        children: [],
+                        styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
+                        figure: JSON.parse(JSON.stringify(FIGURE.SKEWED_RECTANGLE)),
+                        styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
+                        styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
+                        position: { x: 0, y: 0 },
+                        draggable: true,
+                    }],
                 styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
                 figure: JSON.parse(JSON.stringify(FIGURE.RECTANGLE)),
                 styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
@@ -482,19 +529,34 @@ function nodeAddButtonDisable() {
     }
 }
 
+function addNewNode(parentId) {
+    if (!parentId) {
+        console.error('No parent node selected for adding a child');
+        return;
+    }
+    
+    jm.addChild(parentId);
+    markMapAsModified();
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     init();
     
     document.addEventListener('mousedown', (e) => {
         const clickedNode = e.target.closest('.jsmind-node');
         if (clickedNode) {
-            // Устанавливаем активный узел через jsMind
             jm.setActiveNode(clickedNode);
             nodeAddButtonActive(clickedNode.id);
         } else {
-            // Сбрасываем активный узел и скрываем кнопку при клике вне узлов
             jm.setActiveNode(null);
             nodeAddButtonDisable();
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        const addButton = document.getElementById('create-node');
+        if (e.target === addButton && jm.activeNode) {
+            addNewNode(jm.activeNode.id);
         }
     });
 

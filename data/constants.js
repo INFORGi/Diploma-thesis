@@ -56,7 +56,7 @@ export const NODE_STYLES = {
     border: "3px solid #000",
     margin: "0px",
     cursor: "pointer",
-    transition: "all 0.3s ease",
+    // transition: "all 0.3s ease",
     userSelect: "none", 
     outline: "none",
     zIndex: "1",
@@ -152,3 +152,5 @@ export const MIND_MAP_THEMES = {
         line: { color: '#606060', width: '2px' }
     }
 };
+
+export const INDENTATION_BETWEEN_BUTTON_NODE = 20;

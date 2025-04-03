@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline';">    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; script-src 'self'; style-src 'self' 'unsafe-inline';">    
     
     <title>Рабочая область</title>
     
@@ -19,7 +19,7 @@
 <body class="entry-point">
     <div class="window entry-point">
         <header id="title-bar" class="entry-point">
-            <div style="position: relative;">
+            <div style="position: relative; user-select: none;">
                 <button id="menu-button" class="style-button-menu entry-point">⋮</button>
                 <div id="div-dropdown" class="style-dropdown entry-point">
                     <div>
@@ -32,7 +32,7 @@
                 </div>
             </div>
             
-            <div>
+            <div style="user-select: none;">
                 <button class="button-minimize-style entry-point" id="minimize" aria-label="Minimize"></button>
                 <button class="button-maximize-style entry-point" id="maximize" aria-label="Maximize"></button>   
                 <button class="button-close-style entry-point" id="close" aria-label="Close"></button>
@@ -47,6 +47,7 @@
             
             <div class="canvas entry-point">
                 <div id="jsmind_container" class="jsmind-container"></div>
+                <button id="create-node" class="entry-point">+</button>
                 
                 <!-- Меню для работы с узлом -->
                 <div id="node-actions-menu" class="context-menu" style="display: none;">

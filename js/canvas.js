@@ -1,7 +1,7 @@
 import { initWindowDragging, initButtonHandlers, initDropdownStyleMenu, setTheme } from './windowManager.js';
 import { jsMind } from '../lib/jsmind/js/jsmind.js';
 import { MIND_MAP_THEMES, NODE_STYLES } from '../data/constants.js';
-import { TOPIC_STYLES, FIGURE, LINE_STYLES } from '../data/constants.js';
+import { TOPIC_STYLES, FIGURE, LINE_STYLES, INDENTATION_BETWEEN_BUTTON_NODE } from '../data/constants.js';
 
 let jm = null;
 let styleManager = null;
@@ -25,9 +25,16 @@ function initJsMind() {
     container.style.overflow = 'auto';
     container.style.background = 'inherit';
 
+    // const options = {
+    //     container: 'jsmind_container',
+    //     theme: 'default'
+    // };
+
     const options = {
         container: 'jsmind_container',
-        theme: 'default'
+        theme: 'default',
+        onNodeAddButtonActive: nodeAddButtonActive, // Передаем функцию для показа кнопки
+        onNodeAddButtonDisable: nodeAddButtonDisable // Передаем функцию для скрытия кнопки
     };
 
     try {
@@ -37,7 +44,7 @@ function initJsMind() {
             data: { 
                 id: 'root', 
                 topic: {
-                    text: '### Главная тема',
+                    text: 'Главная тема',
                     color: "#333333",
                     fontSize: "14px",
                     fontFamily: "Arial, sans-serif"
@@ -46,7 +53,7 @@ function initJsMind() {
                 children: [{
                     id: 'rodsot', 
                     topic: {
-                        text: '### Текст',
+                        text: "## Под тема",
                         color: "#333333",
                         fontSize: "14px",
                         fontFamily: "Arial, sans-serif"
@@ -56,14 +63,14 @@ function initJsMind() {
                     styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
                     figure: JSON.parse(JSON.stringify(FIGURE.SKEWED_RECTANGLE)),
                     styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
-                    styleLine: JSON.parse(JSON.stringify(LINE_STYLES.STRAIGHT)),
+                    styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
                     position: { x: 0, y: 0 },
                     draggable: true,
                 }],
                 styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
                 figure: JSON.parse(JSON.stringify(FIGURE.RECTANGLE)),
                 styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
-                styleLine: JSON.parse(JSON.stringify(LINE_STYLES.STRAIGHT)),
+                styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
                 position: { x: 0, y: 0 },
                 draggable: false,
             }
@@ -441,14 +448,55 @@ async function navigateBack() {
     }
 }
 
+function nodeAddButtonActive(selectNode) {
+    const node = jm.nodes.get(selectNode.id)?.element; // Получаем DOM-элемент узла
+    if (!node) return;
+    
+    const buttonAdd = document.getElementById("create-node");
+    if (!buttonAdd) return;
+
+    const nodeRect = node.getBoundingClientRect();
+    const buttonRect = buttonAdd.getBoundingClientRect();
+    const offsetX = INDENTATION_BETWEEN_BUTTON_NODE;
+    
+    let buttonX;
+    const nodeData = jm.nodes.get(node.id);
+
+    if (!nodeData.parent) {
+        // Для root узла всегда размещаем кнопку справа
+        buttonX = nodeRect.right + offsetX;
+    } else {
+        const parentNode = document.getElementById(nodeData.parent);
+        if (!parentNode) return;
+        
+        const parentRect = parentNode.getBoundingClientRect();
+        // Для остальных узлов определяем положение относительно родителя
+        if (parentRect.left - nodeRect.left > 0) {
+            buttonX = nodeRect.left - offsetX - buttonRect.width;
+        } else {
+            buttonX = nodeRect.right + offsetX;
+        }
+    }
+
+    buttonAdd.style.left = `${buttonX}px`;
+    buttonAdd.style.top = `${nodeRect.top + (nodeRect.height / 2)}px`;
+    buttonAdd.style.visibility = 'visible';
+}
+
+function nodeAddButtonDisable() {
+    const buttonAdd = document.getElementById("create-node");
+    if (buttonAdd) {
+        buttonAdd.style.visibility = 'hidden';
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     init();
     
     document.addEventListener('click', (e) => {
-        const node = e.target.closest('.jsmind-node');
-        if (node && styleManager) {
-            styleManager.setNode(node);
-        }
+        const clickedNode = e.target.closest('.jsmind-node');
+        if (clickedNode) nodeAddButtonActive(clickedNode);
+        else nodeAddButtonDisable();
     });
 
     window.electron.onLoadSettings((settings) => {

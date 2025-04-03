@@ -1,9 +1,18 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+
+const MarkdownIt = require('markdown-it');
+const markdownItContainer = require('markdown-it-container');
+const markdownItAttrs = require('markdown-it-attrs');
+
 const path = require('path');
 const fs = require('fs');
 const fsPromises = require('fs').promises;
 
 const settingsPath = path.join(__dirname, 'data', 'settings.json');
+
+const md = new MarkdownIt()
+  .use(markdownItContainer)
+  .use(markdownItAttrs);
 
 function readSettings() {
     try {
@@ -26,7 +35,9 @@ function createWindow() {
             preload: path.join(__dirname, 'js/preload.js'),
             contextIsolation: true,
             webSecurity: true,
-            allowRunningInsecureContent: false
+            allowRunningInsecureContent: false,
+            nodeIntegration: false,
+            sandbox: true
         },
     });
 
@@ -139,5 +150,14 @@ ipcMain.on('show-notification', (event, message, type) => {
             type,
             buttons: ['OK']
         });
+    }
+});
+
+ipcMain.handle('render-markdown', async (event, markdown) => {
+    try {
+        return md.render(markdown);
+    } catch (error) {
+        console.error('Error rendering markdown:', error);
+        return markdown;
     }
 });

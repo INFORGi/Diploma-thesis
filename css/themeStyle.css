@@ -13,6 +13,8 @@
     --light-card-text: #1a1a1a;      
     --light-card-border: #e3e7f0;
     --light-dropdown-hover: #f4f6fa;
+    --light-bacground-add-button: #0267fd;
+    --light-color-add-button: #ffffff;
 
     /* Тёмная тема */
     --dark-bg: #2d2f33;
@@ -32,6 +34,8 @@
     --dark-dropdown-hover: #4b4d52;
     --dark-scrollbar-bg: #6d7077;
     --dark-scrollbar-bg-hover: #7d8087;
+    --dark-bacground-add-button: #273d5e;
+    --dark-color-add-button: #ffffff;
     
     --dropdown-bg: var(--light-bg);
     --close-button-hover: #54565c;
@@ -174,3 +178,6 @@ label.dark { color: var(--dark-text); }
 * { scrollbar-width: thin; scrollbar-color: var(--light-header-bg) var(--light-button-bg); }
 
 .dark { scrollbar-color: var(--dark-header-bg) var(--dark-button-bg); }
+
+#create-node.light { border: 1px solid var(--border-color); background-color: var(--light-bacground-add-button); color: var(--light-color-add-button); }
+#create-node.dark { border: 1px solid var(--border-color); background-color: var(--dark-bacground-add-button); color: var(--dark-color-add-button); }

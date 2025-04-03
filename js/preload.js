@@ -10,5 +10,6 @@ contextBridge.exposeInMainWorld('electron', {
     opencanvas: (mapData) => ipcRenderer.send('open-canvas', mapData),
     saveMap: (data) => ipcRenderer.invoke('save-map', data),
     showNotification: (message, type = 'info') => ipcRenderer.send('show-notification', message, type),
-    onLoadMapData: (callback) => ipcRenderer.on('load-map-data', (_, data) => callback(data))
+    onLoadMapData: (callback) => ipcRenderer.on('load-map-data', (_, data) => callback(data)),
+    renderMarkdown: (markdown) => ipcRenderer.invoke('render-markdown', markdown)
 });

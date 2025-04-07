@@ -37,8 +37,9 @@ export const TOPIC_STYLES = {
     width: "100%",
     height: "100%",
     display: "flex",
-    alignItems: "center",
-    justifyContent: "center",  
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
     fontWeight: "normal",
     textAlign: "justify",
     whiteSpace: "pre-wrap",
@@ -46,23 +47,25 @@ export const TOPIC_STYLES = {
     overflow: "hidden",
     textOverflow: "ellipsis",
     boxSizing: "border-box",
-    padding: "1px"
+    padding: "10px",
+    margin: "0"
 };
 
 export const NODE_STYLES = {
     position: "absolute",
     backgroundColor: "transparent",
-    width: "130px",
-    height: "50px",
+    minWidth: "100px", 
+    minHeight: "50px",    
+    width: "fit-content", 
+    height: "fit-content", 
+    maxWidth: "300px", 
     borderRadius: '5px',
-    margin: "0px",
     cursor: "pointer",
     userSelect: "none", 
     outline: "none",
     zIndex: "1",
     display: "flex",
     alignItems: "center",
-    padding: '5px',
     justifyContent: "center"
 }
 

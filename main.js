@@ -10,9 +10,17 @@ const fsPromises = require('fs').promises;
 
 const settingsPath = path.join(__dirname, 'data', 'settings.json');
 
-const md = new MarkdownIt()
-  .use(markdownItContainer)
+const md = new MarkdownIt({
+    breaks: true,      // Включаем поддержку одиночных переносов строк
+    html: true,        // Разрешаем HTML
+    linkify: true,     // Автоматически определяем ссылки
+    typographer: true, // Включаем типографские замены
+    xhtmlOut: true    // Используем XHTML стиль для переносов строк
+}).use(markdownItContainer)
   .use(markdownItAttrs);
+
+// Добавляем обработку переносов строк
+md.renderer.rules.softbreak = () => '<br>\n';
 
 function readSettings() {
     try {

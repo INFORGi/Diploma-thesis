@@ -47,7 +47,7 @@ function initJsMind() {
                 children: [{
                     id: 'rodsot', 
                     topic: {
-                        text: "## Под тема",
+                        text: "Под тема",
                         color: "#333333",
                         fontSize: "14px",
                         fontFamily: "Arial, sans-serif"
@@ -55,61 +55,14 @@ function initJsMind() {
                     parent: 'root',
                     children: [],
                     styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
-                    figure: JSON.parse(JSON.stringify(FIGURE.SKEWED_RECTANGLE)),
+                    figure: JSON.parse(JSON.stringify(FIGURE.NOTCHED_RECTANGLE)),
                     styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
                     styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
                     position: { x: 0, y: 0 },
                     draggable: true
-                },{                    
-                    id: 'rodsot2', 
-                    topic: {
-                        text: "## Под тема",
-                        color: "#333333",
-                        fontSize: "14px",
-                        fontFamily: "Arial, sans-serif"
-                    },
-                    parent: 'root',
-                    children: [],
-                    styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
-                    figure: JSON.parse(JSON.stringify(FIGURE.SKEWED_RECTANGLE)),
-                    styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
-                    styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
-                    position: { x: 0, y: 0 },
-                    draggable: true},{
-                        id: 'rodsot3', 
-                        topic: {
-                            text: "## Под тема",
-                            color: "#333333",
-                            fontSize: "14px",
-                            fontFamily: "Arial, sans-serif"
-                        },
-                        parent: 'root',
-                        children: [],
-                        styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
-                        figure: JSON.parse(JSON.stringify(FIGURE.SKEWED_RECTANGLE)),
-                        styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
-                        styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
-                        position: { x: 0, y: 0 },
-                        draggable: true,
-                    },{
-                        id: 'rodsot4', 
-                        topic: {
-                            text: "## Под тема",
-                            color: "#333333",
-                            fontSize: "14px",
-                            fontFamily: "Arial, sans-serif"
-                        },
-                        parent: 'root',
-                        children: [],
-                        styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
-                        figure: JSON.parse(JSON.stringify(FIGURE.SKEWED_RECTANGLE)),
-                        styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
-                        styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
-                        position: { x: 0, y: 0 },
-                        draggable: true,
-                    }],
+                }],
                 styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
-                figure: JSON.parse(JSON.stringify(FIGURE.RECTANGLE)),
+                figure: JSON.parse(JSON.stringify(FIGURE.SKEWED_RECTANGLE)),
                 styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
                 styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
                 position: { x: 0, y: 0 },

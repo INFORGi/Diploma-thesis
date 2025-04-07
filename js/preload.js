@@ -1,4 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
+const html2canvas = require('html2canvas');
 
 contextBridge.exposeInMainWorld('electron', {
     minimize: () => ipcRenderer.send('minimize-window'),
@@ -11,5 +12,6 @@ contextBridge.exposeInMainWorld('electron', {
     saveMap: (data) => ipcRenderer.invoke('save-map', data),
     showNotification: (message, type = 'info') => ipcRenderer.send('show-notification', message, type),
     onLoadMapData: (callback) => ipcRenderer.on('load-map-data', (_, data) => callback(data)),
-    renderMarkdown: (markdown) => ipcRenderer.invoke('render-markdown', markdown)
+    renderMarkdown: (markdown) => ipcRenderer.invoke('render-markdown', markdown),
+    html2canvas: (element, options) => html2canvas(element, options),
 });

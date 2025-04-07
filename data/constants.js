@@ -38,26 +38,24 @@ export const TOPIC_STYLES = {
     height: "100%",
     display: "flex",
     flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
+    alignItems: "center",
+    justifyContent: "center",
     fontWeight: "normal",
-    textAlign: "justify",
+    textAlign: "center",
     whiteSpace: "pre-wrap",
     wordWrap: "break-word",
     overflow: "hidden",
-    textOverflow: "ellipsis",
     boxSizing: "border-box",
-    padding: "10px",
-    margin: "0"
+    maxHeight: "100%"
 };
 
 export const NODE_STYLES = {
     position: "absolute",
     backgroundColor: "transparent",
-    minWidth: "100px", 
+    minWidth: "150px", 
     minHeight: "50px",    
-    width: "fit-content", 
-    height: "fit-content", 
+    width: "auto",
+    height: "auto",
     maxWidth: "300px", 
     borderRadius: '5px',
     cursor: "pointer",
@@ -66,8 +64,9 @@ export const NODE_STYLES = {
     zIndex: "1",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
-}
+    justifyContent: "center",
+    padding: "10px"
+};
 
 export const FIGURE = {
     RECTANGLE: {
@@ -82,8 +81,8 @@ export const FIGURE = {
     TRAPEZOID: {
         tag: "path",
         dNormalized: [
-            { x: 0.2, y: 0 },
-            { x: 0.8, y: 0 },
+            { x: 0.2, y: 0, fixedOffset: 20 },    // Смещение на 20px от края
+            { x: 0.8, y: 0, fixedOffset: 20 },    // Смещение на 20px от края
             { x: 1, y: 1 },
             { x: 0, y: 1 }
         ],
@@ -94,9 +93,9 @@ export const FIGURE = {
     SKEWED_RECTANGLE: {
         tag: "path",
         dNormalized: [
-            { x: 0.1, y: 0 },
+            { x: 0.1, y: 0, fixedOffset: 15 },    // Смещение на 15px от края
             { x: 1, y: 0 },
-            { x: 0.9, y: 1 },
+            { x: 0.9, y: 1, fixedOffset: 15 },    // Смещение на 15px от края
             { x: 0, y: 1 }
         ],
         fill: "#ffffff",
@@ -109,8 +108,8 @@ export const FIGURE = {
             { x: 0, y: 0 },
             { x: 1, y: 0 },
             { x: 1, y: 1 },
-            { x: 0.2, y: 1 },
-            { x: 0, y: 0.8 }
+            { x: 0.2, y: 1, fixedOffset: 20 },    // Смещение на 20px от края
+            { x: 0, y: 0.8, fixedOffset: 20 }     // Смещение на 20px от края
         ],
         fill: "#ffffff",
         stroke: "#cccccc",
@@ -153,7 +152,8 @@ export const MIND_MAP_THEMES = {
         canvas: { backgroundColor: '#1a1a1a' },
         node: { backgroundColor: '#2d2d2d', borderColor: '#404040' },
         topic: { color: '#e0e0e0' },
-        line: { color: '#606060', width: '2px' }
+        line: { color: '#606060', width: '2px' },
+        borderColorNode: '2px solid #4a9eff'
     }
 };
 

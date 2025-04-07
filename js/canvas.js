@@ -55,14 +55,14 @@ function initJsMind() {
                     parent: 'root',
                     children: [],
                     styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
-                    figure: JSON.parse(JSON.stringify(FIGURE.NOTCHED_RECTANGLE)),
+                    figure: JSON.parse(JSON.stringify(FIGURE.SKEWED_RECTANGLE)),
                     styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
                     styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
                     position: { x: 0, y: 0 },
                     draggable: true
                 }],
                 styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
-                figure: JSON.parse(JSON.stringify(FIGURE.SKEWED_RECTANGLE)),
+                figure: JSON.parse(JSON.stringify(FIGURE.RECTANGLE)),
                 styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
                 styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
                 position: { x: 0, y: 0 },
@@ -496,6 +496,8 @@ document.addEventListener("DOMContentLoaded", function() {
     init();
     
     document.addEventListener('mousedown', (e) => {
+        if (!jm) return;
+        
         const clickedNode = e.target.closest('.jsmind-node');
         if (clickedNode) {
             jm.setActiveNode(clickedNode);

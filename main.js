@@ -44,8 +44,9 @@ function createWindow() {
             contextIsolation: true,
             webSecurity: true,
             allowRunningInsecureContent: false,
-            nodeIntegration: false,
-            sandbox: true
+            nodeIntegration: true, // Разрешаем node интеграцию
+            contextIsolation: true,
+            sandbox: false, // Отключаем sandbox для работы с модулями
         },
     });
 

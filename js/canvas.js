@@ -44,23 +44,25 @@ function initJsMind() {
                     fontFamily: "Arial, sans-serif"
                 },
                 parent: null,
-                children: [{
-                    id: 'rodsot', 
-                    topic: {
-                        text: "Под тема",
-                        color: "#333333",
-                        fontSize: "14px",
-                        fontFamily: "Arial, sans-serif"
-                    },
-                    parent: 'root',
-                    children: [],
-                    styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
-                    figure: JSON.parse(JSON.stringify(FIGURE.SKEWED_RECTANGLE)),
-                    styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
-                    styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
-                    position: { x: 0, y: 0 },
-                    draggable: true
-                }],
+                children: [
+                //     {
+                //     id: 'rodsot', 
+                //     topic: {
+                //         text: "Под тема",
+                //         color: "#333333",
+                //         fontSize: "14px",
+                //         fontFamily: "Arial, sans-serif"
+                //     },
+                //     parent: 'root',
+                //     children: [],
+                //     styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
+                //     figure: JSON.parse(JSON.stringify(FIGURE.TRAPEZOID)),
+                //     styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
+                //     styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
+                //     position: { x: 0, y: 0 },
+                //     draggable: true
+                // }
+            ],
                 styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
                 figure: JSON.parse(JSON.stringify(FIGURE.RECTANGLE)),
                 styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
@@ -443,7 +445,7 @@ async function navigateBack() {
 }
 
 function nodeAddButtonActive(nodeId) {
-    const node = jm.nodes.get(nodeId)?.element; // Получаем DOM-элемент узла
+    const node = jm.nodes.get(nodeId)?.element;
     if (!node) return;
     
     const buttonAdd = document.getElementById("create-node");
@@ -483,11 +485,12 @@ function nodeAddButtonDisable() {
 }
 
 function addNewNode(parentId) {
-    if (!parentId) {
-        console.error('No parent node selected for adding a child');
+    if (!parentId || !jm) {
+        console.error('No parent node selected for adding a child or jsMind not initialized');
         return;
     }
     
+    console.log('Adding new node to parent:', parentId); // Отладочный лог
     jm.addChild(parentId);
     markMapAsModified();
 }
@@ -495,6 +498,16 @@ function addNewNode(parentId) {
 document.addEventListener("DOMContentLoaded", function() {
     init();
     
+    // Обработчик клика для добавления узла (перемещен выше)
+    document.addEventListener('click', (e) => {
+        const addButton = document.getElementById('create-node');
+        if (e.target === addButton && jm && jm.activeNode) {
+            e.stopPropagation(); // Предотвращаем всплытие события
+            addNewNode(jm.activeNode.id);
+        }
+    });
+
+    // Обработчик mousedown для выделения узлов
     document.addEventListener('mousedown', (e) => {
         if (!jm) return;
         
@@ -502,16 +515,9 @@ document.addEventListener("DOMContentLoaded", function() {
         if (clickedNode) {
             jm.setActiveNode(clickedNode);
             nodeAddButtonActive(clickedNode.id);
-        } else {
+        } else if (!e.target.matches('#create-node')) { // Проверяем, что клик не по кнопке добавления
             jm.setActiveNode(null);
             nodeAddButtonDisable();
-        }
-    });
-
-    document.addEventListener('click', (e) => {
-        const addButton = document.getElementById('create-node');
-        if (e.target === addButton && jm.activeNode) {
-            addNewNode(jm.activeNode.id);
         }
     });
 

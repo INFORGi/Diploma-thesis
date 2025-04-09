@@ -24,17 +24,15 @@ function initJsMind() {
     container.style.overflow = 'auto';
     container.style.background = 'inherit';
 
-    const options = {
-        container: 'jsmind_container',
-        theme: 'default',
-        onNodeAddButtonActive: nodeAddButtonActive, // Передаем функцию для показа кнопки
-        onNodeAddButtonDisable: nodeAddButtonDisable // Передаем функцию для скрытия кнопки
-    };
-
     try {
-        jm = new jsMind(options);
         const initialData = {
-            theme: 'default',
+            settings: {
+                container: 'jsmind_container',
+                theme: 'dark',
+                onNodeAddButtonActive: nodeAddButtonActive, // Передаем функцию для показа кнопки
+                onNodeAddButtonDisable: nodeAddButtonDisable, // Передаем функцию для скрытия кнопки
+                cascadeRemove: true,
+            },
             data: { 
                 id: 'root', 
                 topic: {
@@ -54,7 +52,8 @@ function initJsMind() {
             }
         };
 
-        jm.show(initialData);
+        jm = new jsMind(initialData);
+        jm.show();
     } catch (error) {
         console.error('Error initializing jsMind:', error);
     }

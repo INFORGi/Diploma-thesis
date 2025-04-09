@@ -44,27 +44,9 @@ function initJsMind() {
                     fontFamily: "Arial, sans-serif"
                 },
                 parent: null,
-                children: [
-                //     {
-                //     id: 'rodsot', 
-                //     topic: {
-                //         text: "Под тема",
-                //         color: "#333333",
-                //         fontSize: "14px",
-                //         fontFamily: "Arial, sans-serif"
-                //     },
-                //     parent: 'root',
-                //     children: [],
-                //     styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
-                //     figure: JSON.parse(JSON.stringify(FIGURE.TRAPEZOID)),
-                //     styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
-                //     styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
-                //     position: { x: 0, y: 0 },
-                //     draggable: true
-                // }
-            ],
+                children: [],
                 styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
-                figure: JSON.parse(JSON.stringify(FIGURE.RECTANGLE)),
+                figure: JSON.parse(JSON.stringify(FIGURE.TRAPEZOID)),
                 styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
                 styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
                 position: { x: 0, y: 0 },
@@ -515,11 +497,23 @@ document.addEventListener("DOMContentLoaded", function() {
         if (clickedNode) {
             jm.setActiveNode(clickedNode);
             nodeAddButtonActive(clickedNode.id);
-        } else if (!e.target.matches('#create-node')) { // Проверяем, что клик не по кнопке добавления
+        } else if (!e.target.matches('#create-node')) {
             jm.setActiveNode(null);
             nodeAddButtonDisable();
         }
     });
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Delete' || e.key === 'Del') {
+            const activeNode = jm.activeNode;
+            if (activeNode) {
+                jm.removeNode(activeNode.id);
+                markMapAsModified();
+            }
+        }
+    });
+
+    window.addEventListener('beforeunload', async (event) => { }); // Для предуприждения что не сохранено
 
     window.electron.onLoadSettings((settings) => {
         setTheme(settings.Theme);

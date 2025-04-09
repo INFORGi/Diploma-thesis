@@ -81,10 +81,10 @@ export const FIGURE = {
     TRAPEZOID: {
         tag: "path",
         dNormalized: [
-            { x: 0.2, y: 0, fixedOffset: 20 },    // Смещение на 20px от края
-            { x: 0.8, y: 0, fixedOffset: 20 },    // Смещение на 20px от края
-            { x: 1, y: 1 },
-            { x: 0, y: 1 }
+            { x: 0, y: 0, fixedOffset: 20 },    // Левый верхний угол, отступ 20px от левого края
+            { x: 1, y: 0, fixedOffset: 20 },    // Правый верхний угол, отступ 20px от правого края
+            { x: 1, y: 1 },                     // Правый нижний угол (полная ширина)
+            { x: 0, y: 1 }                      // Левый нижний угол (полная ширина)
         ],
         fill: "#ffffff",
         stroke: "#cccccc",
@@ -93,10 +93,10 @@ export const FIGURE = {
     SKEWED_RECTANGLE: {
         tag: "path",
         dNormalized: [
-            { x: 0.1, y: 0, fixedOffset: 15 },    // Смещение на 15px от края
-            { x: 1, y: 0 },
-            { x: 0.9, y: 1, fixedOffset: 15 },    // Смещение на 15px от края
-            { x: 0, y: 1 }
+            { x: 0, y: 0, fixedOffset: 15 },    // Левый верхний угол, отступ 15px от левого края
+            { x: 1, y: 0 },                     // Правый верхний угол (полная ширина)
+            { x: 1, y: 1, fixedOffset: 15 },    // Правый нижний угол, отступ 15px от правого края
+            { x: 0, y: 1 }                      // Левый нижний угол (полная ширина)
         ],
         fill: "#ffffff",
         stroke: "#cccccc",
@@ -105,11 +105,11 @@ export const FIGURE = {
     NOTCHED_RECTANGLE: {
         tag: "path",
         dNormalized: [
-            { x: 0, y: 0 },
-            { x: 1, y: 0 },
-            { x: 1, y: 1 },
-            { x: 0.2, y: 1, fixedOffset: 20 },    // Смещение на 20px от края
-            { x: 0, y: 0.8, fixedOffset: 20 }     // Смещение на 20px от края
+            { x: 0, y: 0 },                     // Левый верхний угол
+            { x: 1, y: 0 },                     // Правый верхний угол
+            { x: 1, y: 1 },                     // Правый нижний угол
+            { x: 0.2, y: 1 },                   // Точка выреза снизу (20% ширины)
+            { x: 0, y: 0.8, fixedOffset: 20 }   // Точка выреза слева, отступ 20px от нижнего края
         ],
         fill: "#ffffff",
         stroke: "#cccccc",

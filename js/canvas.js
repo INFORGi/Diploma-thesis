@@ -3,34 +3,29 @@ import { jsMind } from '../lib/jsmind/js/jsmind.js';
 import { TOPIC_STYLES, FIGURE, LINE_STYLES, INDENTATION_BETWEEN_BUTTON_NODE, MIND_MAP_THEMES, NODE_STYLES } from '../data/constants.js';
 
 let jm = null;
-let styleManager = null;
-let isMapModified = false;
-let currentMapPath = null;
-let currentFilePath = null;
-let navigationLock = null;
+let selectedNodes = new Set();
 
-function markMapAsModified() {
-    isMapModified = true;
+let isSelecting = false;
+let selectionBox = null;
+
+function init() {
+    initWindowDragging();
+    initButtonHandlers();
+    initDropdownStyleMenu();
+    initJsMind();
+    // initNode();
+    // initZoneBox();
+    initSelection();
 }
 
 function initJsMind() {
-    const container = document.getElementById('jsmind_container');
-    if (!container) {
-        console.error('Container not found: jsmind_container');
-        return;
-    }
-
-    container.style.position = 'absolute';
-    container.style.overflow = 'auto';
-    container.style.background = 'inherit';
-
     try {
         const initialData = {
             settings: {
                 container: 'jsmind_container',
                 theme: 'dark',
-                onNodeAddButtonActive: nodeAddButtonActive, // Передаем функцию для показа кнопки
-                onNodeAddButtonDisable: nodeAddButtonDisable, // Передаем функцию для скрытия кнопки
+                onNodeAddButtonActive: nodeAddButtonActive,
+                onNodeAddButtonDisable: nodeAddButtonDisable,
                 cascadeRemove: true,
             },
             data: { 
@@ -59,378 +54,348 @@ function initJsMind() {
     }
 }
 
-function applyTheme(themeName) {
-    if (!MIND_MAP_THEMES[themeName]) return;
-    
-    const theme = MIND_MAP_THEMES[themeName];
-    
-    const container = document.getElementById('jsmind_container');
-    if (container) {
-        container.style.backgroundColor = theme.canvas.backgroundColor;
-    }
-
-    const nodes = document.querySelectorAll('.jsmind-node');
-    nodes.forEach(node => {
-        if (node.dataset.isroot === 'true') {
-            const styles = {
-                backgroundColor: theme.root.backgroundColor,
-                borderColor: theme.root.borderColor,
-                borderWidth: '2px',
-                boxShadow: theme.node.shadow
-            };
-            Object.assign(node.style, styles);
-            
-            const topic = node.querySelector('.node-topic');
-            if (topic) {
-                topic.style.color = theme.root.color || theme.node.color;
-            }
-            
-            if (!node.nodeData) node.nodeData = {};
-            if (!node.nodeData.nodeStyle) node.nodeData.nodeStyle = {};
-            if (!node.nodeData.topicStyle) node.nodeData.topicStyle = {};
-            
-            Object.assign(node.nodeData.nodeStyle, styles);
-            node.nodeData.topicStyle.color = theme.root.color || theme.node.color;
-        } else {
-            const styles = {
-                backgroundColor: theme.node.backgroundColor,
-                borderColor: theme.node.borderColor,
-                borderWidth: theme.node.borderWidth,
-                boxShadow: theme.node.shadow
-            };
-            Object.assign(node.style, styles);
-            
-            const topic = node.querySelector('.node-topic');
-            if (topic) {
-                topic.style.color = theme.node.color;
-            }
-            
-            if (!node.nodeData) node.nodeData = {};
-            Object.assign(node.nodeData.nodeStyle || {}, styles);
-            if (node.nodeData.topicStyle) {
-                node.nodeData.topicStyle.color = theme.node.color;
-            }
-        }
-    });
-
-    if (styleManager && styleManager.currentNode) {
-        styleManager.updateFormValues();
-    }
-
-    if (jm && jm.options) {
-        jm.options.view.line_color = theme.line.color;
-        jm.options.view.line_width = theme.line.width;
-        jm.drawLines();
-    }
-}
-
-function init() {
-    console.log('Initializing application...');
-    initWindowDragging();
-    initButtonHandlers();
-    initDropdownStyleMenu();
-    initJsMind();
-}
-
-function initMapThemeMenu() {
-    const themeButtons = document.querySelectorAll('.map-theme-button');
-    themeButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const themeName = button.dataset.theme;
-            if (themeName && MIND_MAP_THEMES[themeName] && jm) {
-                console.log('Changing theme to:', themeName);
-                jm.options.theme = themeName;
-                applyTheme(themeName);
-            }
-        });
-    });
-}
-
-async function exportMapImage() {
-    if (!jm) return null;
-    try {
-        const container = document.querySelector('#jsmind_container');
-        const svgElement = container.querySelector('svg');
-        if (!svgElement || !container) return null;
-
-        const nodes = container.querySelectorAll('.jsmind-node');
-        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+function initNode() {
+    document.addEventListener('mousedown', (e) => {
+        if (!jm) return;
         
-        const lines = svgElement.querySelectorAll('path');
-        [...nodes, ...lines].forEach(element => {
-            const rect = element.getBoundingClientRect();
-            minX = Math.min(minX, rect.left);
-            minY = Math.min(minY, rect.top);
-            maxX = Math.max(maxX, rect.right);
-            maxY = Math.max(maxY, rect.bottom);
-        });
-
-        const padding = 50;
-        minX -= padding;
-        minY -= padding;
-        maxX += padding;
-        maxY += padding;
-
-        const width = maxX - minX;
-        const height = maxY - minY;
-
-        const newSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        newSvg.setAttribute('width', width);
-        newSvg.setAttribute('height', height);
-        newSvg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-
-        const bgColor = window.getComputedStyle(container).backgroundColor;
-        const background = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        background.setAttribute('width', '100%');
-        background.setAttribute('height', '100%');
-        background.setAttribute('fill', bgColor);
-        newSvg.appendChild(background);
-
-        const contentGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        contentGroup.setAttribute('transform', `translate(${-minX}, ${-minY})`);
-
-        const linesGroup = svgElement.querySelector('g');
-        if (linesGroup) {
-            const newGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            
-            Array.from(linesGroup.attributes).forEach(attr => {
-                newGroup.setAttribute(attr.name, attr.value);
-            });
-
-            linesGroup.querySelectorAll('path').forEach(path => {
-                const newPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                Array.from(path.attributes).forEach(attr => {
-                    newPath.setAttribute(attr.name, attr.value);
-                });
-                newPath.setAttribute('stroke', path.getAttribute('stroke') || '#666');
-                newPath.setAttribute('stroke-width', path.getAttribute('stroke-width') || '1');
-                newPath.setAttribute('fill', 'none');
-                newGroup.appendChild(newPath);
-            });
-
-            contentGroup.appendChild(newGroup);
-        }
-
-        nodes.forEach(node => {
-            const rect = node.getBoundingClientRect();
-            const nodeGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            const computedStyle = window.getComputedStyle(node);
-            
-            const nodeRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            nodeRect.setAttribute('x', rect.left);
-            nodeRect.setAttribute('y', rect.top);
-            nodeRect.setAttribute('width', rect.width);
-            nodeRect.setAttribute('height', rect.height);
-            nodeRect.setAttribute('rx', computedStyle.borderRadius);
-            nodeRect.setAttribute('ry', computedStyle.borderRadius);
-            nodeRect.setAttribute('fill', computedStyle.backgroundColor);
-            nodeRect.setAttribute('stroke', computedStyle.borderColor);
-            nodeRect.setAttribute('stroke-width', computedStyle.borderWidth);
-            
-            const topic = node.querySelector('.node-topic');
-            if (topic) {
-                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                text.setAttribute('x', rect.left + 10);
-                text.setAttribute('y', rect.top + rect.height/2 + 5);
-                text.setAttribute('fill', computedStyle.color);
-                text.setAttribute('font-family', computedStyle.fontFamily);
-                text.setAttribute('font-size', computedStyle.fontSize);
-                text.textContent = topic.textContent;
-                
-                if (computedStyle.fontWeight === 'bold') {
-                    text.setAttribute('font-weight', 'bold');
-                }
-                if (computedStyle.fontStyle === 'italic') {
-                    text.setAttribute('font-style', 'italic');
-                }
-                
-                nodeGroup.appendChild(nodeRect);
-                nodeGroup.appendChild(text);
+        const clickedNode = e.target.closest('.jsmind-node');
+        if (clickedNode) {
+            if (!e.ctrlKey) {
+                selectedNodes.clear();
+                selectedNodes.add(clickedNode.id);
+            } else {
+                selectedNodes.add(clickedNode.id);
             }
-            
-            contentGroup.appendChild(nodeGroup);
-        });
 
-        newSvg.appendChild(contentGroup);
+            jm.setActiveNode([...selectedNodes]);
 
-        const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-        const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
-        style.textContent = `
-            path {
-                fill: none;
-                stroke-linecap: round;
-                stroke-linejoin: round;
+            if (selectedNodes.size === 1) {
+                nodeAddButtonActive();
+            } else {
+                nodeAddButtonDisable();
             }
-            ${MIND_MAP_THEMES[jm.options.theme]?.line ? `
-                path {
-                    stroke: ${MIND_MAP_THEMES[jm.options.theme].line.color};
-                    stroke-width: ${MIND_MAP_THEMES[jm.options.theme].line.width}px;
-                }
-            ` : ''}
-        `;
-        defs.appendChild(style);
-        newSvg.insertBefore(defs, newSvg.firstChild);
-
-        return {
-            svg: new XMLSerializer().serializeToString(newSvg)
-        };
-    } catch (error) {
-        console.error('Error exporting map image:', error);
-        return null;
-    }
-}
-
-async function saveMap() {
-    if (!jm) {
-        console.error('jsMind instance is not initialized');
-        return false;
-    }
-
-    try {
-        const mapData = {
-            theme: jm.options.theme,
-            data: jm.getNodeData(jm.get_root())
-        };
-
-        const savePath = currentFilePath || `mindmap_${Date.now()}`;
-        const saveData = {
-            mapData,
-            mapPath: savePath,
-            isExisting: Boolean(currentFilePath),
-            imageData: await exportMapImage()
-        };
-
-        const result = await window.electron.saveMap(saveData);
-
-        if (result.success) {
-            isMapModified = false;
-            if (!currentFilePath) {
-                currentFilePath = result.path;
-                window.electron.showNotification('Карта сохранена');
-            }
-            return true;
-        }
-        throw new Error(result.error);
-    } catch (error) {
-        console.error('Save error:', error);
-        window.electron.showNotification('Ошибка при сохранении: ' + error.message, 'error');
-        return false;
-    }
-}
-
-function collectNodeData(nodeId) {
-    const node = jm.nodes.get(nodeId);
-    if (!node) {
-        return null;
-    }
-
-    const nodeData = {
-        id: nodeId,
-        topic: node.data.topic || '',
-        direction: node.data.direction || 'right',
-        type: node.data.type || 'node',
-        expanded: node.expanded,
-        children: []
-    };
-
-    if (node.data) {
-        Object.assign(nodeData, Object.assign({}, node.data));
-    }
-
-    if (node.element) {
-        const computedStyle = window.getComputedStyle(node.element);
-        const nodeStyle = {
-            backgroundColor: computedStyle.backgroundColor,
-            borderColor: computedStyle.borderColor,
-            borderWidth: computedStyle.borderWidth,
-            borderStyle: computedStyle.borderStyle,
-            borderRadius: computedStyle.borderRadius,
-            boxShadow: computedStyle.boxShadow
-        };
-
-        nodeData.style = Object.assign(
-            {},
-            nodeStyle,
-            node.element.nodeData?.nodeStyle || {}
-        );
-
-        const topic = node.element.querySelector('.node-topic');
-        if (topic) {
-            const computedTopicStyle = window.getComputedStyle(topic);
-            const topicStyle = {
-                color: computedTopicStyle.color,
-                fontSize: computedTopicStyle.fontSize,
-                fontFamily: computedTopicStyle.fontFamily,
-                fontWeight: computedTopicStyle.fontWeight,
-                fontStyle: computedTopicStyle.fontStyle,
-                textDecoration: computedTopicStyle.textDecoration
-            };
-
-            nodeData.topicStyle = Object.assign(
-                {},
-                topicStyle,
-                node.element.nodeData?.topicStyle || {}
-            );
-        }
-    }
-
-    node.children.forEach(childId => {
-        const childData = collectNodeData(childId);
-        if (childData) {
-            nodeData.children.push(childData);
+        } else if (!e.target.matches('#create-node')) {
+            selectedNodes.clear();
+            jm.setActiveNode([]);
+            nodeAddButtonDisable();
         }
     });
 
-    return nodeData;
-}
-
-async function handleUnsavedChanges() {
-    if (isMapModified) {
-        const choice = await window.electron.showSaveDialog();
-        if (choice === 'save') {
-            return await saveMap();
-        } else if (choice === 'dont-save') {
-            return true;
+    document.addEventListener('click', (e) => {
+        if (e.target.id === 'create-node' && selectedNodes.size === 1) {
+            e.stopPropagation();
+            const parentId = Array.from(selectedNodes)[0];
+            addNewNode(parentId);
         }
-        const backButton = document.getElementById('back-button');
-        if (backButton) {
-            backButton.disabled = false;
+
+        if (e.target.id === 'jsmind_container') {
+            jm.setActiveNode();
         }
-        return false;
-    }
-    return true;
-}
+    });
 
-function unlockBackButton() {
-    const backButton = document.getElementById('back-button');
-    if (backButton) {
-        backButton.disabled = false;
-        navigationLock = null;
-    }
-}
-
-async function navigateBack() {
-    const backButton = document.getElementById('back-button');
-    if (!backButton) return;
-    
-    backButton.disabled = true;
-    try {
-        const result = await window.electron.goBack();
-        if (!result) {
-            backButton.disabled = false;
+    // Обработчик клавиш для удаления
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Delete' || e.key === 'Del') {
+            if (jm.activeNode.size > 0) {
+                jm.removeNode();
+            }
         }
-    } catch (error) {
-        console.error('Navigation error:', error);
-        backButton.disabled = false;
+    });
+}
+
+function initZoneBox() {
+    selectionBox = document.createElement('div');
+    selectionBox.className = 'selection-box';
+    document.getElementById('jsmind_container').appendChild(selectionBox);
+
+    let startX, startY;
+
+    document.addEventListener('mousedown', (e) => {
+        if (e.target.closest('.jsmind-node') || e.button !== 0) return;
+        
+        isSelecting = true;
+        startX = e.pageX;
+        startY = e.pageY;
+        
+        selectionBox.style.left = startX + 'px';
+        selectionBox.style.top = startY + 'px';
+        selectionBox.style.width = '0';
+        selectionBox.style.height = '0';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isSelecting) return;
+
+        e.preventDefault();
+
+        const currentX = e.pageX;
+        const currentY = e.pageY;
+        
+        const left = Math.min(startX, currentX);
+        const top = Math.min(startY, currentY);
+        const width = Math.abs(currentX - startX);
+        const height = Math.abs(currentY - startY);
+
+        selectionBox.style.display = 'block';
+        selectionBox.style.left = left + 'px';
+        selectionBox.style.top = top + 'px';
+        selectionBox.style.width = width + 'px';
+        selectionBox.style.height = height + 'px';
+
+        const selectionRect = {
+            left,
+            top,
+            right: left + width,
+            bottom: top + height
+        };
+
+        document.querySelectorAll('.jsmind-node').forEach(node => {
+            const nodeRect = node.getBoundingClientRect();
+            const adjustedNodeRect = {
+                left: nodeRect.left + window.pageXOffset,
+                top: nodeRect.top + window.pageYOffset,
+                right: nodeRect.right + window.pageXOffset,
+                bottom: nodeRect.bottom + window.pageYOffset
+            };
+
+            if (isRectIntersecting(selectionRect, adjustedNodeRect)) {
+                selectedNodes.add(node.id);
+            } else if (!e.ctrlKey) {
+                selectedNodes.delete(node.id);
+            }
+        });
+
+        if (selectedNodes.size > 0) {
+            jm.setActiveNode(new Set(selectedNodes));
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (!isSelecting) return;
+        
+        isSelecting = false;
+        selectionBox.style.display = 'none';
+    });
+}
+
+function initSelection() {
+    const selectionBox = document.createElement('div');
+    selectionBox.className = 'selection-box';
+    document.getElementById('jsmind_container').appendChild(selectionBox);
+
+    let startX, startY;
+    let isSelecting = false;
+    let justFinishedSelecting = false; // Флаг для отслеживания завершения выделения
+
+    document.addEventListener('mousedown', (e) => {
+        if (!jm) return;
+
+        console.log('mousedown:', {
+            target: e.target.id || e.target.className,
+            ctrlKey: e.ctrlKey,
+            button: e.button,
+            selectedNodesBefore: [...selectedNodes],
+            activeNodeBefore: [...jm.activeNode]
+        });
+
+        const clickedNode = e.target.closest('.jsmind-node');
+        
+        if (clickedNode) {
+            if (!e.ctrlKey) {
+                selectedNodes.clear();
+                selectedNodes.add(clickedNode.id);
+            } else {
+                if (selectedNodes.has(clickedNode.id)) {
+                    selectedNodes.delete(clickedNode.id);
+                } else {
+                    selectedNodes.add(clickedNode.id);
+                }
+            }
+            jm.setActiveNode([...selectedNodes]);
+
+            console.log('mousedown on node completed:', {
+                selectedNodes: [...selectedNodes],
+                activeNode: [...jm.activeNode]
+            });
+
+            if (selectedNodes.size === 1) {
+                nodeAddButtonActive();
+            } else {
+                nodeAddButtonDisable();
+            }
+            e.stopPropagation();
+            return;
+        }
+
+        if (e.button === 0 && !e.target.matches('#create-node')) {
+            isSelecting = true;
+            startX = e.pageX;
+            startY = e.pageY;
+
+            if (!e.ctrlKey) {
+                selectedNodes.clear();
+                jm.setActiveNode([]);
+            }
+
+            selectionBox.style.left = startX + 'px';
+            selectionBox.style.top = startY + 'px';
+            selectionBox.style.width = '0';
+            selectionBox.style.height = '0';
+            selectionBox.style.display = 'block';
+        }
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isSelecting) return;
+
+        e.preventDefault();
+
+        const currentX = e.pageX;
+        const currentY = e.pageY;
+        
+        const left = Math.min(startX, currentX);
+        const top = Math.min(startY, currentY);
+        const width = Math.abs(currentX - startX);
+        const height = Math.abs(currentY - startY);
+
+        selectionBox.style.left = left + 'px';
+        selectionBox.style.top = top + 'px';
+        selectionBox.style.width = width + 'px';
+        selectionBox.style.height = height + 'px';
+
+        const selectionRect = {
+            left,
+            top,
+            right: left + width,
+            bottom: top + height
+        };
+
+        document.querySelectorAll('.jsmind-node').forEach(node => {
+            const nodeRect = node.getBoundingClientRect();
+            const adjustedNodeRect = {
+                left: nodeRect.left + window.pageXOffset,
+                top: nodeRect.top + window.pageYOffset,
+                right: nodeRect.right + window.pageXOffset,
+                bottom: nodeRect.bottom + window.pageYOffset
+            };
+
+            if (isRectIntersecting(selectionRect, adjustedNodeRect)) {
+                selectedNodes.add(node.id);
+            } else if (!e.ctrlKey) {
+                selectedNodes.delete(node.id);
+            }
+        });
+
+        if (selectedNodes.size > 0) {
+            jm.setActiveNode(new Set(selectedNodes));
+        }
+    });
+
+    document.addEventListener('mouseup', (e) => {
+        console.log('mouseup:', {
+            target: e.target.id || e.target.className,
+            isSelecting: isSelecting,
+            selectedNodesBefore: [...selectedNodes],
+            activeNodeBefore: [...jm.activeNode]
+        });
+
+        if (isSelecting) {
+            isSelecting = false;
+            justFinishedSelecting = true; // Устанавливаем флаг
+            selectionBox.style.display = 'none';
+
+            if (selectedNodes.size > 0) {
+                jm.setActiveNode(new Set(selectedNodes));
+                if (selectedNodes.size === 1) {
+                    nodeAddButtonActive();
+                } else {
+                    nodeAddButtonDisable();
+                }
+            } else {
+                jm.setActiveNode([]);
+                nodeAddButtonDisable();
+            }
+
+            console.log('mouseup completed:', {
+                selectedNodes: [...selectedNodes],
+                activeNode: [...jm.activeNode]
+            });
+            e.stopPropagation();
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        console.log('click:', {
+            target: e.target.id || e.target.className,
+            selectedNodesBefore: [...selectedNodes],
+            activeNodeBefore: [...jm.activeNode],
+            justFinishedSelecting: justFinishedSelecting
+        });
+
+        if (e.target.id === 'create-node' && selectedNodes.size === 1) {
+            e.stopPropagation();
+            const parentId = Array.from(selectedNodes)[0];
+            addNewNode(parentId);
+            return;
+        }
+
+        // Не сбрасываем выделение сразу после завершения области
+        if (e.target.id === 'jsmind_container' && !isSelecting && !justFinishedSelecting) {
+            selectedNodes.clear();
+            jm.setActiveNode([]);
+            nodeAddButtonDisable();
+            console.log('click reset completed:', {
+                selectedNodes: [...selectedNodes],
+                activeNode: [...jm.activeNode]
+            });
+        }
+
+        // Сбрасываем флаг после обработки клика
+        justFinishedSelecting = false;
+    });
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Delete' || e.key === 'Del') {
+            if (jm.activeNode.size > 0) {
+                jm.removeNode();
+            }
+        }
+    });
+
+    function isRectIntersecting(rect1, rect2) {
+        return rect1.left < rect2.right &&
+               rect1.right > rect2.left &&
+               rect1.top < rect2.bottom &&
+               rect1.bottom > rect2.top;
     }
 }
 
-function nodeAddButtonActive(nodeId) {
-    const node = jm.nodes.get(nodeId)?.element;
-    if (!node) return;
+document.addEventListener("DOMContentLoaded", function() {
+    init();
+
+    // Для предуприждения что не сохранено
+    window.addEventListener('beforeunload', async (event) => { }); 
+    // Настройка темы
+    window.electron.onLoadSettings((settings) => { setTheme(settings.Theme); });
+});
+
+function nodeAddButtonActive() {
+    if (selectedNodes.size !== 1) {
+        nodeAddButtonDisable();
+        return;
+    }
+
+    const node = jm.nodes.get(Array.from(jm.activeNode)[0])?.element;
+    if (!node) {
+        console.warn('nodeAddButtonActive: No node found for activeNode[0]');
+        return;
+    }
     
     const buttonAdd = document.getElementById("create-node");
-    if (!buttonAdd) return;
+    if (!buttonAdd) {
+        console.warn('nodeAddButtonActive: Button #create-node not found');
+        return;
+    }
 
     const nodeRect = node.getBoundingClientRect();
     const buttonRect = buttonAdd.getBoundingClientRect();
@@ -443,7 +408,10 @@ function nodeAddButtonActive(nodeId) {
         buttonX = nodeRect.right + offsetX;
     } else {
         const parentNode = document.getElementById(nodeData.parent);
-        if (!parentNode) return;
+        if (!parentNode) {
+            console.warn('nodeAddButtonActive: Parent node not found');
+            return;
+        }
         
         const parentRect = parentNode.getBoundingClientRect();
         if (parentRect.left - nodeRect.left > 0) {
@@ -471,53 +439,5 @@ function addNewNode(parentId) {
         return;
     }
     
-    console.log('Adding new node to parent:', parentId); // Отладочный лог
     jm.addChild(parentId);
-    markMapAsModified();
 }
-
-document.addEventListener("DOMContentLoaded", function() {
-    init();
-    
-    // Обработчик клика для добавления узла (перемещен выше)
-    document.addEventListener('click', (e) => {
-        const addButton = document.getElementById('create-node');
-        if (e.target === addButton && jm && jm.activeNode) {
-            e.stopPropagation(); // Предотвращаем всплытие события
-            addNewNode(jm.activeNode.id);
-        }
-    });
-
-    // Обработчик mousedown для выделения узлов
-    document.addEventListener('mousedown', (e) => {
-        if (!jm) return;
-        
-        const clickedNode = e.target.closest('.jsmind-node');
-        if (clickedNode) {
-            jm.setActiveNode(clickedNode);
-            nodeAddButtonActive(clickedNode.id);
-        } else if (!e.target.matches('#create-node')) {
-            jm.setActiveNode(null);
-            nodeAddButtonDisable();
-        }
-    });
-
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Delete' || e.key === 'Del') {
-            const activeNode = jm.activeNode;
-            if (activeNode) {
-                jm.removeNode(activeNode.id);
-                markMapAsModified();
-            }
-        }
-    });
-
-    window.addEventListener('beforeunload', async (event) => { }); // Для предуприждения что не сохранено
-
-    window.electron.onLoadSettings((settings) => {
-        setTheme(settings.Theme);
-        if (jm && settings.MapTheme) {
-            changeMapTheme(settings.MapTheme);
-        }
-    });
-});

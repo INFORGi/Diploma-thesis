@@ -78,3 +78,12 @@
     min-width: inherit;
     min-height: inherit;
 }
+
+.selection-box {
+    position: fixed;
+    border: 1px solid #3498db;
+    background-color: rgba(52, 152, 219, 0.2);
+    pointer-events: none;
+    z-index: 1000;
+    display: none;
+}

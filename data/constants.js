@@ -146,14 +146,22 @@ export const MIND_MAP_THEMES = {
         node: { backgroundColor: '#ffffff', borderColor: '#cccccc' },
         topic: { color: '#333333' },
         line: { color: '#555555', width: '2px' },
-        borderColorNode: '2px solid #0267fd' 
+        selectBorderColorNode: '2px solid #0267fd',
+        selectZone: {
+            backgroundColor: 'rgba(26, 91, 189, 0.2)',
+            border: '1px dashed #0000FF'
+        }
     },
     dark: {
         canvas: { backgroundColor: '#1a1a1a' },
         node: { backgroundColor: '#2d2d2d', borderColor: '#404040' },
         topic: { color: '#e0e0e0' },
         line: { color: '#606060', width: '2px' },
-        borderColorNode: '2px solid #4a9eff'
+        selectBorderColorNode: '2px solid rgb(255, 74, 134)',
+        selectZone: {
+            backgroundColor: 'rgba(104, 172, 250, 0.2)',
+            border: '1px dashed rgb(174, 174, 255)'
+        }
     }
 };
 

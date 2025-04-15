@@ -34,8 +34,8 @@ export const LINE_STYLES = {
 export const TOPIC_STYLES = {
     position: "relative",
     zIndex: "2",
-    width: "100%",
-    height: "100%",
+    // width: "100%",
+    // height: "100%",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -46,17 +46,17 @@ export const TOPIC_STYLES = {
     wordWrap: "break-word",
     overflow: "hidden",
     boxSizing: "border-box",
-    maxHeight: "100%"
+    // maxHeight: "100%"
 };
 
 export const NODE_STYLES = {
     position: "absolute",
     backgroundColor: "transparent",
-    minWidth: "150px", 
-    minHeight: "50px",    
+    // minWidth: "150px", 
+    // minHeight: "50px",    
     width: "auto",
     height: "auto",
-    maxWidth: "300px", 
+    // maxWidth: "300px", 
     borderRadius: '5px',
     cursor: "pointer",
     userSelect: "none", 
@@ -70,50 +70,72 @@ export const NODE_STYLES = {
 
 export const FIGURE = {
     RECTANGLE: {
-        tag: "rect",
-        fill: "#ffffff",
-        stroke: "#cccccc",
+        tag: "path",
+        dNormalized: [
+            { x: 0, y: 0 },
+            { x: 1, y: 0 },
+            { x: 1, y: 1 },
+            { x: 0, y: 1 }
+        ],
+        fill: null,
+        stroke: null,
         strokeWidth: "1",
-        rx: "10",
-        width: "100%",
-        height: "100%"
+        rx: "10"
     },
     TRAPEZOID: {
         tag: "path",
         dNormalized: [
-            { x: 0, y: 0, fixedOffset: 20 },    // Левый верхний угол, отступ 20px от левого края
-            { x: 1, y: 0, fixedOffset: 20 },    // Правый верхний угол, отступ 20px от правого края
-            { x: 1, y: 1 },                     // Правый нижний угол (полная ширина)
-            { x: 0, y: 1 }                      // Левый нижний угол (полная ширина)
+            { x: 0, y: 0, fixedOffset: 20 },
+            { x: 1, y: 0, fixedOffset: 20 },    
+            { x: 1, y: 1 },                    
+            { x: 0, y: 1 }                      
         ],
-        fill: "#ffffff",
-        stroke: "#cccccc",
-        strokeWidth: "1"
+        fill: null,
+        stroke: null,
+        strokeWidth: "1",
+        rx: "10"
     },
     SKEWED_RECTANGLE: {
         tag: "path",
         dNormalized: [
-            { x: 0, y: 0, fixedOffset: 15 },    // Левый верхний угол, отступ 15px от левого края
-            { x: 1, y: 0 },                     // Правый верхний угол (полная ширина)
-            { x: 1, y: 1, fixedOffset: 15 },    // Правый нижний угол, отступ 15px от правого края
-            { x: 0, y: 1 }                      // Левый нижний угол (полная ширина)
+            { x: 0, y: 0, fixedOffset: 5 },   
+            { x: 1, y: 0 },                    
+            { x: 1, y: 1, fixedOffset: 5 },  
+            { x: 0, y: 1 }                      
         ],
-        fill: "#ffffff",
-        stroke: "#cccccc",
-        strokeWidth: "1"
+        fill: null,
+        stroke: null,
+        strokeWidth: "1",
+        rx: "0"
     },
     NOTCHED_RECTANGLE: {
         tag: "path",
         dNormalized: [
-            { x: 0, y: 0 },                     // Левый верхний угол
-            { x: 1, y: 0 },                     // Правый верхний угол
-            { x: 1, y: 1 },                     // Правый нижний угол
-            { x: 0.2, y: 1 },                   // Точка выреза снизу (20% ширины)
-            { x: 0, y: 0.8, fixedOffset: 20 }   // Точка выреза слева, отступ 20px от нижнего края
+            { x: 0, y: 0 },                    
+            { x: 1, y: 0 },                    
+            { x: 1, y: 1 },                     
+            { x: 0.2, y: 1 },                   
+            { x: 0, y: 0.8, fixedOffset: 20 }   
         ],
-        fill: "#ffffff",
-        stroke: "#cccccc",
+        fill: null,
+        stroke: null,
+        rx: "0",
         strokeWidth: "1"
+    },
+    FLATTENED_HEXAGON: {
+        tag: "path",
+        dNormalized: [
+            { x: 0.1, y: 0.5 },    // левая середина
+            { x: 0.25, y: 0 },     // верхний левый угол
+            { x: 0.75, y: 0 },     // верхний правый угол
+            { x: 0.9, y: 0.5 },    // правая середина
+            { x: 0.75, y: 1 },     // нижний правый угол
+            { x: 0.25, y: 1 },     // нижний левый угол
+        ],
+        fill: null,
+        stroke: null,
+        strokeWidth: "1",
+        rx: "10"
     }
 };
 
@@ -121,7 +143,7 @@ export const DEFAULT_NODE_DATA = {
     id: null,
     topic: {
         text: 'Текст',
-        color: "#333333",
+        color: '#333',
         fontSize: "14px",
         fontFamely: "Arial, sans-serif"
     },
@@ -146,6 +168,7 @@ export const MIND_MAP_THEMES = {
         node: { backgroundColor: '#ffffff', borderColor: '#cccccc' },
         topic: { color: '#333333' },
         line: { color: '#555555', width: '2px' },
+        buttonAdd: { backgroundColor: 'rgb(26, 91, 189)', color: '#fff' },
         selectBorderColorNode: '2px solid #0267fd',
         selectZone: {
             backgroundColor: 'rgba(26, 91, 189, 0.2)',
@@ -157,6 +180,7 @@ export const MIND_MAP_THEMES = {
         node: { backgroundColor: '#2d2d2d', borderColor: '#404040' },
         topic: { color: '#e0e0e0' },
         line: { color: '#606060', width: '2px' },
+        buttonAdd: { backgroundColor: 'rgb(142, 5, 155)', color: '#fff' },
         selectBorderColorNode: '2px solid rgb(255, 74, 134)',
         selectZone: {
             backgroundColor: 'rgba(104, 172, 250, 0.2)',
@@ -168,3 +192,4 @@ export const MIND_MAP_THEMES = {
 export const INDENTATION_BETWEEN_BUTTON_NODE = 20;
 export const SPACING_WIDTH = 100;
 export const SPACING_HEIGHT = 50;
+export const CANVAS_SIZE_BUTTON = 15;

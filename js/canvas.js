@@ -1,21 +1,19 @@
 import { initWindowDragging, initButtonHandlers, initDropdownStyleMenu, setTheme } from './windowManager.js';
 import { jsMind } from '../lib/jsmind/js/jsmind.js';
-import { TOPIC_STYLES, FIGURE, LINE_STYLES, INDENTATION_BETWEEN_BUTTON_NODE, MIND_MAP_THEMES, NODE_STYLES } from '../data/constants.js';
+import { TOPIC_STYLES, FIGURE, LINE_STYLES, INDENTATION_BETWEEN_BUTTON_NODE, MIND_MAP_THEMES, NODE_STYLES, CANVAS_SIZE_BUTTON } from '../data/constants.js';
 
 let jm = null;
 let selectedNodes = new Set();
 
-let isSelecting = false;
-let selectionBox = null;
 
 function init() {
     initWindowDragging();
     initButtonHandlers();
     initDropdownStyleMenu();
     initJsMind();
-    // initNode();
-    // initZoneBox();
+    initButtonMenu();
     initSelection();
+    initShapeButtons();
 }
 
 function initJsMind() {
@@ -32,14 +30,14 @@ function initJsMind() {
                 id: 'root', 
                 topic: {
                     text: 'Главная тема',
-                    color: "#333333",
+                    color: "#aa3322",
                     fontSize: "14px",
                     fontFamily: "Arial, sans-serif"
                 },
                 parent: null,
                 children: [],
                 styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
-                figure: JSON.parse(JSON.stringify(FIGURE.TRAPEZOID)),
+                figure: {...JSON.parse(JSON.stringify(FIGURE.TRAPEZOID)), fill: "#0e0f"},
                 styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
                 styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
                 position: { x: 0, y: 0 },
@@ -49,133 +47,10 @@ function initJsMind() {
 
         jm = new jsMind(initialData);
         jm.show();
+        // jm.swapTheme();
     } catch (error) {
         console.error('Error initializing jsMind:', error);
     }
-}
-
-function initNode() {
-    document.addEventListener('mousedown', (e) => {
-        if (!jm) return;
-        
-        const clickedNode = e.target.closest('.jsmind-node');
-        if (clickedNode) {
-            if (!e.ctrlKey) {
-                selectedNodes.clear();
-                selectedNodes.add(clickedNode.id);
-            } else {
-                selectedNodes.add(clickedNode.id);
-            }
-
-            jm.setActiveNode([...selectedNodes]);
-
-            if (selectedNodes.size === 1) {
-                nodeAddButtonActive();
-            } else {
-                nodeAddButtonDisable();
-            }
-        } else if (!e.target.matches('#create-node')) {
-            selectedNodes.clear();
-            jm.setActiveNode([]);
-            nodeAddButtonDisable();
-        }
-    });
-
-    document.addEventListener('click', (e) => {
-        if (e.target.id === 'create-node' && selectedNodes.size === 1) {
-            e.stopPropagation();
-            const parentId = Array.from(selectedNodes)[0];
-            addNewNode(parentId);
-        }
-
-        if (e.target.id === 'jsmind_container') {
-            jm.setActiveNode();
-        }
-    });
-
-    // Обработчик клавиш для удаления
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Delete' || e.key === 'Del') {
-            if (jm.activeNode.size > 0) {
-                jm.removeNode();
-            }
-        }
-    });
-}
-
-function initZoneBox() {
-    selectionBox = document.createElement('div');
-    selectionBox.className = 'selection-box';
-    document.getElementById('jsmind_container').appendChild(selectionBox);
-
-    let startX, startY;
-
-    document.addEventListener('mousedown', (e) => {
-        if (e.target.closest('.jsmind-node') || e.button !== 0) return;
-        
-        isSelecting = true;
-        startX = e.pageX;
-        startY = e.pageY;
-        
-        selectionBox.style.left = startX + 'px';
-        selectionBox.style.top = startY + 'px';
-        selectionBox.style.width = '0';
-        selectionBox.style.height = '0';
-    });
-
-    document.addEventListener('mousemove', (e) => {
-        if (!isSelecting) return;
-
-        e.preventDefault();
-
-        const currentX = e.pageX;
-        const currentY = e.pageY;
-        
-        const left = Math.min(startX, currentX);
-        const top = Math.min(startY, currentY);
-        const width = Math.abs(currentX - startX);
-        const height = Math.abs(currentY - startY);
-
-        selectionBox.style.display = 'block';
-        selectionBox.style.left = left + 'px';
-        selectionBox.style.top = top + 'px';
-        selectionBox.style.width = width + 'px';
-        selectionBox.style.height = height + 'px';
-
-        const selectionRect = {
-            left,
-            top,
-            right: left + width,
-            bottom: top + height
-        };
-
-        document.querySelectorAll('.jsmind-node').forEach(node => {
-            const nodeRect = node.getBoundingClientRect();
-            const adjustedNodeRect = {
-                left: nodeRect.left + window.pageXOffset,
-                top: nodeRect.top + window.pageYOffset,
-                right: nodeRect.right + window.pageXOffset,
-                bottom: nodeRect.bottom + window.pageYOffset
-            };
-
-            if (isRectIntersecting(selectionRect, adjustedNodeRect)) {
-                selectedNodes.add(node.id);
-            } else if (!e.ctrlKey) {
-                selectedNodes.delete(node.id);
-            }
-        });
-
-        if (selectedNodes.size > 0) {
-            jm.setActiveNode(new Set(selectedNodes));
-        }
-    });
-
-    document.addEventListener('mouseup', () => {
-        if (!isSelecting) return;
-        
-        isSelecting = false;
-        selectionBox.style.display = 'none';
-    });
 }
 
 function initSelection() {
@@ -185,18 +60,10 @@ function initSelection() {
 
     let startX, startY;
     let isSelecting = false;
-    let justFinishedSelecting = false; // Флаг для отслеживания завершения выделения
+    let justFinishedSelecting = false;
 
     document.addEventListener('mousedown', (e) => {
         if (!jm) return;
-
-        console.log('mousedown:', {
-            target: e.target.id || e.target.className,
-            ctrlKey: e.ctrlKey,
-            button: e.button,
-            selectedNodesBefore: [...selectedNodes],
-            activeNodeBefore: [...jm.activeNode]
-        });
 
         const clickedNode = e.target.closest('.jsmind-node');
         
@@ -213,11 +80,6 @@ function initSelection() {
             }
             jm.setActiveNode([...selectedNodes]);
 
-            console.log('mousedown on node completed:', {
-                selectedNodes: [...selectedNodes],
-                activeNode: [...jm.activeNode]
-            });
-
             if (selectedNodes.size === 1) {
                 nodeAddButtonActive();
             } else {
@@ -227,7 +89,8 @@ function initSelection() {
             return;
         }
 
-        if (e.button === 0 && !e.target.matches('#create-node')) {
+        if (e.button === 0 && !e.target.matches('#create-node') && e.ctrlKey) { // Добавил клавишу Ctrl для создания узла
+                                                                                // Может быть удалю
             isSelecting = true;
             startX = e.pageX;
             startY = e.pageY;
@@ -301,7 +164,7 @@ function initSelection() {
 
         if (isSelecting) {
             isSelecting = false;
-            justFinishedSelecting = true; // Устанавливаем флаг
+            justFinishedSelecting = true;
             selectionBox.style.display = 'none';
 
             if (selectedNodes.size > 0) {
@@ -325,13 +188,6 @@ function initSelection() {
     });
 
     document.addEventListener('click', (e) => {
-        console.log('click:', {
-            target: e.target.id || e.target.className,
-            selectedNodesBefore: [...selectedNodes],
-            activeNodeBefore: [...jm.activeNode],
-            justFinishedSelecting: justFinishedSelecting
-        });
-
         if (e.target.id === 'create-node' && selectedNodes.size === 1) {
             e.stopPropagation();
             const parentId = Array.from(selectedNodes)[0];
@@ -339,18 +195,12 @@ function initSelection() {
             return;
         }
 
-        // Не сбрасываем выделение сразу после завершения области
         if (e.target.id === 'jsmind_container' && !isSelecting && !justFinishedSelecting) {
             selectedNodes.clear();
             jm.setActiveNode([]);
             nodeAddButtonDisable();
-            console.log('click reset completed:', {
-                selectedNodes: [...selectedNodes],
-                activeNode: [...jm.activeNode]
-            });
         }
 
-        // Сбрасываем флаг после обработки клика
         justFinishedSelecting = false;
     });
 
@@ -367,6 +217,140 @@ function initSelection() {
                rect1.right > rect2.left &&
                rect1.top < rect2.bottom &&
                rect1.bottom > rect2.top;
+    }
+}
+
+function initButtonMenu() {
+    // Меню
+    document.querySelectorAll('.menu-section-toggle').forEach(button => {
+        button.addEventListener('click', () => {
+            const content = button.nextElementSibling;
+            content.classList.toggle('hidden');
+            
+            // Меняем стрелку в зависимости от состояния
+            if (content.classList.contains('hidden')) {
+                button.textContent = button.textContent.replace('▼', '▶');
+            } else {
+                button.textContent = button.textContent.replace('▶', '▼');
+            }
+        });
+    });
+
+    // Обработчик для кнопки "Развернуть все"
+    document.getElementById('expand-all').addEventListener('click', () => {
+        document.querySelectorAll('.menu-section-toggle').forEach(button => {
+            const content = button.nextElementSibling;
+            content.classList.remove('hidden');
+            button.textContent = button.textContent.replace('▶', '▼');
+        });
+    });
+
+    // Обработчик для кнопки "Свернуть все"
+    document.getElementById('collapse-all').addEventListener('click', () => {
+        document.querySelectorAll('.menu-section-toggle').forEach(button => {
+            const content = button.nextElementSibling;
+            content.classList.add('hidden');
+            button.textContent = button.textContent.replace('▼', '▶');
+        });
+    });
+}
+
+function initShapeButtons() {
+    const buttonGroup = document.querySelector('.button-group');
+    if (!buttonGroup) {
+        console.error('Button group container not found');
+        return;
+    }
+
+    // Очищаем существующие кнопки, если они есть
+    buttonGroup.innerHTML = '';
+
+    // Размеры канваса для кнопок
+    const canvasSizeButtonFigure = CANVAS_SIZE_BUTTON;
+
+    // Проходим по всем фигурам в FIGURE
+    Object.keys(FIGURE).forEach(shapeKey => {
+        const figure = FIGURE[shapeKey];
+
+        // Создаем кнопку
+        const button = document.createElement('button');
+        button.className = 'shape-btn';
+        button.dataset.shape = shapeKey.toLowerCase();
+
+        // Создаем канвас
+        const canvas = document.createElement('canvas');
+        canvas.width = canvasSizeButtonFigure;
+        canvas.height = canvasSizeButtonFigure;
+        canvas.style.width = `${canvasSizeButtonFigure}px`;
+        canvas.style.height = `${canvasSizeButtonFigure}px`;
+
+        // Получаем контекст и рисуем фигуру
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvasSizeButtonFigure, canvasSizeButtonFigure);
+
+        // Устанавливаем стили для отображения формы
+        ctx.fillStyle = figure.fill || '#ffffff';
+        ctx.strokeStyle = figure.stroke || '#000000';
+        ctx.lineWidth = parseFloat(figure.strokeWidth) || 1;
+
+        if (figure.dNormalized) {
+            drawPath(ctx, figure.dNormalized, canvasSizeButtonFigure, canvasSizeButtonFigure);
+        } else {
+            console.warn(`No dNormalized points provided for figure: ${shapeKey}`);
+        }
+
+        ctx.fill();
+        ctx.stroke();
+
+        // Добавляем канвас в кнопку
+        button.appendChild(canvas);
+
+        // Добавляем кнопку в button-group
+        buttonGroup.appendChild(button);
+    });
+
+    function drawPath(ctx, points, width, height) {
+        ctx.beginPath();
+    
+        const getPointCoords = (point) => {
+            let x = point.x * width;
+            let y = point.y * height;
+
+            // Применяем минимальные отступы для фигур с fixedOffset
+            if (point.fixedOffset !== undefined) {
+                const offset = point.fixedOffset / 5; // Масштабируем для маленького канваса
+                if (point.x <= 0.5) {
+                    x = Math.max(0, x + offset);
+                } else {
+                    x = Math.min(width, x - offset);
+                }
+                if (point.y <= 0.5) {
+                    y = Math.max(0, y + offset);
+                } else {
+                    y = Math.min(height, y - offset);
+                }
+            }
+
+            return { x, y };
+        };
+    
+        const pointsCount = points.length;
+    
+        if (pointsCount < 2) return;
+    
+        // Вычисляем координаты всех точек
+        const coords = points.map(point => getPointCoords(point));
+    
+        // Инициализируем путь
+        ctx.moveTo(coords[0].x, coords[0].y);
+    
+        // Обрабатываем все точки
+        points.forEach((point, index) => {
+            const current = coords[index];
+            ctx.lineTo(current.x, current.y);
+        });
+    
+        ctx.closePath();
     }
 }
 

@@ -4,7 +4,7 @@ export const LINE_STYLES = {
 
         style: {
             stroke: "#555555",
-            strokeWidth: "2px",
+            strokeWidth: "2",
             fill: "none"
         }
     },
@@ -13,7 +13,7 @@ export const LINE_STYLES = {
 
         style: {
             stroke: "#555555",
-            strokeWidth: "2px",
+            strokeWidth: "2",
             fill: "none",
             strokeLinecap: "round",
             strokeLinejoin: "round"
@@ -23,7 +23,7 @@ export const LINE_STYLES = {
         type: "bezier",
         style: {
             stroke: "#555555",
-            strokeWidth: "2px",
+            strokeWidth: "2",
             fill: "none",
             strokeLinecap: "round",
             strokeLinejoin: "round"
@@ -33,7 +33,7 @@ export const LINE_STYLES = {
         type: "dashed",
         style: {
             stroke: "#555555",
-            strokeWidth: "2px",
+            strokeWidth: "2",
             fill: "none",
             strokeDasharray: "5,5"
         }
@@ -42,7 +42,7 @@ export const LINE_STYLES = {
         type: "dotted",
         style: {
             stroke: "#555555",
-            strokeWidth: "2px",
+            strokeWidth: "2",
             fill: "none",
             strokeDasharray: "2,6",
             strokeLinecap: "round"

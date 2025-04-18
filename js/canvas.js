@@ -1,18 +1,34 @@
 import { initWindowDragging, initButtonHandlers, initDropdownStyleMenu, setTheme } from './windowManager.js';
 import { jsMind } from '../lib/jsmind/js/jsmind.js';
-import { TOPIC_STYLES, FIGURE, LINE_STYLES, INDENTATION_BETWEEN_BUTTON_NODE, NODE_STYLES, CANVAS_SIZE_BUTTON } from '../data/constants.js';
+import { TOPIC_STYLES, FIGURE, LINE_STYLES, INDENTATION_BETWEEN_BUTTON_NODE, NODE_STYLES, CANVAS_SIZE_BUTTON, DEFAULT_NODE_DATA } from '../data/constants.js';
 
 let jm = null;
 let selectedNodes = new Set();
+
+// Кнопки для работы с фигурой узла
+// let buttonFigur = null;
+let bgColorFigur = document.getElementById('node-color');
+let borderColorFigure = document.getElementById('border-color');
+let borderWidth = document.getElementById('border-width');
+
+// Кнопки для работы с линией
+let groupBoxLineStyle = document.getElementById('line-style');
+let inputLineColor = document.getElementById('line-color');
+let inputLineWidth = document.getElementById('line-width');
+
+// Кнопки глобальных настроек
+let renderMap = document.getElementById('map-type');
+let mapZoom = document.getElementById('map-zoom');
+
 
 function init() {
     initWindowDragging();
     initButtonHandlers();
     initDropdownStyleMenu();
     initJsMind();
+    initShapeButtons();
     initButtonMenu();
     initSelection();
-    initShapeButtons();
 }
 
 function initJsMind() {
@@ -24,15 +40,16 @@ function initJsMind() {
                 onNodeAddButtonActive: nodeAddButtonActive,
                 onNodeAddButtonDisable: nodeAddButtonDisable,
                 cascadeRemove: true,
+                renderMap: "mind",
             },
             data: { 
                 id: 'root', 
                 topic: {
-                    text: 'Главная тема',
-                    color: "#333333",
-                    fontSize: "14px",
-                    fontFamily: "Arial, sans-serif"
-                },
+                    text: '<span style="color: purple;">Главная тема</span>',
+                    color: '#000',
+                    fontSize: '14px',
+                    fontFamily: 'Arial'
+                },                
                 parent: null,
                 children: [],
                 styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
@@ -46,6 +63,10 @@ function initJsMind() {
 
         jm = new jsMind(initialData);
         jm.show();
+
+        // Заполняем глобальные кнопки настройки карты
+        renderMap.value = jm.settings.renderMap;
+        mapZoom.value = 50;
     } catch (error) {
         console.error('Error initializing jsMind:', error);
     }
@@ -77,12 +98,14 @@ function initSelection() {
                 }
             }
             jm.setActiveNode([...selectedNodes]);
-
             if (selectedNodes.size === 1) {
                 nodeAddButtonActive();
             } else {
                 nodeAddButtonDisable();
             }
+
+
+            getData();
             e.stopPropagation();
             return;
         }
@@ -102,6 +125,8 @@ function initSelection() {
             selectionBox.style.width = '0';
             selectionBox.style.height = '0';
             selectionBox.style.display = 'block';
+
+            getData();
         }
     });
 
@@ -142,6 +167,8 @@ function initSelection() {
             if (isRectIntersecting(selectionRect, adjustedNodeRect)) {
                 selectedNodes.add(node.id);
             } else if (!e.ctrlKey) {
+                selectedNodes.delete(node.id);
+            } else {
                 selectedNodes.delete(node.id);
             }
         });
@@ -237,11 +264,11 @@ function initButtonMenu() {
 
     const cascadeDeleteToggle = document.getElementById('cascade-delete');
     if (cascadeDeleteToggle) {
-        cascadeDeleteToggle.checked = jm.options.cascadeRemove || false;
+        cascadeDeleteToggle.checked = jm.settings.cascadeRemove || false;
 
         cascadeDeleteToggle.addEventListener('change', (e) => {
             e.stopPropagation();
-            jm.options.cascadeRemove = e.target.checked;
+            jm.settings.cascadeRemove = e.target.checked;
         });
 
         const slider = cascadeDeleteToggle.nextElementSibling;
@@ -253,6 +280,71 @@ function initButtonMenu() {
     } else {
         console.error('Переключатель #cascade-delete не найден');
     }
+
+    const buttonGroup = document.querySelector('.button-group');
+    if (buttonGroup) {
+        buttonGroup.addEventListener('click', function(event) {
+            const target = event.target.closest('button');
+            if (target && target.tagName === 'BUTTON') {
+                const shape = target.dataset.shape;
+                if (!shape) {
+                    console.warn('Атрибут data-shape не определён');
+                    return;
+                }
+                const typeFigure = shape.toUpperCase();
+                if (!FIGURE[typeFigure]) {
+                    console.warn(`Форма ${typeFigure} не найдена в FIGURE`);
+                    return;
+                }
+
+                const dNormalizedCopy = JSON.parse(JSON.stringify(FIGURE[typeFigure].dNormalized));
+                setData({ figure: {dNormalized: dNormalizedCopy} });
+            }
+        });
+    }
+    
+    const inputs = [
+        {
+            element: bgColorFigur,
+            event: 'input',
+            handler: () => setData({ figure: { fill: bgColorFigur.value } })
+        },
+        {
+            element: borderColorFigure,
+            event: 'input',
+            handler: () => setData({ figure: { stroke: borderColorFigure.value } })
+        },
+        {
+            element: borderWidth,
+            event: 'input',
+            handler: () => setData({ figure: { strokeWidth: borderWidth.value } })
+        },
+        {
+            element: groupBoxLineStyle,
+            event: 'change',
+            handler: () => setData({ styleLine: { type: groupBoxLineStyle.value } })
+        },
+        {
+            element: inputLineColor,
+            event: 'input',
+            handler: () => setData({ styleLine: { style: { stroke: inputLineColor.value } } })
+        },
+        {
+            element: inputLineWidth,
+            event: 'input',
+            handler: () => setData({ styleLine: { style: { strokeWidth: inputLineWidth.value } } })
+        }
+    ];
+
+    // Добавляем дебонсированные обработчики для полей ввода
+    inputs.forEach(({ element, event, handler }) => {
+        if (element) {
+            const debouncedHandler = debounce(handler, 10);
+            element.addEventListener(event, debouncedHandler);
+        } else {
+            console.warn(`Элемент ввода ${element} не найден`);
+        }
+    });
 }
 
 function initShapeButtons() {
@@ -271,6 +363,7 @@ function initShapeButtons() {
 
         const button = document.createElement('button');
         button.className = 'shape-btn';
+        button.classList.add('menu-button');
         button.dataset.shape = shapeKey.toLowerCase();
 
         const canvas = document.createElement('canvas');
@@ -407,4 +500,95 @@ function addNewNode(parentId) {
     }
     
     jm.addChild(parentId);
+}
+
+function getData() {
+    const nodes = jm.activeNode;
+    if (!nodes) return;
+
+    // Один узел — заполняем его данными
+    if (nodes.size === 1) {
+        const node = jm.nodes.get(Array.from(nodes)[0]);
+        fillUIWithNodeData(node);
+    }
+    else if (nodes.size !== 1) {
+        fillUIWithDefaultData();
+    }
+
+    function fillUIWithNodeData(node) {
+        try {
+            bgColorFigur.value = node.data.figure.fill;
+            borderColorFigure.value = node.data.figure.stroke;
+            borderWidth.value = node.data.figure.strokeWidth;
+
+            groupBoxLineStyle.value = node.data.styleLine.type;
+            inputLineColor.value = node.data.styleLine.style.stroke;
+            inputLineWidth.value = node.data.styleLine.style.strokeWidth;
+        } catch (error) {
+            console.error('Ошибка заполнения данными узла: ' + error);
+        }
+    }
+
+    function fillUIWithDefaultData() {
+        try {
+            const defaultFigure = FIGURE.RECTANGLE;
+            const defaultLine = LINE_STYLES.BEZIER;
+
+            bgColorFigur.value = defaultFigure.fill;
+            borderColorFigure.value = defaultFigure.stroke;
+            borderWidth.value = defaultFigure.strokeWidth;
+
+            groupBoxLineStyle.value = defaultLine.type;
+            inputLineColor.value = defaultLine.style.stroke;
+            inputLineWidth.value = defaultLine.style.strokeWidth;
+        } catch (error) {
+            console.error('Ошибка при установке стандартных значений: ' + error);
+        }
+    }
+}
+
+// Функция для дебонсинга
+function debounce(fn, delay) {
+    let timeout;
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn(...args), delay);
+    };
+}
+
+function setData(updates = {}) {
+    try {
+        if (!jm.activeNode || jm.activeNode.size === 0) {
+            console.log('Нет активных узлов для изменения стилей');
+            return;
+        }
+
+        jm.activeNode.forEach(nodeId => {
+            const node = jm.nodes.get(nodeId);
+            if (!node) {
+                console.warn(`Узел ${nodeId} не найден в jm.nodes`);
+                return;
+            }
+
+            if (updates.figure) {
+                Object.assign(node.data.figure, updates.figure);
+                
+                const canvas = node.element.querySelector('canvas');
+                const container = node.element.querySelector('.jsmind-node-content');
+                jm.drawNodeFigure(canvas, container, node.data.figure);
+            }
+
+            if (updates.styleLine) {
+                Object.assign(node.data.styleLine, updates.styleLine);
+                if (node.parent) {
+                    jm.drawLine(node.parent, node.data.id);
+                }
+                node.children.forEach(childId => {
+                    jm.drawLine(node.data.id, childId);
+                });
+            }
+        });
+    } catch (error) {
+        console.error('Ошибка в методе setData: ' + error);
+    }
 }

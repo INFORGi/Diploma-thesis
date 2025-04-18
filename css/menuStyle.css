@@ -3,6 +3,49 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 8px;
+    -webkit-app-region: drag;
+    height: 30px;
+    user-select: none;
+}
+
+header > div {
+    -webkit-app-region: no-drag;
+}
+
+.style-button-menu {
+    width: 25px;
+    height: 25px;
+    border: none;
+    background: none;
+    font-size: 20px;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.style-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: none;
+    z-index: 1000;
+    min-width: 200px;
+    width: max-content; /* Добавляем автоматическую подстройку ширины */
+    border-radius: 4px;
+    padding: 4px 0;
+}
+
+.dropdown-button-style {
+    width: 100%;
+    padding: 8px 16px;
+    text-align: left;
+    cursor: pointer;
+    border: none;
+    background: none;
+    display: block;
 }
 
 .style-button-menu{
@@ -20,6 +63,8 @@ header {
     left: 50%;
     display: none; 
     z-index: 1000; 
+    min-width: 200px;
+    border-radius: 4px;
 }
 
 .dropdown-button-style{
@@ -31,36 +76,39 @@ header {
     width: 100%;
 }
 
+.dropdown-item {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-item-text {
+    display: block;
+    width: 100%;
+    padding: 0 4px; /* Добавляем небольшие отступы для текста */
+}
+
 .theme-dropdown{
     position: absolute; 
     top: 0;
     left: 100%;
     display: none; 
     z-index: 1000; 
+    width: max-content; /* Добавляем автоматическую подстройку ширины */
 }
 
-.button-minimize-style{
-    background-color: transparent;
-    border: 0;
-    background-size: contain;
+.button-minimize-style,
+.button-maximize-style,
+.button-close-style {
     width: 25px;
     height: 25px;
-}
-
-.button-maximize-style{
+    border: none;
     background-color: transparent;
-    border: 0;
+    background-position: center;
+    background-repeat: no-repeat;
     background-size: contain;
-    width: 25px;
-    height: 25px;
-}
-
-.button-close-style{
-    background-color: transparent;
-    border: 0;
-    background-size: contain;
-    width: 25px;
-    height: 25px;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+    margin-left: 8px;
 }
 
 .img-button {
@@ -80,3 +128,9 @@ header {
     display: none;
 }
 
+/* Общие стили для шапки */
+#title-bar {
+    -webkit-app-region: drag;
+    height: 30px;
+    min-height: 30px;
+}

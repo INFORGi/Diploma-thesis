@@ -28,6 +28,25 @@ export const LINE_STYLES = {
             strokeLinecap: "round",
             strokeLinejoin: "round"
         }
+    },
+    DASHED: {
+        type: "dashed",
+        style: {
+            stroke: "#555555",
+            strokeWidth: "2px",
+            fill: "none",
+            strokeDasharray: "5,5"
+        }
+    },
+    DOTTED: {
+        type: "dotted",
+        style: {
+            stroke: "#555555",
+            strokeWidth: "2px",
+            fill: "none",
+            strokeDasharray: "2,6",
+            strokeLinecap: "round"
+        }
     }
 };
 
@@ -77,8 +96,8 @@ export const FIGURE = {
             { x: 1, y: 1 },
             { x: 0, y: 1 }
         ],
-        fill: null,
-        stroke: null,
+        fill: "#ffffff",
+        stroke: "#cccccc",
         strokeWidth: "1",
         rx: "10"
     },
@@ -90,8 +109,8 @@ export const FIGURE = {
             { x: 1, y: 1 },                    
             { x: 0, y: 1 }                      
         ],
-        fill: null,
-        stroke: null,
+        fill: "#ffffff",
+        stroke: "#cccccc",
         strokeWidth: "1",
         rx: "10"
     },
@@ -103,8 +122,8 @@ export const FIGURE = {
             { x: 1, y: 1, fixedOffset: 5 },  
             { x: 0, y: 1 }                      
         ],
-        fill: null,
-        stroke: null,
+        fill: "#ffffff",
+        stroke: "#cccccc",
         strokeWidth: "1",
         rx: "0"
     },
@@ -117,8 +136,8 @@ export const FIGURE = {
             { x: 0.2, y: 1 },                   
             { x: 0, y: 0.8, fixedOffset: 20 }   
         ],
-        fill: null,
-        stroke: null,
+        fill: "#ffffff",
+        stroke: "#cccccc",
         rx: "0",
         strokeWidth: "1"
     },
@@ -132,8 +151,8 @@ export const FIGURE = {
             { x: 0.75, y: 1 },     // нижний правый угол
             { x: 0.25, y: 1 },     // нижний левый угол
         ],
-        fill: null,
-        stroke: null,
+        fill: "#ffffff",
+        stroke: "#cccccc",
         strokeWidth: "1",
         rx: "10"
     }
@@ -192,4 +211,5 @@ export const MIND_MAP_THEMES = {
 export const INDENTATION_BETWEEN_BUTTON_NODE = 20;
 export const SPACING_WIDTH = 100;
 export const SPACING_HEIGHT = 50;
-export const CANVAS_SIZE_BUTTON = 15;
+export const CANVAS_SIZE_BUTTON = 25;
+export const PADDING_WITH_NODE = 45;

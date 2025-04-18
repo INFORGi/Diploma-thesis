@@ -1,10 +1,9 @@
 import { initWindowDragging, initButtonHandlers, initDropdownStyleMenu, setTheme } from './windowManager.js';
 import { jsMind } from '../lib/jsmind/js/jsmind.js';
-import { TOPIC_STYLES, FIGURE, LINE_STYLES, INDENTATION_BETWEEN_BUTTON_NODE, MIND_MAP_THEMES, NODE_STYLES, CANVAS_SIZE_BUTTON } from '../data/constants.js';
+import { TOPIC_STYLES, FIGURE, LINE_STYLES, INDENTATION_BETWEEN_BUTTON_NODE, NODE_STYLES, CANVAS_SIZE_BUTTON } from '../data/constants.js';
 
 let jm = null;
 let selectedNodes = new Set();
-
 
 function init() {
     initWindowDragging();
@@ -30,16 +29,16 @@ function initJsMind() {
                 id: 'root', 
                 topic: {
                     text: 'Главная тема',
-                    color: "#aa3322",
+                    color: "#333333",
                     fontSize: "14px",
                     fontFamily: "Arial, sans-serif"
                 },
                 parent: null,
                 children: [],
                 styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
-                figure: {...JSON.parse(JSON.stringify(FIGURE.TRAPEZOID)), fill: "#0e0f"},
+                figure: {...JSON.parse(JSON.stringify(FIGURE.TRAPEZOID)) },
                 styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
-                styleLine: JSON.parse(JSON.stringify(LINE_STYLES.BEZIER)),
+                styleLine: JSON.parse(JSON.stringify(LINE_STYLES.DASHED)),
                 position: { x: 0, y: 0 },
                 draggable: false,
             }
@@ -47,7 +46,6 @@ function initJsMind() {
 
         jm = new jsMind(initialData);
         jm.show();
-        // jm.swapTheme();
     } catch (error) {
         console.error('Error initializing jsMind:', error);
     }
@@ -89,8 +87,7 @@ function initSelection() {
             return;
         }
 
-        if (e.button === 0 && !e.target.matches('#create-node') && e.ctrlKey) { // Добавил клавишу Ctrl для создания узла
-                                                                                // Может быть удалю
+        if (e.button === 0 && !e.target.matches('#create-node') && e.ctrlKey) {
             isSelecting = true;
             startX = e.pageX;
             startY = e.pageY;
@@ -155,13 +152,6 @@ function initSelection() {
     });
 
     document.addEventListener('mouseup', (e) => {
-        console.log('mouseup:', {
-            target: e.target.id || e.target.className,
-            isSelecting: isSelecting,
-            selectedNodesBefore: [...selectedNodes],
-            activeNodeBefore: [...jm.activeNode]
-        });
-
         if (isSelecting) {
             isSelecting = false;
             justFinishedSelecting = true;
@@ -178,11 +168,6 @@ function initSelection() {
                 jm.setActiveNode([]);
                 nodeAddButtonDisable();
             }
-
-            console.log('mouseup completed:', {
-                selectedNodes: [...selectedNodes],
-                activeNode: [...jm.activeNode]
-            });
             e.stopPropagation();
         }
     });
@@ -221,13 +206,11 @@ function initSelection() {
 }
 
 function initButtonMenu() {
-    // Меню
     document.querySelectorAll('.menu-section-toggle').forEach(button => {
         button.addEventListener('click', () => {
             const content = button.nextElementSibling;
             content.classList.toggle('hidden');
             
-            // Меняем стрелку в зависимости от состояния
             if (content.classList.contains('hidden')) {
                 button.textContent = button.textContent.replace('▼', '▶');
             } else {
@@ -236,7 +219,6 @@ function initButtonMenu() {
         });
     });
 
-    // Обработчик для кнопки "Развернуть все"
     document.getElementById('expand-all').addEventListener('click', () => {
         document.querySelectorAll('.menu-section-toggle').forEach(button => {
             const content = button.nextElementSibling;
@@ -245,7 +227,6 @@ function initButtonMenu() {
         });
     });
 
-    // Обработчик для кнопки "Свернуть все"
     document.getElementById('collapse-all').addEventListener('click', () => {
         document.querySelectorAll('.menu-section-toggle').forEach(button => {
             const content = button.nextElementSibling;
@@ -253,6 +234,25 @@ function initButtonMenu() {
             button.textContent = button.textContent.replace('▼', '▶');
         });
     });
+
+    const cascadeDeleteToggle = document.getElementById('cascade-delete');
+    if (cascadeDeleteToggle) {
+        cascadeDeleteToggle.checked = jm.options.cascadeRemove || false;
+
+        cascadeDeleteToggle.addEventListener('change', (e) => {
+            e.stopPropagation();
+            jm.options.cascadeRemove = e.target.checked;
+        });
+
+        const slider = cascadeDeleteToggle.nextElementSibling;
+        if (slider && slider.classList.contains('slider')) {
+            slider.addEventListener('mousedown', (e) => e.stopPropagation());
+            slider.addEventListener('mouseup', (e) => e.stopPropagation());
+            slider.addEventListener('click', (e) => e.stopPropagation());
+        }
+    } else {
+        console.error('Переключатель #cascade-delete не найден');
+    }
 }
 
 function initShapeButtons() {
@@ -262,33 +262,26 @@ function initShapeButtons() {
         return;
     }
 
-    // Очищаем существующие кнопки, если они есть
     buttonGroup.innerHTML = '';
 
-    // Размеры канваса для кнопок
     const canvasSizeButtonFigure = CANVAS_SIZE_BUTTON;
 
-    // Проходим по всем фигурам в FIGURE
     Object.keys(FIGURE).forEach(shapeKey => {
         const figure = FIGURE[shapeKey];
 
-        // Создаем кнопку
         const button = document.createElement('button');
         button.className = 'shape-btn';
         button.dataset.shape = shapeKey.toLowerCase();
 
-        // Создаем канвас
         const canvas = document.createElement('canvas');
         canvas.width = canvasSizeButtonFigure;
         canvas.height = canvasSizeButtonFigure;
         canvas.style.width = `${canvasSizeButtonFigure}px`;
         canvas.style.height = `${canvasSizeButtonFigure}px`;
 
-        // Получаем контекст и рисуем фигуру
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvasSizeButtonFigure, canvasSizeButtonFigure);
 
-        // Устанавливаем стили для отображения формы
         ctx.fillStyle = figure.fill || '#ffffff';
         ctx.strokeStyle = figure.stroke || '#000000';
         ctx.lineWidth = parseFloat(figure.strokeWidth) || 1;
@@ -302,10 +295,7 @@ function initShapeButtons() {
         ctx.fill();
         ctx.stroke();
 
-        // Добавляем канвас в кнопку
         button.appendChild(canvas);
-
-        // Добавляем кнопку в button-group
         buttonGroup.appendChild(button);
     });
 
@@ -316,9 +306,8 @@ function initShapeButtons() {
             let x = point.x * width;
             let y = point.y * height;
 
-            // Применяем минимальные отступы для фигур с fixedOffset
             if (point.fixedOffset !== undefined) {
-                const offset = point.fixedOffset / 5; // Масштабируем для маленького канваса
+                const offset = point.fixedOffset / 5;
                 if (point.x <= 0.5) {
                     x = Math.max(0, x + offset);
                 } else {
@@ -338,13 +327,10 @@ function initShapeButtons() {
     
         if (pointsCount < 2) return;
     
-        // Вычисляем координаты всех точек
         const coords = points.map(point => getPointCoords(point));
     
-        // Инициализируем путь
         ctx.moveTo(coords[0].x, coords[0].y);
     
-        // Обрабатываем все точки
         points.forEach((point, index) => {
             const current = coords[index];
             ctx.lineTo(current.x, current.y);
@@ -356,10 +342,7 @@ function initShapeButtons() {
 
 document.addEventListener("DOMContentLoaded", function() {
     init();
-
-    // Для предуприждения что не сохранено
-    window.addEventListener('beforeunload', async (event) => { }); 
-    // Настройка темы
+    window.addEventListener('beforeunload', async (event) => {});
     window.electron.onLoadSettings((settings) => { setTheme(settings.Theme); });
 });
 

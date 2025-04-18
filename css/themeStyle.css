@@ -53,20 +53,20 @@ main.dark { background-color: var(--dark-primary); }
 .button-minimize-style.light{ background-image:url(../image/minimize_window.svg); filter: invert(0); }
 .button-minimize-style.dark{ background-image:url(../image/minimize_window.svg); filter: invert(1); }
 
-.button-minimize-style.light:hover{ background-color: var(--dark-text-secondary); border: 1px solid var(--border-color); border-radius: 3px; }
-.button-minimize-style.dark:hover{ background-color: var(--light-gray-200); border: 1px solid var(--border-color); border-radius: 3px; }
+.button-minimize-style.light:hover{ transform: scale(0.9); }
+.button-minimize-style.dark:hover{ transform: scale(0.9); }
 
 .button-maximize-style.light{ background-image:url(../image/expand_window.svg); filter: invert(0); }
 .button-maximize-style.dark{ background-image:url(../image/expand_window.svg); filter: invert(1); }
 
-.button-maximize-style.light:hover{ background-color: var(--dark-text-secondary); border: 1px solid var(--border-color); border-radius: 3px; }
-.button-maximize-style.dark:hover{ background-color: var(--light-gray-200); border: 1px solid var(--border-color); border-radius: 3px; }
+.button-maximize-style.light:hover{ transform: scale(0.9); }
+.button-maximize-style.dark:hover{ transform: scale(0.9); }
 
 .button-close-style.light{ background-image:url(../image/close_window.svg); filter: invert(0); } 
 .button-close-style.dark{ background-image:url(../image/close_window.svg); filter: invert(1); }
 
-.button-close-style.light:hover{ background-color: var(--dark-text-secondary); border: 1px solid var(--border-color); border-radius: 3px; }
-.button-close-style.dark:hover{ background-color: var(--light-gray-200); border: 1px solid var(--border-color); border-radius: 3px; }
+.button-close-style.light:hover{ transform: scale(0.9); }
+.button-close-style.dark:hover{ transform: scale(0.9); }
 
 /* Меню с тремя точками */
 .style-button-menu.light{ background-color: var(--light-tertiary); color: var(--light-text-primary); }
@@ -261,4 +261,82 @@ select.dark {
     background-color: var(--dark-gray-200);
     color: var(--dark-text-primary);
     border: 1px solid var(--dark-gray-400);
+}
+
+/* Стили для переключателя */
+.toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.toggle-label {
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 50px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--light-gray-300);
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+/* Светлая тема */
+.light .toggle-switch input:checked + .slider {
+    background-color: var(--light-accent);
+}
+
+.light .toggle-switch input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Тёмная тема */
+.dark .slider {
+    background-color: var(--dark-gray-300);
+}
+
+.dark .toggle-switch input:checked + .slider {
+    background-color: var(--dark-accent);
+}
+
+.dark .toggle-switch input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Эффект при наведении */
+.toggle:hover .slider {
+    box-shadow: 0 0 1px var(--light-accent);
 }

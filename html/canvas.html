@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="../css/menuStyle.css">
     <link rel="stylesheet" href="../css/themeStyle.css">
     <link rel="stylesheet" href="../lib/jsmind/style/jsmind.css">
-    <link rel="stylesheet" href="../css/styleMenu.css">
 
     <script type="module" src="../js/canvas.js"></script>
     <script type="module" src="../data/constants.js"></script>
@@ -22,8 +21,10 @@
             <div style="position: relative; user-select: none;">
                 <button id="menu-button" class="style-button-menu entry-point">⋮</button>
                 <div id="div-dropdown" class="style-dropdown entry-point">
-                    <div>
-                        <button id="theme-button" class="dropdown-button-style button-transform entry-point">Темы приложения</button>
+                    <div class="dropdown-item">
+                        <button id="theme-button" class="dropdown-button-style button-transform entry-point">
+                            <span class="dropdown-item-text">Темы приложения</span>
+                        </button>
                         <div id="theme-switch-menu" class="theme-dropdown entry-point">
                             <button class="dropdown-button-style button-transform entry-point" id="button-swith-theme-light" data-value="light">Светлая тема</button>
                             <button class="dropdown-button-style button-transform entry-point" id="button-swith-theme-dark" data-value="dark">Темная тема</button>
@@ -31,7 +32,6 @@
                     </div>
                 </div>
             </div>
-            
             <div style="user-select: none;">
                 <button class="button-minimize-style entry-point" id="minimize" aria-label="Minimize"></button>
                 <button class="button-maximize-style entry-point" id="maximize" aria-label="Maximize"></button>   
@@ -54,12 +54,7 @@
                         <button class="menu-section-toggle">Узел ▼</button>
                         <div class="menu-section-content">
                             <label>Форма узла</label>
-                            <div class="button-group">
-                                <button class="shape-btn" data-shape="rectangle">□</button>
-                                <button class="shape-btn" data-shape="rounded">⬭</button>
-                                <button class="shape-btn" data-shape="diamond">◇</button>
-                                <button class="shape-btn" data-shape="ellipse">○</button>
-                            </div>
+                            <div class="button-group"></div>
                             
                             <label>Цвет узла</label>
                             <input type="color" id="node-color" value="#ffffff">
@@ -84,9 +79,11 @@
                         <div class="menu-section-content">
                             <label>Стиль линии</label>
                             <select id="line-style">
-                                <option value="solid">Сплошная</option>
-                                <option value="dashed">Пунктирная</option>
-                                <option value="dotted">Точечная</option>
+                                <option value="STRAIGHT">Прямая</option>
+                                <option value="CURVED">Кривая</option>
+                                <option value="BEZIER">Линия Безье</option>
+                                <option value="DASHED">Пунктирная</option>
+                                <option value="DOTTED">Точечная</option>
                             </select>
                             
                             <label>Цвет линии</label>
@@ -110,6 +107,11 @@
                             
                             <label>Масштаб</label>
                             <input type="range" id="map-zoom" min="50" max="200" value="100">
+
+                            <div class="toggle-container">
+                                <label for="cascade-delete">Каскадное удаление узлов</label>
+                                <input type="checkbox" id="cascade-delete">
+                            </div>
                         </div>
                     </div>
                     

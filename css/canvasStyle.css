@@ -120,6 +120,7 @@ main {
     z-index: 1000;
     overflow-y: auto;
     transition: transform 0.3s ease;
+    user-select: none;
 }
 
 .menu.hidden {

@@ -10,6 +10,8 @@ let selectedNodes = new Set();
 let bgColorFigur = document.getElementById('node-color');
 let borderColorFigure = document.getElementById('border-color');
 let borderWidth = document.getElementById('border-width');
+let nodeWidth = document.getElementById('node-width');
+let nodeHeight = document.getElementById('node-height');
 
 // Кнопки для работы с линией
 let groupBoxLineStyle = document.getElementById('line-style');
@@ -20,6 +22,48 @@ let inputLineWidth = document.getElementById('line-width');
 let renderMap = document.getElementById('map-type');
 let mapZoom = document.getElementById('map-zoom');
 
+const inputs = [
+    {
+        element: bgColorFigur,
+        event: 'input',
+        handler: () => setData({ figure: { fill: bgColorFigur.value } })
+    },
+    {
+        element: borderColorFigure,
+        event: 'input',
+        handler: () => setData({ figure: { stroke: borderColorFigure.value } })
+    },
+    {
+        element: borderWidth,
+        event: 'input',
+        handler: () => setData({ figure: { strokeWidth: borderWidth.value } })
+    },
+    {
+        element: nodeWidth,
+        event: 'input',
+        handler: () => setData({ size: { width: nodeWidth.value } })
+    },
+    {  
+        element: nodeHeight,
+        event: 'input',
+        handler: () => setData({ size: { height: nodeHeight.value } })
+    },
+    {
+        element: groupBoxLineStyle,
+        event: 'change',
+        handler: () => setData({ styleLine: { type: groupBoxLineStyle.value } })
+    },
+    {
+        element: inputLineColor,
+        event: 'input',
+        handler: () => setData({ styleLine: { style: { stroke: inputLineColor.value } } })
+    },
+    {
+        element: inputLineWidth,
+        event: 'input',
+        handler: () => setData({ styleLine: { style: { strokeWidth: inputLineWidth.value } } })
+    }
+];
 
 function init() {
     initWindowDragging();
@@ -166,9 +210,8 @@ function initSelection() {
 
             if (isRectIntersecting(selectionRect, adjustedNodeRect)) {
                 selectedNodes.add(node.id);
-            } else if (!e.ctrlKey) {
-                selectedNodes.delete(node.id);
-            } else {
+            } 
+            else {
                 selectedNodes.delete(node.id);
             }
         });
@@ -176,6 +219,11 @@ function initSelection() {
         if (selectedNodes.size > 0) {
             jm.setActiveNode(new Set(selectedNodes));
         }
+        else {
+            jm.setActiveNode(new Set());
+        }
+        
+        
     });
 
     document.addEventListener('mouseup', (e) => {
@@ -302,39 +350,6 @@ function initButtonMenu() {
             }
         });
     }
-    
-    const inputs = [
-        {
-            element: bgColorFigur,
-            event: 'input',
-            handler: () => setData({ figure: { fill: bgColorFigur.value } })
-        },
-        {
-            element: borderColorFigure,
-            event: 'input',
-            handler: () => setData({ figure: { stroke: borderColorFigure.value } })
-        },
-        {
-            element: borderWidth,
-            event: 'input',
-            handler: () => setData({ figure: { strokeWidth: borderWidth.value } })
-        },
-        {
-            element: groupBoxLineStyle,
-            event: 'change',
-            handler: () => setData({ styleLine: { type: groupBoxLineStyle.value } })
-        },
-        {
-            element: inputLineColor,
-            event: 'input',
-            handler: () => setData({ styleLine: { style: { stroke: inputLineColor.value } } })
-        },
-        {
-            element: inputLineWidth,
-            event: 'input',
-            handler: () => setData({ styleLine: { style: { strokeWidth: inputLineWidth.value } } })
-        }
-    ];
 
     // Добавляем дебонсированные обработчики для полей ввода
     inputs.forEach(({ element, event, handler }) => {
@@ -363,7 +378,7 @@ function initShapeButtons() {
 
         const button = document.createElement('button');
         button.className = 'shape-btn';
-        button.classList.add('menu-button');
+        // button.classList.add('menu-button');
         button.dataset.shape = shapeKey.toLowerCase();
 
         const canvas = document.createElement('canvas');
@@ -521,6 +536,16 @@ function getData() {
             borderColorFigure.value = node.data.figure.stroke;
             borderWidth.value = node.data.figure.strokeWidth;
 
+            const width = node.data.styleNode.width === "auto" || !isFinite(parseFloat(node.data.styleNode.width))
+                ? parseFloat(node.data.styleNode.minWidth) || 250
+                : parseFloat(node.data.styleNode.width);
+            const height = node.data.styleNode.height === "auto" || !isFinite(parseFloat(node.data.styleNode.height))
+                ? parseFloat(node.data.styleNode.minHeight) || 75
+                : parseFloat(node.data.styleNode.height);
+
+            nodeWidth.value = width;
+            nodeHeight.value = height;
+
             groupBoxLineStyle.value = node.data.styleLine.type;
             inputLineColor.value = node.data.styleLine.style.stroke;
             inputLineWidth.value = node.data.styleLine.style.strokeWidth;
@@ -573,20 +598,61 @@ function setData(updates = {}) {
             if (updates.figure) {
                 Object.assign(node.data.figure, updates.figure);
                 
-                const canvas = node.element.querySelector('canvas');
-                const container = node.element.querySelector('.jsmind-node-content');
-                jm.drawNodeFigure(canvas, container, node.data.figure);
+                // const canvas = node.element.querySelector('canvas');
+                // const container = node.element.querySelector('.jsmind-node-content');
+                // jm.drawNodeFigure(canvas, container, node.data.figure);
             }
 
             if (updates.styleLine) {
-                Object.assign(node.data.styleLine, updates.styleLine);
-                if (node.parent) {
-                    jm.drawLine(node.parent, node.data.id);
+                if (!node.data.styleLine || typeof node.data.styleLine !== 'object') {
+                    node.data.styleLine = { ...LINE_STYLES.STRAIGHT };
                 }
-                node.children.forEach(childId => {
-                    jm.drawLine(node.data.id, childId);
-                });
+                if (!node.data.styleLine.style || typeof node.data.styleLine.style !== 'object') {
+                    node.data.styleLine.style = { ...LINE_STYLES.STRAIGHT.style };
+                }
+
+                if (updates.styleLine.type) {
+                    const type = updates.styleLine.type.toUpperCase();
+                    if (!LINE_STYLES[type]) {
+                        console.warn(`Стиль линии ${type} не найден в LINE_STYLES`);
+                        return;
+                    }
+
+                    const currentStroke = node.data.styleLine.style.stroke || LINE_STYLES[type].style.stroke;
+                    const currentStrokeWidth = node.data.styleLine.style.strokeWidth || LINE_STYLES[type].style.strokeWidth;
+
+                    node.data.styleLine = {
+                        type: updates.styleLine.type,
+                        style: { ...JSON.parse(JSON.stringify(LINE_STYLES[type].style)) }
+                    };
+
+                    node.data.styleLine.style.stroke = currentStroke;
+                    node.data.styleLine.style.strokeWidth = currentStrokeWidth;
+                } else if (updates.styleLine.style) {
+                    Object.assign(node.data.styleLine.style, updates.styleLine.style);
+                } else {
+                    console.warn('Пропущено обновление styleLine: некорректные данные', updates.styleLine);
+                }
             }
+
+            if (updates.size) {
+                // Минимальные размеры узла
+                const minWidth = parseFloat(node.data.styleNode.minWidth) || 250;
+                const minHeight = parseFloat(node.data.styleNode.minHeight) || 75;
+
+                // Валидация новых размеров
+                const newWidth = updates.size.width === "auto" || !isFinite(parseFloat(updates.size.width))
+                    ? "auto"
+                    : Math.max(parseFloat(updates.size.width), minWidth);
+                const newHeight = updates.size.height === "auto" || !isFinite(parseFloat(updates.size.height))
+                    ? "auto"
+                    : Math.max(parseFloat(updates.size.height), minHeight);
+
+                node.data.styleNode.width = newWidth;
+                node.data.styleNode.height = newHeight;
+            }
+
+            jm.layout(nodeId);
         });
     } catch (error) {
         console.error('Ошибка в методе setData: ' + error);

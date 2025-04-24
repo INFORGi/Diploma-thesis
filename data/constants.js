@@ -53,8 +53,6 @@ export const LINE_STYLES = {
 export const TOPIC_STYLES = {
     position: "relative",
     zIndex: "2",
-    // width: "100%",
-    // height: "100%",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -65,17 +63,15 @@ export const TOPIC_STYLES = {
     wordWrap: "break-word",
     overflow: "hidden",
     boxSizing: "border-box",
-    // maxHeight: "100%"
 };
 
 export const NODE_STYLES = {
     position: "absolute",
     backgroundColor: "transparent",
-    // minWidth: "150px", 
-    // minHeight: "50px",    
+    minWidth: "250", 
+    minHeight: "75",    
     width: "auto",
     height: "auto",
-    // maxWidth: "300px", 
     borderRadius: '5px',
     cursor: "pointer",
     userSelect: "none", 
@@ -195,7 +191,7 @@ export const MIND_MAP_THEMES = {
         }
     },
     dark: {
-        canvas: { backgroundColor: '#1a1a1a' },
+        canvas: { backgroundColor: '#2d2d2d' },
         node: { backgroundColor: '#2d2d2d', borderColor: '#404040' },
         topic: { color: '#e0e0e0' },
         line: { color: '#606060', width: '2px' },
@@ -212,4 +208,4 @@ export const INDENTATION_BETWEEN_BUTTON_NODE = 20;
 export const SPACING_WIDTH = 100;
 export const SPACING_HEIGHT = 50;
 export const CANVAS_SIZE_BUTTON = 25;
-export const PADDING_WITH_NODE = 45;
+export const PADDING_WITH_NODE = 1;

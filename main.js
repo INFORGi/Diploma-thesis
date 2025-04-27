@@ -1,14 +1,15 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 
 const MarkdownIt = require('markdown-it');
-const markdownItContainer = require('markdown-it-container');
-const markdownItAttrs = require('markdown-it-attrs');
+const emoji = require('markdown-it-emoji');
+// const markdownItContainer = require('markdown-it-container');
+// const markdownItAttrs = require('markdown-it-attrs');
 
 const path = require('path');
 const fs = require('fs');
 const fsPromises = require('fs').promises;
 
-const settingsPath = path.join(__dirname, 'data', 'settings.json');
+const settingsPath = path.join(__dirname, 'src/data', 'settings.json');
 
 const md = new MarkdownIt({
     breaks: true,      // Включаем поддержку одиночных переносов строк
@@ -16,8 +17,7 @@ const md = new MarkdownIt({
     linkify: true,     // Автоматически определяем ссылки
     typographer: true, // Включаем типографские замены
     xhtmlOut: true    // Используем XHTML стиль для переносов строк
-}).use(markdownItContainer)
-  .use(markdownItAttrs);
+});
 
 // Добавляем обработку переносов строк
 md.renderer.rules.softbreak = () => '<br>\n';
@@ -38,9 +38,9 @@ function createWindow() {
         frame: false,
         transparent: false,
         roundedCorners: true,  
-        icon: path.join(__dirname, '/data/icons/blue.ico'),
+        icon: path.join(__dirname, 'src/assets/blue.ico'),
         webPreferences: {
-            preload: path.join(__dirname, 'js/preload.js'),
+            preload: path.join(__dirname, 'src/preload/preload.js'),
             contextIsolation: true,
             webSecurity: true,
             allowRunningInsecureContent: false,
@@ -50,13 +50,13 @@ function createWindow() {
         },
     });
 
-    win.loadFile('html/new_menu.html');
+    win.loadFile('src/html/menu.html');
     
     win.webContents.on('did-finish-load', () => {
         win.webContents.send('load-settings', readSettings());
     });
     
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
 }
 
 app.whenReady().then(createWindow);
@@ -105,11 +105,11 @@ ipcMain.on('switch-theme', (event, newTheme) => {
 
 ipcMain.on('open-canvas', async (event, mapPath) => {
     const win = BrowserWindow.fromWebContents(event.sender);
-    win.loadFile('html/canvas.html');
+    win.loadFile('src/html/canvas.html');
     
     if (mapPath) {
         try {
-            const fullPath = path.join(__dirname, 'data/map', mapPath);
+            const fullPath = path.join(__dirname, 'src/data/map', mapPath);
             const mapData = await fsPromises.readFile(fullPath, 'utf-8');
             const parsedData = JSON.parse(mapData);
             parsedData.meta = { path: fullPath };
@@ -129,7 +129,7 @@ ipcMain.on('open-canvas', async (event, mapPath) => {
 
 ipcMain.handle('save-map', async (event, { mapData, mapPath, isExisting, imageData }) => {
     try {
-        const dataDir = path.join(__dirname, 'data', 'map');
+        const dataDir = path.join(__dirname, 'src/data', 'map');
         const imgDir = path.join(dataDir, 'img');
         
         await fsPromises.mkdir(dataDir, { recursive: true });

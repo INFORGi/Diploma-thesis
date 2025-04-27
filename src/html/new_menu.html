@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Main HTML file</title>
+    <link rel="stylesheet" href="../css/mainWinwowStyle.css">
+    <link rel="stylesheet" href="../css/menuStyle.css">
+    <link rel="stylesheet" href="../css/themeStyle.css">
+</head>
+<body class="entry-point">
+    <div class="window entry-point">
+        <header id="title-bar" class="entry-point">
+            <div style="position: relative;">
+                <button id="menu-button" class="style-button-menu entry-point">⋮</button>
+                <div id="div-dropdown" class="style-dropdown entry-point">
+                    <!-- <button class="dropdown-button-style button-transform entry-point" data-value="about">О программе</button> -->
+                    <div>
+                        <button id="theme-button" class="dropdown-button-style button-transform entry-point">
+                            <span class="dropdown-item-text">Темы приложения</span>
+                        </button>
+                        <div id="theme-switch-menu" class="theme-dropdown entry-point">
+                            <button class="dropdown-button-style button-transform entry-point" id="button-swith-theme-light" data-value="light">Светлая тема</button>
+                            <button class="dropdown-button-style button-transform entry-point" id="button-swith-theme-dark" data-value="dark">Темная тема</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <button class="button-minimize-style entry-point" id="minimize" aria-label="Minimize"></button>
+                <button class="button-maximize-style entry-point" id="maximize" aria-label="Maximize"></button>   
+                <button class="button-close-style entry-point" id="close" aria-label="Close"></button>
+            </div>
+        </header>
+        <main class="menu-main-html entry-point">
+            <div class="block-menu entry-point">
+                <button id="new-map" class="button-main-menu button-transform entry-point" type="type">Создать ментальную карту</button>
+                <button id="open-map" class="button-main-menu button-transform entry-point" type="type">Открыть ментальную карту</button>
+            </div>
+            <div class="block-history entry-point">
+                <div id="create-map" class="create-map-display entry-point" style="display: none;">
+                    <div class="card entry-point">
+                        <img class="img-card entry-point" src="../image/node_tree.svg">
+                        <p class="p-card entry-point">Пустая карта</p>
+                        <button id="create" class="button-card button-transform entry-point" type="button">Создать</button>
+                    </div>
+                </div>
+                <div id="existing-maps" class="create-map-display entry-point" style="display: none;">
+                    
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="../js/windowManager.js"></script>
+    <script type="module" src="../js/menu.js"></script>
+</body>
+</html>

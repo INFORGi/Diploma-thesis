@@ -510,54 +510,6 @@ export class jsMind {
         ctx.closePath();
     }
 
-    // setupTopicEventListeners(topic) {
-    //     let originalContent;
-    
-    //     topic.addEventListener('dblclick', (e) => {
-    //         e.stopPropagation();
-    //         const node = topic.closest('.jsmind-node');
-    
-    //         topic.contentEditable = 'true';
-    //         originalContent = topic.dataset.markdown || topic.textContent;
-    //         topic.textContent = originalContent;
-    
-    //         topic.classList.add('editing');
-    //         topic.focus();
-    
-    //         const range = document.createRange();
-    //         const sel = window.getSelection();
-    //         range.selectNodeContents(topic);
-    //         range.collapse(false);
-    //         sel.removeAllRanges();
-    //         sel.addRange(range);
-    //     });
-    
-    //     topic.addEventListener('blur', async () => {
-    //         const node = topic.closest('.jsmind-node');
-    //         topic.contentEditable = 'false';
-    //         topic.classList.remove('editing');
-    
-    //         const nodeId = node.id;
-    //         const nodeData = this.nodes.get(nodeId);
-    //         const markdown = topic.textContent.trim() || 'Текст';
-    
-    //         nodeData.data.topic.text = markdown;
-    //         topic.dataset.markdown = markdown;
-    //         topic.innerHTML = await window.electron.renderMarkdown(markdown);
-    
-    //         await new Promise(resolve => requestAnimationFrame(resolve));
-
-    //         await this.layout();
-    //     });
-    
-    //     topic.addEventListener('keydown', (e) => {
-    //         if (e.key === 'Enter' && !e.shiftKey) {
-    //             e.preventDefault();
-    //             topic.blur();
-    //         }
-    //     });
-    // }
-
     setupTopicEventListeners(topic) {
         let originalContent;
     
@@ -833,35 +785,6 @@ export class jsMind {
 
         return Math.abs(p2.x - p1.x) || Math.abs(p2.y - p1.y);
     }
-
-    // calculateNodeDimensions(figure, topicRect) {
-    //     const padding = PADDING_WITH_NODE;
-    //     let width, height, maxWidth, maxHeight;
-    
-    //     if (figure.tag === 'path' && figure.dNormalized) {
-    //         const edges = this.findEdges(figure.dNormalized);
-    //         const horizontalRatio = Math.min(
-    //             edges.top ? this.getEdgeLength(edges.top) : 1,
-    //             edges.bottom ? this.getEdgeLength(edges.bottom) : 1
-    //         );
-    //         const verticalRatio = Math.min(
-    //             edges.left ? this.getEdgeLength(edges.left) : 1,
-    //             edges.right ? this.getEdgeLength(edges.right) : 1
-    //         );
-    
-    //         width = Math.max(topicRect.width / horizontalRatio + padding * 2, 150);
-    //         height = Math.max(topicRect.height / verticalRatio + padding * 2, 50);
-    //         maxWidth = `${horizontalRatio * 0.9 * 100 - parseInt(figure.strokeWidth)}%`;
-    //         maxHeight = `${verticalRatio * 0.9 * 100 - parseInt(figure.strokeWidth)}%`;
-    //     } else {
-    //         width = Math.max(topicRect.width + padding * 2, 150);
-    //         height = Math.max(topicRect.height + padding * 2, 50);
-    //         maxWidth = '90%';
-    //         maxHeight = '90%';
-    //     }
-    
-    //     return { width, height, maxWidth, maxHeight };
-    // }
 
     calculateNodeDimensions(figure, data, topicRect) {
         const padding = PADDING_WITH_NODE;

@@ -83,6 +83,22 @@ export const NODE_STYLES = {
     padding: "10px"
 };
 
+export const DEFAULT_TOPIC = {
+    id: `block_${Date.now()}`,
+    text: 'New Topic',
+    type: 'span',
+    styles: {
+        color: '#333333',
+        fontSize: '14px',
+        fontWeight: 'normal',
+        fontStyle: 'normal',
+        fontFamily: 'Arial',
+        textDecoration: 'none',
+        textTransform: 'none',
+        textAlign: 'justify'
+    }
+};
+
 export const FIGURE = {
     RECTANGLE: {
         tag: "path",
@@ -157,10 +173,9 @@ export const FIGURE = {
 export const DEFAULT_NODE_DATA = {
     id: null,
     topic: {
-        text: 'Текст',
-        color: '#333',
-        fontSize: "14px",
-        fontFamely: "Arial, sans-serif"
+        block: [
+            { ...DEFAULT_TOPIC },
+        ]
     },
     parent: null,
     children: {},
@@ -203,6 +218,8 @@ export const MIND_MAP_THEMES = {
         }
     }
 };
+
+
 
 export const INDENTATION_BETWEEN_BUTTON_NODE = 20;
 export const SPACING_WIDTH = 100;

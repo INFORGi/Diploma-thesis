@@ -38,7 +38,7 @@
                 <button class="button-close-style entry-point" id="close" aria-label="Close"></button>
             </div>
         </header>
-        <main class="entry-point">
+        <main id="main" class="entry-point">
             <div class="side-toolbar entry-point">
                 <button id="back-button" class="side-button entry-point" title="Вернуться на главную">
                     <img src="../image/back_window.svg" alt="Назад">
@@ -48,7 +48,7 @@
                 <div id="jsmind_container" class="jsmind-container"></div>
                 <button id="create-node">+</button>
                 
-                <div class="menu floating-menu entry-point light">
+                <div class="menu floating-menu entry-point">
                     <!-- Настройки узла -->
                     <div class="menu-section">
                         <button class="menu-section-toggle">Узел ▼</button>
@@ -119,12 +119,35 @@
                         <button class="action-btn" id="expand-all">Развернуть все</button>
                         <button class="action-btn" id="collapse-all">Свернуть все</button>
                     </div>
-                    
-                    <div>
-                        <button id="create-span">Добавить блок span</button>
-                        <button id="create-h1">Добавить блок h1</button>
+                </div>
+            </div>
+
+            <div id="context-menu" class="context-menu">
+                <div class="context-menu-group">
+                    <button id="change-block" class="context-menu-button">Изменить блок</button>
+                    <div class="context-submenu">
+                        <button id="change-p" class="context-menu-item" data-type="p">Параграф</button>
+                        <button id="change-h1" class="context-menu-item" data-type="h1">Заголовок 1</button>
+                        <button id="change-h2" class="context-menu-item" data-type="h2">Заголовок 2</button>
+                        <button id="change-h3" class="context-menu-item" data-type="h3">Заголовок 3</button>
+                        <button id="change-ul" class="context-menu-item" data-type="ul">Список</button>
+                        <button id="change-ol" class="context-menu-item" data-type="ol">Нумерованный список</button>
+                        <button id="change-img" class="context-menu-item" data-type="img">Изображение</button>
                     </div>
                 </div>
+                <div class="context-menu-group">
+                    <button id="add-block" class="context-menu-button">Добавить блок</button>
+                    <div class="context-submenu">
+                        <button id="add-p" class="context-menu-item" data-type="p">Параграф</button>
+                        <button id="add-h1" class="context-menu-item" data-type="h1">Заголовок 1</button>
+                        <button id="add-h2" class="context-menu-item" data-type="h2">Заголовок 2</button>
+                        <button id="add-h3" class="context-menu-item" data-type="h3">Заголовок 3</button>
+                        <button id="add-ul" class="context-menu-item" data-type="ul">Список</button>
+                        <button id="add-ol" class="context-menu-item" data-type="ol">Нумерованный список</button>
+                        <button id="add-img" class="context-menu-item" data-type="img">Изображение</button>
+                    </div>
+                </div>
+                <button id="delete-block" class="context-menu-button">Удалить блок</button>
             </div>
         </main>
     </div>

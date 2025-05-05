@@ -4,6 +4,8 @@ import { TOPIC_STYLES, FIGURE, LINE_STYLES, INDENTATION_BETWEEN_BUTTON_NODE, NOD
 
 let jm = null;
 let selectedNodes = new Set();
+let activeEditBlock = null; // Add this line
+let selectedBlocks = new Set(); // Add this line
 
 // Кнопки для работы с фигурой узла
 // let buttonFigur = null;
@@ -83,13 +85,14 @@ function initJsMind() {
                 theme: 'dark',
                 onNodeAddButtonActive: nodeAddButtonActive,
                 onNodeAddButtonDisable: nodeAddButtonDisable,
+                onContextMenu: showContextMenu, // Добавляем новый обработчик
                 cascadeRemove: true,
                 renderMap: "mind",
             },
             data: { 
                 id: 'root', 
                 topic: {
-                    text: '<span style="color: purple;">Главная тема</span>',
+                    text: `<ol><li>TEXT</li><li>text</li></ol><h3>hi</h3>`,
                     color: '#000',
                     fontSize: '14px',
                     fontFamily: 'Arial'
@@ -108,12 +111,41 @@ function initJsMind() {
         jm = new jsMind(initialData);
         jm.show();
 
-        // Заполняем глобальные кнопки настройки карты
         renderMap.value = jm.settings.renderMap;
         mapZoom.value = 50;
     } catch (error) {
         console.error('Error initializing jsMind:', error);
     }
+}
+
+// Новая функция для отображения контекстного меню
+function showContextMenu(e, nodeId) {
+    const contextMenu = document.getElementById('context-menu');
+    const node = jm.nodes.get(nodeId);
+    
+    if (!node || !contextMenu) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    
+    contextMenu.style.display = 'block';
+    
+    // Позиционируем меню внутри видимой области
+    const x = Math.min(e.pageX, window.innerWidth - contextMenu.offsetWidth);
+    const y = Math.min(e.pageY, window.innerHeight - contextMenu.offsetHeight);
+    
+    contextMenu.style.left = x + 'px';
+    contextMenu.style.top = y + 'px';
+    
+    // Закрываем меню при клике вне его
+    const closeMenu = (e) => {
+        if (!e.target.closest('#context-menu')) {
+            contextMenu.style.display = 'none';
+            document.removeEventListener('click', closeMenu);
+        }
+    };
+    
+    document.addEventListener('click', closeMenu);
 }
 
 function initSelection() {
@@ -128,8 +160,58 @@ function initSelection() {
     document.addEventListener('mousedown', (e) => {
         if (!jm) return;
 
+        // // Handle block selection
+        // const clickedBlock = e.target.closest('[data-editable="true"]');
+        // if (clickedBlock && !clickedBlock.contentEditable) {
+        //     e.stopPropagation();
+            
+        //     // Clear selection if not holding Ctrl
+        //     if (!e.ctrlKey) {
+        //         selectedBlocks.forEach(block => {
+        //             block.classList.remove('selected');
+        //         });
+        //         selectedBlocks.clear();
+        //     }
+
+        //     // Toggle selection for clicked block
+        //     clickedBlock.classList.toggle('selected');
+        //     if (clickedBlock.classList.contains('selected')) {
+        //         selectedBlocks.add(clickedBlock);
+        //     } else {
+        //         selectedBlocks.delete(clickedBlock);
+        //     }
+        //     return;
+        // }
+
+        // // Clear block selection when clicking outside
+        // if (!e.target.closest('.node-topic')) {
+        //     selectedBlocks.forEach(block => {
+        //         block.classList.remove('selected');
+        //     });
+        //     selectedBlocks.clear();
+        // }
+
+        // // Check if we're editing a block and clicked outside
+        // if (activeEditBlock && !e.target.closest('[data-editable="true"]')) {
+        //     activeEditBlock.contentEditable = 'false';
+        //     activeEditBlock.draggable = true;
+        //     activeEditBlock = null;
+        //     return;
+        // }
+
         const clickedNode = e.target.closest('.jsmind-node');
         
+        // if (clickedBlock && !clickedBlock.contentEditable) {
+        //     e.stopPropagation();
+        //     if (!e.ctrlKey) {
+        //         document.querySelectorAll('[data-editable].selected').forEach(el => {
+        //             el.classList.remove('selected');
+        //         });
+        //     }
+        //     clickedBlock.classList.toggle('selected');
+        //     return;
+        // }
+
         if (clickedNode) {
             if (!e.ctrlKey) {
                 selectedNodes.clear();

@@ -9,6 +9,10 @@ body {
     overflow: hidden;
 }
 
+header {
+    z-index: 9999;
+}
+
 main {
     display: flex;
     height: calc(100vh - 30px);
@@ -24,6 +28,7 @@ main {
     height: 100%;
     display: flex;
     flex-direction: column;
+    z-index: 1;
 }
 
 .canvas {
@@ -83,7 +88,7 @@ main {
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 1000;
+    z-index: 2;
     padding: 8px;
     display: flex;
     flex-direction: column;
@@ -101,6 +106,7 @@ main {
     transition: all 0.2s ease;
     padding: 8px;
     user-select: none;
+    z-index: 2;
 }
 
 .side-button svg {
@@ -117,7 +123,7 @@ main {
     width: 280px;
     padding: 15px;
     font-family: Arial, sans-serif;
-    z-index: 1000;
+    z-index: 3;
     overflow-y: auto;
     transition: transform 0.3s ease;
     user-select: none;
@@ -246,4 +252,48 @@ main {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s;
+}
+
+/* Стили контекстного меню */
+#context-menu {
+    display: none;
+    position: fixed;
+    z-index: 3;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    padding: 5px 0;
+}
+
+#context-menu.show {
+    display: block;
+}
+
+#context-menu button {
+    display: block;
+    width: 100%;
+    padding: 8px 15px;
+    text-align: left;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+#context-menu button:hover {
+    background-color: #f0f0f0;
+}
+
+#context-menu .context-submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#context-menu .context-menu-group:hover .context-submenu {
+    display: block;
 }

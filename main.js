@@ -12,15 +12,13 @@ const fsPromises = require('fs').promises;
 const settingsPath = path.join(__dirname, 'src/data', 'settings.json');
 
 const md = new MarkdownIt({
-    breaks: true,      // Включаем поддержку одиночных переносов строк
-    html: true,        // Разрешаем HTML
-    linkify: true,     // Автоматически определяем ссылки
-    typographer: true, // Включаем типографские замены
-    xhtmlOut: true    // Используем XHTML стиль для переносов строк
+    breaks: true,
+    html: true,
+    linkify: true,
+    typographer: true
 });
 
-// Добавляем обработку переносов строк
-md.renderer.rules.softbreak = () => '<br>\n';
+// md.renderer.rules.softbreak = () => '<br>\n';
 
 function readSettings() {
     try {
@@ -44,9 +42,9 @@ function createWindow() {
             contextIsolation: true,
             webSecurity: true,
             allowRunningInsecureContent: false,
-            nodeIntegration: true, // Разрешаем node интеграцию
+            nodeIntegration: true,
             contextIsolation: true,
-            sandbox: false, // Отключаем sandbox для работы с модулями
+            sandbox: false,
         },
     });
 

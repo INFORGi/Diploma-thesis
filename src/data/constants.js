@@ -83,21 +83,21 @@ export const NODE_STYLES = {
     padding: "10px"
 };
 
-export const DEFAULT_TOPIC = {
-    id: `block_${Date.now()}`,
-    text: 'New Topic',
-    type: 'span',
-    styles: {
-        color: '#333333',
-        fontSize: '14px',
-        fontWeight: 'normal',
-        fontStyle: 'normal',
-        fontFamily: 'Arial',
-        textDecoration: 'none',
-        textTransform: 'none',
-        textAlign: 'justify'
-    }
-};
+// export const DEFAULT_TOPIC = {
+//     id: `block_${Date.now()}`,
+//     text: 'New Topic',
+//     type: 'span',
+//     styles: {
+//         color: '#333333',
+//         fontSize: '14px',
+//         fontWeight: 'normal',
+//         fontStyle: 'normal',
+//         fontFamily: 'Arial',
+//         textDecoration: 'none',
+//         textTransform: 'none',
+//         textAlign: 'justify'
+//     }
+// };
 
 export const FIGURE = {
     RECTANGLE: {
@@ -173,10 +173,11 @@ export const FIGURE = {
 export const DEFAULT_NODE_DATA = {
     id: null,
     topic: {
-        block: [
-            { ...DEFAULT_TOPIC },
-        ]
-    },
+        text: `<p>Text</p>`,
+        color: '#000',
+        fontSize: '14px',
+        fontFamily: 'Arial'
+    },  
     parent: null,
     children: {},
     styleNode: { ...NODE_STYLES },
@@ -226,3 +227,4 @@ export const SPACING_WIDTH = 100;
 export const SPACING_HEIGHT = 50;
 export const CANVAS_SIZE_BUTTON = 25;
 export const PADDING_WITH_NODE = 1;
+export const DOUBLE_CLICK_DELAY = 300;

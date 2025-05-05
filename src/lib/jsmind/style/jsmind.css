@@ -20,29 +20,39 @@
     z-index: 2;
 }
 
-.node-topic.light.editing {
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 2px;
+.jsmind-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.node-topic.editing {
     cursor: text;
-    white-space: normal;
+    min-width: 50px;
+    min-height: 20px;
+    outline: none;
+    white-space: pre-wrap;
+    padding: 5px;
+}
+
+.node-topic.editing:focus {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.node-topic.light.editing {
+    background: rgba(255, 255, 255, 0.95);
+    color: #000;
 }
 
 .node-topic.dark.editing {
-    background: rgba(0, 0, 0, 0.8);
-    border-radius: 2px;
-    cursor: text;
-    white-space: normal;
-}
-
-.context-menu {
-    position: fixed;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    z-index: 1001;
-    min-width: 150px;
+    background: rgba(40, 40, 40, 0.95);
+    color: #fff;
 }
 
 .style-group,
@@ -84,7 +94,7 @@
     border: 1px solid #3498db;
     background-color: rgba(52, 152, 219, 0.2);
     pointer-events: none;
-    z-index: 1000;
+    z-index: 999;
     display: none;
 }
 
@@ -94,4 +104,153 @@
     left: 0;
     width: 100%;
     height: 100%;
+}
+
+.content:hover {
+    border: 1px solid #111943;
+}
+
+.blocks-movable h1,
+.blocks-movable h2,
+.blocks-movable h3,
+.blocks-movable p,
+.blocks-movable ul,
+.blocks-movable ol {
+    padding: 5px;
+    margin: 5px 0;
+    border-radius: 4px;
+    cursor: move;
+    transition: background-color 0.2s;
+}
+
+[contenteditable="true"] {
+    cursor: text;
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    outline: none;
+}
+
+[contenteditable="true"]:focus {
+    background-color: rgba(255, 255, 255, 0.98);
+}
+
+.jsmind-node.editing-mode {
+    outline: 2px dashed #666;
+}
+
+.jsmind-node.editing-mode [contenteditable="true"] {
+    outline: 1px solid #ccc;
+    min-width: 1em;
+    cursor: move;
+}
+
+.jsmind-node.editing-mode [contenteditable="true"]:focus {
+    outline: 2px solid #0066cc;
+    cursor: text;
+}
+
+.jsmind-node.editing-mode [contenteditable="true"].dragging {
+    opacity: 0.5;
+}
+
+[data-editable="true"] {
+    cursor: move;
+    padding: 4px;
+    margin: 2px 0;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+[data-editable="true"]:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-color: #ccc;
+}
+
+[data-editable="true"][contenteditable="true"] {
+    cursor: text;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-color: #0066cc;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+[data-editable="true"].dragging {
+    opacity: 0.5;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-color: #666;
+}
+
+[data-editable="true"].selected {
+    outline: 2px solid #0066cc !important;
+    border-radius: 4px;
+    background-color: rgba(0, 102, 204, 0.1);
+}
+
+[data-editable="true"].selected:hover {
+    background-color: rgba(0, 102, 204, 0.15);
+}
+
+[data-editable="true"].selected {
+    background-color: rgba(0, 102, 204, 0.1);
+    border-color: #0066cc;
+}
+
+[data-editable="true"].selected:hover {
+    background-color: rgba(0, 102, 204, 0.15);
+}
+
+.jsmind-node.editing-mode [data-editable="true"] {
+    display: block; /* Ensure blocks are stacked vertically */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Preserve list styles */
+.jsmind-node.editing-mode ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.jsmind-node.editing-mode ol {
+    list-style-type: decimal;
+    padding-left: 20px;
+}
+
+.jsmind-node.editing-mode li {
+    display: list-item;
+}
+
+/* Стили для блоков внутри topic */
+.node-topic > * {
+    min-width: 100px;
+    min-height: 50px;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    margin: 5px 0;
+    padding: 8px;
+}
+
+.node-topic h1,
+.node-topic h2,
+.node-topic h3,
+.node-topic p {
+    display: block;
+    width: 100%;
+}
+
+.node-topic ul,
+.node-topic ol {
+    width: 100%;
+    padding-left: 25px;
+}
+
+.node-topic li {
+    min-height: 25px;
+}
+
+[data-editable="true"]:empty::before {
+    content: 'Введите текст';
+    color: #999;
+    font-style: italic;
 }

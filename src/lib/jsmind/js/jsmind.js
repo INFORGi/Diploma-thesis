@@ -1,5 +1,9 @@
-import { FIGURE, TOPIC_STYLES, NODE_STYLES, LINE_STYLES, DEFAULT_NODE_DATA, MIND_MAP_THEMES, SPACING_WIDTH, SPACING_HEIGHT, PADDING_WITH_NODE } from '../../../data/constants.js';
+import { FIGURE, TOPIC_STYLES, NODE_STYLES, 
+    LINE_STYLES, DEFAULT_NODE_DATA, MIND_MAP_THEMES, 
+    SPACING_WIDTH, SPACING_HEIGHT, PADDING_WITH_NODE,
+    DOUBLE_CLICK_DELAY } from '../../../data/constants.js';
 
+    
 export class jsMind {
     constructor(map) {
         this.settings = {
@@ -7,6 +11,7 @@ export class jsMind {
             theme: map.settings.theme || 'default',
             onNodeAddButtonActive: map.settings.onNodeAddButtonActive || (() => {}),
             onNodeAddButtonDisable: map.settings.onNodeAddButtonDisable || (() => {}),
+            onContextMenu: map.settings.onContextMenu || (() => {}), // Добавляем новый обработчик
             cascadeRemove: map.settings.cascadeRemove ?? true,
             renderMap: map.settings.renderMap,
         };
@@ -18,6 +23,7 @@ export class jsMind {
         this.nodes = new Map();
         this.root = null;
         this.activeNode = new Set();
+        this.selectedBlock = null; // Add this line
 
         this.initContainer();
     }
@@ -124,6 +130,7 @@ export class jsMind {
         if (data.draggable) {
             this.makeNodeDraggable(node);
         }
+
         this.setupTopicEventListeners(topic);
     
         return node;
@@ -511,48 +518,209 @@ export class jsMind {
     }
 
     setupTopicEventListeners(topic) {
-        let originalContent;
-    
+        let isEditMode = false;
+        let draggedBlock = null;
+        let editingBlock = null;
+        let clickTimer = null;
+        let clickCount = 0;
+
+        const exitEditMode = () => {
+            isEditMode = false;
+            editingBlock = null;
+            const node = topic.closest('.jsmind-node');
+            if (!node) return;
+
+            // Restore node dragging
+            const nodeData = this.nodes.get(node.id);
+            if (nodeData && node.dataset.isroot !== 'true') {
+                nodeData.data.draggable = true;
+            }
+
+            // Cleanup editable blocks
+            topic.querySelectorAll('[data-editable]').forEach(block => {
+                block.contentEditable = 'false';
+                block.draggable = false;
+                block.removeAttribute('data-editable');
+            });
+
+            node.classList.remove('editing-mode');
+            this.saveNodeContent(topic);
+        };
+
+        const handleBlockClick = (block) => {
+            clickCount++;
+            
+            if (clickCount === 1) {
+                clickTimer = setTimeout(() => {
+                    clickCount = 0;
+                    clickTimer = null;
+                }, DOUBLE_CLICK_DELAY);
+            } else if (clickCount === 2) {
+                clearTimeout(clickTimer);
+                clickCount = 0;
+                clickTimer = null;
+
+                if (editingBlock === block) {
+                    block.contentEditable = 'false';
+                    block.draggable = true;
+                    editingBlock = null;
+                } else {
+                    if (editingBlock) {
+                        editingBlock.contentEditable = 'false';
+                        editingBlock.draggable = true;
+                    }
+                    block.contentEditable = 'true';
+                    block.draggable = false;
+                    block.focus();
+                    editingBlock = block;
+                }
+            }
+        };
+
         topic.addEventListener('dblclick', (e) => {
+            const node = topic.closest('.jsmind-node');
+            if (!node || !this.activeNode.has(node.id) || this.activeNode.size !== 1) return;
+
+            if (!isEditMode) {
+                isEditMode = true;
+                node.classList.add('editing-mode');
+
+                const nodeData = this.nodes.get(node.id);
+                if (nodeData) {
+                    nodeData.data.draggable = false;
+                }
+
+                // Make blocks editable while preserving their original markup
+                topic.querySelectorAll('h1, h2, h3, p, ul, ol, li').forEach(block => {
+                    if (block.textContent.trim()) {
+                        block.setAttribute('data-editable', 'true');
+                        block.draggable = true;
+                    }
+                });
+            }
+        });
+
+        topic.addEventListener('click', (e) => {
+            const block = e.target.closest('[data-editable="true"]');
+            if (!block) return;
+
             e.stopPropagation();
-            const node = topic.closest('.jsmind-node');
-    
-            topic.contentEditable = 'true';
-            originalContent = topic.dataset.markdown || topic.textContent;
-            topic.textContent = originalContent;
-    
-            topic.classList.add('editing');
-            topic.focus();
-    
-            const range = document.createRange();
-            const sel = window.getSelection();
-            range.selectNodeContents(topic);
-            range.collapse(false);
-            sel.removeAllRanges();
-            sel.addRange(range);
+
+            // If the block is being edited, don't change selection
+            if (editingBlock === block) return;
+
+            // Clear previous selection
+            if (this.selectedBlock) {
+                this.selectedBlock.classList.remove('selected');
+            }
+
+            // Update selection
+            block.classList.add('selected');
+            this.selectedBlock = block;
+
+            // If in edit mode, handle editing
+            if (isEditMode) {
+                handleBlockClick(block);
+            }
         });
-    
-        topic.addEventListener('blur', async () => {
-            const node = topic.closest('.jsmind-node');
-            topic.contentEditable = 'false';
-            topic.classList.remove('editing');
-    
-            const nodeId = node.id;
-            const nodeData = this.nodes.get(nodeId);
-            const markdown = topic.textContent.trim() || 'Текст';
-    
-            nodeData.data.topic.text = markdown;
-            topic.dataset.markdown = markdown;
-            topic.innerHTML = await window.electron.renderMarkdown(markdown);
-    
-            // Дождаться обновления DOM
-            await new Promise(resolve => requestAnimationFrame(resolve));
-        });
-    
-        topic.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
+
+        topic.addEventListener('dragstart', (e) => {
+            if (!isEditMode) {
                 e.preventDefault();
-                topic.blur();
+                return;
+            }
+            const block = e.target.closest('[data-editable="true"]');
+            if (!block || block === editingBlock) {
+                e.preventDefault();
+                return;
+            }
+            draggedBlock = block;
+            draggedBlock.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', '');
+        });
+
+        topic.addEventListener('dragover', (e) => {
+            if (!isEditMode || !draggedBlock) return;
+            e.preventDefault();
+
+            const block = e.target.closest('[data-editable="true"]');
+            if (!block || block === draggedBlock) return;
+
+            const rect = block.getBoundingClientRect();
+            const insertBefore = e.clientY < rect.top + rect.height / 2;
+
+            if (insertBefore) {
+                block.parentNode.insertBefore(draggedBlock, block);
+            } else {
+                block.parentNode.insertBefore(draggedBlock, block.nextSibling);
+            }
+        });
+
+        topic.addEventListener('dragend', () => {
+            if (draggedBlock) {
+                draggedBlock.classList.remove('dragging');
+                draggedBlock = null;
+            }
+        });
+
+        document.addEventListener('mousedown', (e) => {
+            if (isEditMode && !topic.contains(e.target)) {
+                exitEditMode();
+            }
+        });
+
+        topic.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isEditMode) {
+                e.preventDefault();
+                exitEditMode();
+            } else if (e.key === 'Enter') {
+                if (!e.shiftKey) {
+                    e.preventDefault();
+                    exitEditMode();
+                } else if (isEditMode && editingBlock) {
+                    e.preventDefault();
+                    const selection = window.getSelection();
+                    const range = selection.getRangeAt(0);
+                    
+                    // Get text content before and after cursor
+                    const content = editingBlock.textContent;
+                    const cursorPosition = range.startOffset;
+                    const textBefore = content.substring(0, cursorPosition);
+                    const textAfter = content.substring(cursorPosition);
+                    
+                    // Update current block with text before cursor
+                    editingBlock.textContent = textBefore;
+                    
+                    // Create new block of the same type
+                    const newBlock = document.createElement(editingBlock.tagName);
+                    newBlock.setAttribute('data-editable', 'true');
+                    newBlock.draggable = false;
+                    newBlock.contentEditable = 'true';
+                    newBlock.textContent = textAfter;
+                    
+                    // Insert new block after current block
+                    if (editingBlock.nextSibling) {
+                        editingBlock.parentNode.insertBefore(newBlock, editingBlock.nextSibling);
+                    } else {
+                        editingBlock.parentNode.appendChild(newBlock);
+                    }
+                    
+                    // Focus new block and set cursor to start
+                    newBlock.focus();
+                    const newRange = document.createRange();
+                    newRange.setStart(newBlock.firstChild || newBlock, 0);
+                    newRange.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+                    
+                    editingBlock = newBlock;
+                }
+            }
+        });
+
+        document.addEventListener('mousedown', (e) => {
+            if (isEditMode && !topic.contains(e.target)) {
+                exitEditMode();
             }
         });
     }
@@ -733,21 +901,6 @@ export class jsMind {
         if (this.settings.theme) this.container.style.backgroundColor = MIND_MAP_THEMES[this.settings.theme].canvas.backgroundColor;
     }
 
-    swapTheme() {
-        if (!this.settings.theme) { console.error("Не определена тема в опциях"); return; }
-
-        const theme = MIND_MAP_THEMES[this.settings.theme];
-        if (!this.container) { console.error("Не определен контейнер"); return; }
-
-        this.container.style.backgroundColor = theme.canvas.backgroundColor;
-        
-        const buttonAdd = document.getElementById('create-node');
-        if (!buttonAdd) { console.error("Не определена кнопка добавления узла"); return; }
-
-        buttonAdd.style.backgroundColor = theme.buttonAdd.backgroundColor;
-        buttonAdd.style.color = theme.buttonAdd.color;
-    }
-
     findEdges(points) {
         let minY = 1, maxY = 0;
         points.forEach(point => {
@@ -846,4 +999,18 @@ export class jsMind {
         ctx.fill();
         ctx.stroke();
     }
+
+    saveNodeContent(topic) {
+        const node = topic.closest('.jsmind-node');
+        if (!node) return;
+
+        const nodeData = this.nodes.get(node.id);
+        if (!nodeData) return;
+
+        const content = topic.innerHTML;
+        nodeData.data.topic.text = content;
+
+        this.layout(this.root, new Set([node.id]));
+    }
+
 }

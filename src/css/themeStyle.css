@@ -30,6 +30,22 @@
     /* Общие */
     --border-color: #6b6e75;
     --accent-hover: rgb(206, 222, 255);
+
+    --editable-selected-bg-light: rgba(0, 102, 204, 0.1);
+    --editable-selected-border-light: #0066cc;
+    --editable-selected-hover-bg-light: rgba(0, 102, 204, 0.15);
+    --editable-hover-bg-light: rgba(0, 0, 0, 0.05);
+    --editable-hover-border-light: #ccc;
+    --editable-dragging-bg-light: rgba(0, 0, 0, 0.05);
+    --editable-dragging-border-light: #666;
+    
+    --editable-selected-bg-dark: rgba(0, 102, 204, 0.2);
+    --editable-selected-border-dark: #3399ff;
+    --editable-selected-hover-bg-dark: rgba(0, 102, 204, 0.25);
+    --editable-hover-bg-dark: rgba(255, 255, 255, 0.05);
+    --editable-hover-border-dark: #888;
+    --editable-dragging-bg-dark: rgba(255, 255, 255, 0.05);
+    --editable-dragging-border-dark: #999;
 }
 
 body.light { background-color: var(--light-primary); color: var(--light-text-primary); }
@@ -290,7 +306,7 @@ select.dark {
     height: 0;
 }
 
-.slider {
+/* .slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -312,9 +328,8 @@ select.dark {
     background-color: white;
     transition: .4s;
     border-radius: 50%;
-}
+} */
 
-/* Светлая тема */
 .light .toggle-switch input:checked + .slider {
     background-color: var(--light-accent);
 }
@@ -323,7 +338,6 @@ select.dark {
     transform: translateX(26px);
 }
 
-/* Тёмная тема */
 .dark .slider {
     background-color: var(--dark-gray-300);
 }
@@ -336,7 +350,47 @@ select.dark {
     transform: translateX(26px);
 }
 
-/* Эффект при наведении */
 .toggle:hover .slider {
     box-shadow: 0 0 1px var(--light-accent);
+}
+
+[data-editable="true"]:hover {
+    background-color: var(--editable-hover-bg-light);
+    border-color: var(--editable-hover-border-light);
+}
+
+[data-editable="true"].dragging {
+    opacity: 0.5;
+    background-color: var(--editable-dragging-bg-light);
+    border-color: var(--editable-dragging-border-light);
+}
+
+[data-editable="true"].selected {
+    outline: 2px solid var(--editable-selected-border-light) !important;
+    border-radius: 4px;
+    background-color: var(--editable-selected-bg-light);
+}
+
+[data-editable="true"].selected:hover {
+    background-color: var(--editable-selected-hover-bg-light);
+}
+
+/* Dark theme overrides */
+.dark [data-editable="true"]:hover {
+    background-color: var(--editable-hover-bg-dark);
+    border-color: var(--editable-hover-border-dark);
+}
+
+.dark [data-editable="true"].dragging {
+    background-color: var(--editable-dragging-bg-dark);
+    border-color: var(--editable-dragging-border-dark);
+}
+
+.dark [data-editable="true"].selected {
+    outline: 2px solid var(--editable-selected-border-dark) !important;
+    background-color: var(--editable-selected-bg-dark);
+}
+
+.dark [data-editable="true"].selected:hover {
+    background-color: var(--editable-selected-hover-bg-dark);
 }

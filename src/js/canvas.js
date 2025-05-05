@@ -160,57 +160,7 @@ function initSelection() {
     document.addEventListener('mousedown', (e) => {
         if (!jm) return;
 
-        // // Handle block selection
-        // const clickedBlock = e.target.closest('[data-editable="true"]');
-        // if (clickedBlock && !clickedBlock.contentEditable) {
-        //     e.stopPropagation();
-            
-        //     // Clear selection if not holding Ctrl
-        //     if (!e.ctrlKey) {
-        //         selectedBlocks.forEach(block => {
-        //             block.classList.remove('selected');
-        //         });
-        //         selectedBlocks.clear();
-        //     }
-
-        //     // Toggle selection for clicked block
-        //     clickedBlock.classList.toggle('selected');
-        //     if (clickedBlock.classList.contains('selected')) {
-        //         selectedBlocks.add(clickedBlock);
-        //     } else {
-        //         selectedBlocks.delete(clickedBlock);
-        //     }
-        //     return;
-        // }
-
-        // // Clear block selection when clicking outside
-        // if (!e.target.closest('.node-topic')) {
-        //     selectedBlocks.forEach(block => {
-        //         block.classList.remove('selected');
-        //     });
-        //     selectedBlocks.clear();
-        // }
-
-        // // Check if we're editing a block and clicked outside
-        // if (activeEditBlock && !e.target.closest('[data-editable="true"]')) {
-        //     activeEditBlock.contentEditable = 'false';
-        //     activeEditBlock.draggable = true;
-        //     activeEditBlock = null;
-        //     return;
-        // }
-
         const clickedNode = e.target.closest('.jsmind-node');
-        
-        // if (clickedBlock && !clickedBlock.contentEditable) {
-        //     e.stopPropagation();
-        //     if (!e.ctrlKey) {
-        //         document.querySelectorAll('[data-editable].selected').forEach(el => {
-        //             el.classList.remove('selected');
-        //         });
-        //     }
-        //     clickedBlock.classList.toggle('selected');
-        //     return;
-        // }
 
         if (clickedNode) {
             if (!e.ctrlKey) {
@@ -346,10 +296,10 @@ function initSelection() {
         justFinishedSelecting = false;
     });
 
-    window.addEventListener('keydown', (e) => {
+    window.addEventListener('keydown', async (e) => {
         if (e.key === 'Delete' || e.key === 'Del') {
-            if (jm.activeNode.size > 0) {
-                jm.removeNode();
+            if (jm.activeNode.size > 0 && jm.selectedBlockContent === null) {
+                await jm.removeNode();
             }
         }
     });

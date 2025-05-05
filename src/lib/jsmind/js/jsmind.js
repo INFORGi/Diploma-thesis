@@ -23,7 +23,7 @@ export class jsMind {
         this.nodes = new Map();
         this.root = null;
         this.activeNode = new Set();
-        this.selectedBlock = null; // Add this line
+        this.selectedBlockContent = null;
 
         this.initContainer();
     }
@@ -147,23 +147,23 @@ export class jsMind {
         const updateNode = (currentNodeId) => {
             const currentNode = this.nodes.get(currentNodeId);
             if (!currentNode) return;
-    
-            // Получаем элементы
+
             const nodeElement = currentNode.element;
             const topic = nodeElement.querySelector('.node-topic');
             const containerContent = nodeElement.querySelector('.jsmind-node-content');
             const canvas = nodeElement.querySelector('canvas');
-    
-            // Обновляем размеры и отрисовываем фигуру только для обновленных узлов
+
             if ((updatedNodes.size === 0 || updatedNodes.has(currentNodeId)) && topic && topic.innerHTML) {
                 const contentRect = topic.getBoundingClientRect();
                 if (contentRect.width > 0 && contentRect.height > 0) {
                     const { width, height, maxWidth, maxHeight } = this.calculateNodeDimensions(currentNode.data.figure, currentNode.data, contentRect);
 
+                    console.log(width, height, maxWidth, maxHeight);
+                    
                     containerContent.style.width = `${width}px`;
                     containerContent.style.height = `${height}px`;
-                    topic.style.maxWidth = maxWidth;
-                    topic.style.maxHeight = maxHeight;
+                    topic.style.width = maxWidth;
+                    topic.style.height = maxHeight;
 
                     this.drawNodeFigure(canvas, containerContent, currentNode.data.figure);
                 }
@@ -544,7 +544,7 @@ export class jsMind {
             });
 
             node.classList.remove('editing-mode');
-            this.saveNodeContent(topic);
+            this.saveNodeContent(node.id, topic);
         };
 
         const handleBlockClick = (block) => {
@@ -606,19 +606,14 @@ export class jsMind {
 
             e.stopPropagation();
 
-            // If the block is being edited, don't change selection
             if (editingBlock === block) return;
-
-            // Clear previous selection
-            if (this.selectedBlock) {
-                this.selectedBlock.classList.remove('selected');
+            if (this.selectedBlockContent) {
+                this.selectedBlockContent.classList.remove('selected');
             }
 
-            // Update selection
             block.classList.add('selected');
-            this.selectedBlock = block;
+            this.selectedBlockContent = block;
 
-            // If in edit mode, handle editing
             if (isEditMode) {
                 handleBlockClick(block);
             }
@@ -721,6 +716,24 @@ export class jsMind {
         document.addEventListener('mousedown', (e) => {
             if (isEditMode && !topic.contains(e.target)) {
                 exitEditMode();
+            }
+        });
+
+        // Add keydown listener for delete functionality
+        window.addEventListener('keydown', async (e) => {
+            if ((e.key === 'Delete' || e.key === 'Del') && this.selectedBlockContent) {
+                e.preventDefault();
+                const node = topic.closest('.jsmind-node');
+                if (!node) return;
+
+                // Remove the block from the DOM
+                this.selectedBlockContent.remove();
+
+                // Clear selection
+                this.selectedBlockContent = null;
+
+                // Save updated content
+                this.saveNodeContent(node.id, topic);
             }
         });
     }
@@ -963,8 +976,8 @@ export class jsMind {
 
             console.log(safeWidth / horizontalRatio + padding * 2);
             
-            maxWidth = `${horizontalRatio * 0.9 * 100 - parseInt(figure.strokeWidth || 1)}%`;
-            maxHeight = `${verticalRatio * 0.9 * 100 - parseInt(figure.strokeWidth || 1)}%`;
+            maxWidth = `${horizontalRatio * 0.95 * 100 - parseInt(figure.strokeWidth || 1)}%`;
+            maxHeight = `${verticalRatio * 0.95 * 100 - parseInt(figure.strokeWidth || 1)}%`;
         } else {
             width = Math.max(safeWidth + padding * 2, 250);
             height = Math.max(safeHeight + padding * 2, 175);
@@ -1000,17 +1013,14 @@ export class jsMind {
         ctx.stroke();
     }
 
-    saveNodeContent(topic) {
-        const node = topic.closest('.jsmind-node');
+    saveNodeContent(nodeId, topic) {
+        const node = this.nodes.get(nodeId);
         if (!node) return;
 
-        const nodeData = this.nodes.get(node.id);
-        if (!nodeData) return;
-
         const content = topic.innerHTML;
-        nodeData.data.topic.text = content;
+        node.data.topic.text = content;
+        topic.dataset.markdown = content;
 
         this.layout(this.root, new Set([node.id]));
     }
-
 }

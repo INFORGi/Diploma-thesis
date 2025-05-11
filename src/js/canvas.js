@@ -92,7 +92,8 @@ function initJsMind() {
             data: { 
                 id: 'root', 
                 topic: {
-                    text: `<ol><li>TEXT</li><li>text</li></ol><h3>hi</h3>`,
+                    text: `<ol><li>TEXT</li><li>text</li></ol><h3>hi</h3>
+                    <img src="C:/Users/shulg/OneDrive/Pictures/Screenshots/ccc.png" style="width:450px; height:500px;" alt="Test image" />`,
                     color: '#000',
                     fontSize: '14px',
                     fontFamily: 'Arial'
@@ -668,23 +669,26 @@ function setData(updates = {}) {
             }
 
             if (updates.size) {
-                // Минимальные размеры узла
                 const minWidth = parseFloat(node.data.styleNode.minWidth) || 250;
                 const minHeight = parseFloat(node.data.styleNode.minHeight) || 75;
 
-                // Валидация новых размеров
-                const newWidth = updates.size.width === "auto" || !isFinite(parseFloat(updates.size.width))
-                    ? "auto"
-                    : Math.max(parseFloat(updates.size.width), minWidth);
-                const newHeight = updates.size.height === "auto" || !isFinite(parseFloat(updates.size.height))
-                    ? "auto"
-                    : Math.max(parseFloat(updates.size.height), minHeight);
+                const topic = node.element.querySelector('.node-topic');
+                const contentRect = topic.getBoundingClientRect();
+
+                const newWidth = Math.max(
+                    parseFloat(updates.size.width) || minWidth,
+                    contentRect.width + PADDING_WITH_NODE * 2
+                );
+                const newHeight = Math.max(
+                    parseFloat(updates.size.height) || minHeight,
+                    contentRect.height + PADDING_WITH_NODE * 2
+                );
 
                 node.data.styleNode.width = newWidth;
                 node.data.styleNode.height = newHeight;
             }
 
-            jm.layout(nodeId);
+            jm.layout(jm.root, new Set([nodeId]));
         });
     } catch (error) {
         console.error('Ошибка в методе setData: ' + error);

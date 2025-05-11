@@ -121,8 +121,7 @@ export class jsMind {
             position: 'relative',
             zIndex: '2'
         });
-    
-        // Дождаться обновления DOM
+
         await new Promise(resolve => requestAnimationFrame(resolve));
     
         node.style.visibility = 'visible';
@@ -530,13 +529,55 @@ export class jsMind {
             const node = topic.closest('.jsmind-node');
             if (!node) return;
 
-            // Restore node dragging
             const nodeData = this.nodes.get(node.id);
             if (nodeData && node.dataset.isroot !== 'true') {
                 nodeData.data.draggable = true;
             }
 
-            // Cleanup editable blocks
+            topic.querySelectorAll('[data-editable]').forEach(block => {
+                if (!block.textContent.trim() && block.tagName !== 'IMG') {
+                    block.remove();
+                    return;
+                }
+                if (block.tagName === 'UL' || block.tagName === 'OL') {
+                    const children = Array.from(block.childNodes);
+                    children.forEach(child => {
+                        if (child.nodeType === Node.ELEMENT_NODE && child.tagName !== 'LI') {
+                            if (child.tagName !== 'IMG') {
+                                const li = document.createElement('li');
+                                li.textContent = child.textContent;
+                                li.setAttribute('data-editable', 'true');
+                                li.contentEditable = 'false';
+                                li.draggable = false;
+                                block.replaceChild(li, child);
+                            }
+                            else {
+                                const parent = block.parentNode;
+                                const next = block.nextSibling;
+                                block.removeChild(child);
+                                if (parent) {
+                                    if (next) {
+                                        parent.insertBefore(child, next);
+                                    } else {
+                                        parent.appendChild(child);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                if (block.tagName === 'LI' && (!block.parentElement || (block.parentElement.tagName !== 'UL' && block.parentElement.tagName !== 'OL'))) {
+                    const p = document.createElement('p');
+                    p.textContent = block.textContent;
+                    p.setAttribute('data-editable', 'true');
+                    p.contentEditable = 'false';
+                    p.draggable = false;
+
+                    const parent = block.parentNode;
+                    parent.replaceChild(p, block);
+                }
+            });
+
             topic.querySelectorAll('[data-editable]').forEach(block => {
                 block.contentEditable = 'false';
                 block.draggable = false;
@@ -590,9 +631,11 @@ export class jsMind {
                     nodeData.data.draggable = false;
                 }
 
-                // Make blocks editable while preserving their original markup
-                topic.querySelectorAll('h1, h2, h3, p, ul, ol, li').forEach(block => {
-                    if (block.textContent.trim()) {
+                topic.querySelectorAll('h1, h2, h3, p, ul, ol, li, img').forEach(block => {
+                    if (
+                        block.tagName === 'IMG' || 
+                        block.textContent.trim()
+                    ) {
                         block.setAttribute('data-editable', 'true');
                         block.draggable = true;
                     }
@@ -639,10 +682,28 @@ export class jsMind {
             e.preventDefault();
 
             const block = e.target.closest('[data-editable="true"]');
-            if (!block || block === draggedBlock) return;
+            if (!block) {
+                const topicElement = e.target.closest('.node-topic');
+                if (topicElement) {
+                    topicElement.appendChild(draggedBlock);
+                }
+                return;
+            }
+            
+            if (block === draggedBlock) return;
 
             const rect = block.getBoundingClientRect();
             const insertBefore = e.clientY < rect.top + rect.height / 2;
+
+            if (draggedBlock.tagName === 'IMG' && (block.tagName === 'UL' || block.tagName === 'OL')) {
+                const parent = block.parentNode;
+                if (insertBefore) {
+                    parent.insertBefore(draggedBlock, block);
+                } else {
+                    parent.insertBefore(draggedBlock, block.nextSibling);
+                }
+                return;
+            }
 
             if (insertBefore) {
                 block.parentNode.insertBefore(draggedBlock, block);
@@ -676,31 +737,28 @@ export class jsMind {
                     e.preventDefault();
                     const selection = window.getSelection();
                     const range = selection.getRangeAt(0);
-                    
-                    // Get text content before and after cursor
+
                     const content = editingBlock.textContent;
                     const cursorPosition = range.startOffset;
                     const textBefore = content.substring(0, cursorPosition);
                     const textAfter = content.substring(cursorPosition);
                     
-                    // Update current block with text before cursor
                     editingBlock.textContent = textBefore;
                     
-                    // Create new block of the same type
                     const newBlock = document.createElement(editingBlock.tagName);
                     newBlock.setAttribute('data-editable', 'true');
                     newBlock.draggable = false;
                     newBlock.contentEditable = 'true';
                     newBlock.textContent = textAfter;
-                    
-                    // Insert new block after current block
+
+
+                    // if (block.contains(draggedBlock)) return; 
                     if (editingBlock.nextSibling) {
                         editingBlock.parentNode.insertBefore(newBlock, editingBlock.nextSibling);
                     } else {
                         editingBlock.parentNode.appendChild(newBlock);
                     }
-                    
-                    // Focus new block and set cursor to start
+
                     newBlock.focus();
                     const newRange = document.createRange();
                     newRange.setStart(newBlock.firstChild || newBlock, 0);
@@ -719,7 +777,6 @@ export class jsMind {
             }
         });
 
-        // Add keydown listener for delete functionality
         window.addEventListener('keydown', async (e) => {
             if ((e.key === 'Delete' || e.key === 'Del') && this.selectedBlockContent) {
                 e.preventDefault();

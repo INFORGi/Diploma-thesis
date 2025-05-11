@@ -52,6 +52,8 @@ export const LINE_STYLES = {
 
 export const TOPIC_STYLES = {
     position: "relative",
+    width: "auto",
+    height: "auto",
     zIndex: "2",
     display: "flex",
     flexDirection: "column",
@@ -68,10 +70,10 @@ export const TOPIC_STYLES = {
 export const NODE_STYLES = {
     position: "absolute",
     backgroundColor: "transparent",
-    minWidth: "250", 
-    minHeight: "75",    
-    width: "auto",
-    height: "auto",
+    minWidth: 300,
+    minHeight: 250,
+    width: 350,
+    height: 250,
     borderRadius: '5px',
     cursor: "pointer",
     userSelect: "none", 

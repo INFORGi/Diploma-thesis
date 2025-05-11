@@ -582,8 +582,17 @@ function getData() {
             groupBoxLineStyle.value = node.data.styleLine.type;
             inputLineColor.value = node.data.styleLine.style.stroke;
             inputLineWidth.value = node.data.styleLine.style.strokeWidth;
+
+            // Получаем актуальные размеры из элемента
+            const containerContent = node.element.querySelector('.jsmind-node-content');
+            const currentWidth = parseInt(containerContent.style.width);
+            const currentHeight = parseInt(containerContent.style.height);
+
+            // Отображаем актуальные размеры в интерфейсе
+            nodeWidth.value = currentWidth || node.data.styleNode.width || 250;
+            nodeHeight.value = currentHeight || node.data.styleNode.height || 75;
         } catch (error) {
-            console.error('Ошибка заполнения данными узла: ' + error);
+            console.error('Ошибка заполнения данными узла:', error);
         }
     }
 
@@ -675,17 +684,28 @@ function setData(updates = {}) {
                 const topic = node.element.querySelector('.node-topic');
                 const contentRect = topic.getBoundingClientRect();
 
+                // Применяем новые размеры, учитывая как минимальные значения, так и размер контента
                 const newWidth = Math.max(
-                    parseFloat(updates.size.width) || minWidth,
-                    contentRect.width + PADDING_WITH_NODE * 2
+                    parseFloat(updates.size.width),
+                    contentRect.width + PADDING_WITH_NODE * 2,
+                    minWidth
                 );
                 const newHeight = Math.max(
-                    parseFloat(updates.size.height) || minHeight,
-                    contentRect.height + PADDING_WITH_NODE * 2
+                    parseFloat(updates.size.height),
+                    contentRect.height + PADDING_WITH_NODE * 2,
+                    minHeight
                 );
 
+                // Сохраняем новые размеры в данных узла
                 node.data.styleNode.width = newWidth;
                 node.data.styleNode.height = newHeight;
+
+                // Обновляем DOM
+                const containerContent = node.element.querySelector('.jsmind-node-content');
+                if (containerContent) {
+                    containerContent.style.width = `${newWidth}px`;
+                    containerContent.style.height = `${newHeight}px`;
+                }
             }
 
             jm.layout(jm.root, new Set([nodeId]));

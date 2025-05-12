@@ -1,6 +1,6 @@
 import { initWindowDragging, initButtonHandlers, initDropdownStyleMenu, setTheme } from './windowManager.js';
 import { jsMind } from '../lib/jsmind/js/jsmind.js';
-import { TOPIC_STYLES, FIGURE, LINE_STYLES, INDENTATION_BETWEEN_BUTTON_NODE, NODE_STYLES, CANVAS_SIZE_BUTTON, DEFAULT_NODE_DATA } from '../data/constants.js';
+import { TOPIC_STYLES, FIGURE, LINE_STYLES, INDENTATION_BETWEEN_BUTTON_NODE, NODE_STYLES, CANVAS_SIZE_BUTTON, PADDING_WITH_NODE } from '../data/constants.js';
 
 let jm = null;
 let selectedNodes = new Set();
@@ -85,7 +85,7 @@ function initJsMind() {
                 theme: 'dark',
                 onNodeAddButtonActive: nodeAddButtonActive,
                 onNodeAddButtonDisable: nodeAddButtonDisable,
-                onContextMenu: showContextMenu, // Добавляем новый обработчик
+                onContextMenu: showContextMenu,
                 cascadeRemove: true,
                 renderMap: "mind",
             },
@@ -93,7 +93,7 @@ function initJsMind() {
                 id: 'root', 
                 topic: {
                     text: `<ol><li>TEXT</li><li>text</li></ol><h3>hi</h3>
-                    <img src="C:/Users/shulg/OneDrive/Pictures/Screenshots/ccc.png" style="width:450px; height:500px;" alt="Test image" />`,
+                    <img src="C:/Users/shulg/OneDrive/Pictures/Screenshots/ccc.png" style="width:150px; height:75px;" alt="Test image" />`,
                     color: '#000',
                     fontSize: '14px',
                     fontFamily: 'Arial'
@@ -678,33 +678,14 @@ function setData(updates = {}) {
             }
 
             if (updates.size) {
-                const minWidth = parseFloat(node.data.styleNode.minWidth) || 250;
-                const minHeight = parseFloat(node.data.styleNode.minHeight) || 75;
+                const width = parseInt(updates.size.width);
+                const height = parseInt(updates.size.height);
 
-                const topic = node.element.querySelector('.node-topic');
-                const contentRect = topic.getBoundingClientRect();
-
-                // Применяем новые размеры, учитывая как минимальные значения, так и размер контента
-                const newWidth = Math.max(
-                    parseFloat(updates.size.width),
-                    contentRect.width + PADDING_WITH_NODE * 2,
-                    minWidth
-                );
-                const newHeight = Math.max(
-                    parseFloat(updates.size.height),
-                    contentRect.height + PADDING_WITH_NODE * 2,
-                    minHeight
-                );
-
-                // Сохраняем новые размеры в данных узла
-                node.data.styleNode.width = newWidth;
-                node.data.styleNode.height = newHeight;
-
-                // Обновляем DOM
-                const containerContent = node.element.querySelector('.jsmind-node-content');
-                if (containerContent) {
-                    containerContent.style.width = `${newWidth}px`;
-                    containerContent.style.height = `${newHeight}px`;
+                if (!isNaN(width)) {
+                    node.data.styleNode.width = width;
+                }
+                if (!isNaN(height)) {
+                    node.data.styleNode.height = height;
                 }
             }
 

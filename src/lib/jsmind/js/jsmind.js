@@ -25,7 +25,61 @@ export class jsMind {
         this.activeNode = new Set();
         this.selectedBlockContent = null;
 
+        this.initFiguresAllowedSpace();
         this.initContainer();
+    }
+
+    initFiguresAllowedSpace() {
+        Object.keys(FIGURE).forEach(figureKey => {
+            const figure = FIGURE[figureKey];
+            if (figure.tag === 'path' && figure.dNormalized) {
+                const edges = this.findEdges(figure.dNormalized);
+                
+                const horizontalSpace = this.calculateHorizontalSpace(edges, figure.dNormalized);
+                const verticalSpace = this.calculateVerticalSpace(edges, figure.dNormalized);
+                
+                figure.allowedSpace = {
+                    width: `${Math.floor(horizontalSpace * 90)}%`,
+                    height: `${Math.floor(verticalSpace * 90)}%`
+                };
+            }
+        });
+    }
+
+    calculateHorizontalSpace(edges, points) {
+        // Calculate horizontal space based on figure's shape
+        const topSpace = edges.top ? this.getEdgeLength(edges.top) : 1;
+        const bottomSpace = edges.bottom ? this.getEdgeLength(edges.bottom) : 1;
+        
+        // Find points with fixed offsets on sides
+        const sideOffsets = points.filter(p => p.fixedOffset !== undefined && (p.x === 0 || p.x === 1))
+            .map(p => p.fixedOffset);
+        
+        let horizontalRatio = Math.min(topSpace, bottomSpace);
+        if (sideOffsets.length > 0) {
+            const maxOffset = Math.max(...sideOffsets);
+            horizontalRatio = Math.min(horizontalRatio, 1 - (maxOffset / 150));
+        }
+        
+        return horizontalRatio;
+    }
+
+    calculateVerticalSpace(edges, points) {
+        // Calculate vertical space based on figure's shape
+        const leftSpace = edges.left ? this.getEdgeLength(edges.left) : 1;
+        const rightSpace = edges.right ? this.getEdgeLength(edges.right) : 1;
+        
+        // Find points with fixed offsets on top/bottom
+        const verticalOffsets = points.filter(p => p.fixedOffset !== undefined && (p.y === 0 || p.y === 1))
+            .map(p => p.fixedOffset);
+        
+        let verticalRatio = Math.min(leftSpace, rightSpace);
+        if (verticalOffsets.length > 0) {
+            const maxOffset = Math.max(...verticalOffsets);
+            verticalRatio = Math.min(verticalRatio, 1 - (maxOffset / 150));
+        }
+        
+        return verticalRatio;
     }
 
     async show(data = this.data) {
@@ -155,14 +209,20 @@ export class jsMind {
             if ((updatedNodes.size === 0 || updatedNodes.has(currentNodeId)) && topic && topic.innerHTML) {
                 const contentRect = topic.getBoundingClientRect();
                 if (contentRect.width > 0 && contentRect.height > 0) {
-                    const { width, height, maxWidth, maxHeight } = this.calculateNodeDimensions(currentNode.data.figure, currentNode.data, contentRect);
-
-                    console.log(width, height, maxWidth, maxHeight);
+                    const { width, height, maxWidth, maxHeight } = this.calculateNodeDimensions(
+                        currentNode.data.figure, 
+                        currentNode.data, 
+                        contentRect
+                    );
                     
                     containerContent.style.width = `${width}px`;
                     containerContent.style.height = `${height}px`;
-                    topic.style.width = maxWidth;
-                    topic.style.height = maxHeight;
+                    topic.style.maxWidth = maxWidth;
+                    topic.style.maxHeight = maxHeight;
+
+                    // Сохраняем размеры в данных узла
+                    currentNode.data.styleNode.width = width;
+                    currentNode.data.styleNode.height = height;
 
                     this.drawNodeFigure(canvas, containerContent, currentNode.data.figure);
                 }
@@ -1010,39 +1070,98 @@ export class jsMind {
     }
 
     calculateNodeDimensions(figure, data, topicRect) {
-        const padding = PADDING_WITH_NODE;
-        let width, height, maxWidth, maxHeight;
-    
-        // Защита от некорректных размеров topicRect
-        const safeWidth = topicRect.width > 0 ? topicRect.width : 100;
-        const safeHeight = topicRect.height > 0 ? topicRect.height : 30;
-    
-        if (figure.tag === 'path' && figure.dNormalized) {
-            const edges = this.findEdges(figure.dNormalized);
-            const horizontalRatio = Math.min(
-                edges.top ? this.getEdgeLength(edges.top) : 1,
-                edges.bottom ? this.getEdgeLength(edges.bottom) : 1
-            );
-            const verticalRatio = Math.min(
-                edges.left ? this.getEdgeLength(edges.left) : 1,
-                edges.right ? this.getEdgeLength(edges.right) : 1
-            );
-    
-            width = Math.max(safeWidth / horizontalRatio + padding * 2, 250);
-            height = Math.max(safeHeight / verticalRatio + padding * 2, 175);
+        const padding = PADDING_WITH_NODE * 2;
+        const minWidth = parseInt(data.styleNode.minWidth) || 300;
+        const minHeight = parseInt(data.styleNode.minHeight) || 250;
 
-            console.log(safeWidth / horizontalRatio + padding * 2);
+        const contentWidth = Math.max(topicRect.width > 0 ? topicRect.width : 100);
+        const contentHeight = Math.max(topicRect.height > 0 ? topicRect.height : 30);
+
+        if (figure.tag === 'path' && figure.dNormalized) {
+            // Получаем размеры фигуры
+            const figureMetrics = this.calculateFigureMetrics(figure.dNormalized);
             
-            maxWidth = `${horizontalRatio * 0.95 * 100 - parseInt(figure.strokeWidth || 1)}%`;
-            maxHeight = `${verticalRatio * 0.95 * 100 - parseInt(figure.strokeWidth || 1)}%`;
-        } else {
-            width = Math.max(safeWidth + padding * 2, 250);
-            height = Math.max(safeHeight + padding * 2, 175);
-            maxWidth = '90%';
-            maxHeight = '90%';
+            // Вычисляем масштаб, необходимый для вмещения контента
+            const scaleX = contentWidth / figureMetrics.contentWidth;
+            const scaleY = contentHeight / figureMetrics.contentHeight;
+            const scale = Math.max(scaleX, scaleY);
+
+            // Вычисляем финальные размеры с учетом масштаба и минимальных размеров
+            const width = Math.max(
+                figureMetrics.totalWidth * scale + padding,
+                minWidth
+            );
+            const height = Math.max(
+                figureMetrics.totalHeight * scale + padding,
+                minHeight
+            );
+
+            return {
+                width,
+                height,
+                maxWidth: `${figureMetrics.contentWidth * scale}px`,
+                maxHeight: `${figureMetrics.contentHeight * scale}px`
+            };
         }
-        
-        return { width, height, maxWidth, maxHeight };
+
+        // Для обычных фигур используем стандартные размеры
+        const width = Math.max(contentWidth + padding, minWidth);
+        const height = Math.max(contentHeight + padding, minHeight);
+
+        return {
+            width,
+            height,
+            maxWidth: `${width - padding}px`,
+            maxHeight: `${height - padding}px`
+        };
+    }
+
+    calculateFigureMetrics(points) {
+        let minX = 1, maxX = 0, minY = 1, maxY = 0;
+        let contentMinX = 1, contentMaxX = 0, contentMinY = 1, contentMaxY = 0;
+
+        // Находим крайние точки фигуры и области контента
+        points.forEach(point => {
+            const x = point.x;
+            const y = point.y;
+
+            // Обновляем общие границы
+            minX = Math.min(minX, x);
+            maxX = Math.max(maxX, x);
+            minY = Math.min(minY, y);
+            maxY = Math.max(maxY, y);
+
+            // Если точка имеет fixedOffset, учитываем это для области контента
+            if (point.fixedOffset === undefined) {
+                contentMinX = Math.min(contentMinX, x);
+                contentMaxX = Math.max(contentMaxX, x);
+                contentMinY = Math.min(contentMinY, y);
+                contentMaxY = Math.max(contentMaxY, y);
+            }
+        });
+
+        // Вычисляем размеры с учетом отступов
+        const totalWidth = (maxX - minX) * 100;
+        const totalHeight = (maxY - minY) * 100;
+        const contentWidth = (contentMaxX - contentMinX) * 100;
+        const contentHeight = (contentMaxY - contentMinY) * 100;
+
+        // Учитываем fixedOffset
+        points.forEach(point => {
+            if (point.fixedOffset) {
+                if (point.x <= 0.5) contentMinX = Math.max(contentMinX, point.fixedOffset / totalWidth);
+                if (point.x >= 0.5) contentMaxX = Math.min(contentMaxX, 1 - point.fixedOffset / totalWidth);
+                if (point.y <= 0.5) contentMinY = Math.max(contentMinY, point.fixedOffset / totalHeight);
+                if (point.y >= 0.5) contentMaxY = Math.min(contentMaxY, 1 - point.fixedOffset / totalHeight);
+            }
+        });
+
+        return {
+            totalWidth,
+            totalHeight,
+            contentWidth: contentWidth * 0.8, // Оставляем 80% от доступного пространства для контента
+            contentHeight: contentHeight * 0.8
+        };
     }
 
     drawNodeFigure(canvas, container, figure) {
@@ -1069,7 +1188,7 @@ export class jsMind {
         ctx.fill();
         ctx.stroke();
     }
-
+    
     saveNodeContent(nodeId, topic) {
         const node = this.nodes.get(nodeId);
         if (!node) return;

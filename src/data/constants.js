@@ -72,8 +72,8 @@ export const NODE_STYLES = {
     backgroundColor: "transparent",
     minWidth: 300,
     minHeight: 250,
-    width: 350,
-    height: 250,
+    width: "auto",
+    height: "auto",
     borderRadius: '5px',
     cursor: "pointer",
     userSelect: "none", 
@@ -84,22 +84,6 @@ export const NODE_STYLES = {
     justifyContent: "center",
     padding: "10px"
 };
-
-// export const DEFAULT_TOPIC = {
-//     id: `block_${Date.now()}`,
-//     text: 'New Topic',
-//     type: 'span',
-//     styles: {
-//         color: '#333333',
-//         fontSize: '14px',
-//         fontWeight: 'normal',
-//         fontStyle: 'normal',
-//         fontFamily: 'Arial',
-//         textDecoration: 'none',
-//         textTransform: 'none',
-//         textAlign: 'justify'
-//     }
-// };
 
 export const FIGURE = {
     RECTANGLE: {
@@ -113,7 +97,11 @@ export const FIGURE = {
         fill: "#ffffff",
         stroke: "#cccccc",
         strokeWidth: "1",
-        rx: "10"
+        rx: "10",
+        allowedSpace: {
+            width: "90%",
+            height: "90%"
+        }
     },
     TRAPEZOID: {
         tag: "path",
@@ -126,7 +114,11 @@ export const FIGURE = {
         fill: "#ffffff",
         stroke: "#cccccc",
         strokeWidth: "1",
-        rx: "10"
+        rx: "10",
+        allowedSpace: {
+            width: null,
+            height: null
+        }
     },
     SKEWED_RECTANGLE: {
         tag: "path",
@@ -139,7 +131,11 @@ export const FIGURE = {
         fill: "#ffffff",
         stroke: "#cccccc",
         strokeWidth: "1",
-        rx: "0"
+        rx: "0",
+        allowedSpace: {
+            width: null,
+            height: null
+        }
     },
     NOTCHED_RECTANGLE: {
         tag: "path",
@@ -153,7 +149,11 @@ export const FIGURE = {
         fill: "#ffffff",
         stroke: "#cccccc",
         rx: "0",
-        strokeWidth: "1"
+        strokeWidth: "1",
+        allowedSpace: {
+            width: null,
+            height: null
+        }
     },
     FLATTENED_HEXAGON: {
         tag: "path",
@@ -168,7 +168,11 @@ export const FIGURE = {
         fill: "#ffffff",
         stroke: "#cccccc",
         strokeWidth: "1",
-        rx: "10"
+        rx: "10",
+        allowedSpace: {
+            width: null,
+            height: null
+        }
     }
 };
 

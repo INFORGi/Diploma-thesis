@@ -53,6 +53,8 @@ export const LINE_STYLES = {
 export const TOPIC_STYLES = {
     position: "relative",
     width: "auto",
+    maxWidth: "480px", // добавляем максимальную ширину
+    maxHeight: "430px", // добавляем максимальную высоту
     height: "auto",
     zIndex: "2",
     display: "flex",
@@ -63,26 +65,36 @@ export const TOPIC_STYLES = {
     textAlign: "justify",
     whiteSpace: "pre-wrap",
     wordWrap: "break-word",
-    overflow: "hidden",
+    overflow: "auto", // меняем на auto для добавления прокрутки
     boxSizing: "border-box",
+    padding: "10px", // добавляем отступы
 };
 
 export const NODE_STYLES = {
     position: "absolute",
-    backgroundColor: "transparent",
-    minWidth: 300,
-    minHeight: 250,
-    width: "auto",
-    height: "auto",
-    borderRadius: '5px',
     cursor: "pointer",
     userSelect: "none", 
     outline: "none",
     zIndex: "1",
+    padding: "10px"
+};
+
+export const CONTAINER_STYLES = {
+    backgroundColor: "#ffffff",
+    minWidth: 300,
+    minHeight: 250,
+    maxWidth: 500,  // добавляем максимальную ширину
+    maxHeight: 450, // добавляем максимальную высоту
+    width: "auto",
+    height: "auto",
+    borderRadius: '15px',
+    border: '1px solid #cccccc',
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: "10px"
+    padding: "10px",
+    boxSizing: "border-box",
+    overflow: "auto",
 };
 
 export const FIGURE = {
@@ -187,9 +199,9 @@ export const DEFAULT_NODE_DATA = {
     parent: null,
     children: {},
     styleNode: { ...NODE_STYLES },
-    figure: { ...FIGURE.RECTANGLE },
+    styleContainer: { ...CONTAINER_STYLES },
     styleTopic: { ...TOPIC_STYLES },
-    styleLine: { ...LINE_STYLES.DEFAULT },
+    styleLine: { ...LINE_STYLES.STRAIGHT },
     position: { x: 0, y: 0 },
     draggable: true
 };
@@ -226,7 +238,24 @@ export const MIND_MAP_THEMES = {
     }
 };
 
-
+export const MENU_CONTROLS = {
+    text: {
+        fontFamily: '#font-family',
+        fontSize: '#font-size',
+        textColor: '#text-color',
+        boldBtn: '#bold-btn',
+        italicBtn: '#italic-btn',
+        underlineBtn: '#underline-btn'
+    },
+    image: {
+        path: '#img-path',
+        width: '#img-width',
+        height: '#img-height',
+        position: '#img-position',
+        select: '#img-select',
+        upload: '#img-upload'
+    }
+};
 
 export const INDENTATION_BETWEEN_BUTTON_NODE = 20;
 export const SPACING_WIDTH = 100;

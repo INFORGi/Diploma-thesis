@@ -1,26 +1,20 @@
 import { initWindowDragging, initButtonHandlers, initDropdownStyleMenu, setTheme } from './windowManager.js';
 import { jsMind } from '../lib/jsmind/js/jsmind.js';
-import { TOPIC_STYLES, FIGURE, LINE_STYLES, INDENTATION_BETWEEN_BUTTON_NODE, NODE_STYLES, CANVAS_SIZE_BUTTON, PADDING_WITH_NODE } from '../data/constants.js';
+import { TOPIC_STYLES, CONTAINER_STYLES, LINE_STYLES, 
+    INDENTATION_BETWEEN_BUTTON_NODE, NODE_STYLES, CANVAS_SIZE_BUTTON, MENU_CONTROLS } from '../data/constants.js';
 
 let jm = null;
-let selectedNodes = new Set();
-let activeEditBlock = null; // Add this line
-let selectedBlocks = new Set(); // Add this line
 
-// Кнопки для работы с фигурой узла
-// let buttonFigur = null;
 let bgColorFigur = document.getElementById('node-color');
 let borderColorFigure = document.getElementById('border-color');
 let borderWidth = document.getElementById('border-width');
 let nodeWidth = document.getElementById('node-width');
 let nodeHeight = document.getElementById('node-height');
 
-// Кнопки для работы с линией
 let groupBoxLineStyle = document.getElementById('line-style');
 let inputLineColor = document.getElementById('line-color');
 let inputLineWidth = document.getElementById('line-width');
 
-// Кнопки глобальных настроек
 let renderMap = document.getElementById('map-type');
 let mapZoom = document.getElementById('map-zoom');
 
@@ -28,42 +22,42 @@ const inputs = [
     {
         element: bgColorFigur,
         event: 'input',
-        handler: () => setData({ figure: { fill: bgColorFigur.value } })
+        handler: () => setData({ container: { backgroundColor: bgColorFigur.value } })
     },
     {
         element: borderColorFigure,
         event: 'input',
-        handler: () => setData({ figure: { stroke: borderColorFigure.value } })
+        handler: () => setData({ container: { borderColor: borderColorFigure.value } })
     },
     {
         element: borderWidth,
         event: 'input',
-        handler: () => setData({ figure: { strokeWidth: borderWidth.value } })
+        handler: () => setData({ container: { borderWidth: `${borderWidth.value}px` } })
     },
     {
         element: nodeWidth,
         event: 'input',
-        handler: () => setData({ size: { width: nodeWidth.value } })
+        handler: () => setData({ container: { width: `${nodeWidth.value}px` } })
     },
     {  
         element: nodeHeight,
         event: 'input',
-        handler: () => setData({ size: { height: nodeHeight.value } })
+        handler: () => setData({ container: { height: `${nodeHeight.value}px` } })
     },
     {
         element: groupBoxLineStyle,
         event: 'change',
-        handler: () => setData({ styleLine: { type: groupBoxLineStyle.value } })
+        handler: () => setData({ line: { type: groupBoxLineStyle.value } })
     },
     {
         element: inputLineColor,
         event: 'input',
-        handler: () => setData({ styleLine: { style: { stroke: inputLineColor.value } } })
+        handler: () => setData({ line: { style: { stroke: inputLineColor.value } } })
     },
     {
         element: inputLineWidth,
         event: 'input',
-        handler: () => setData({ styleLine: { style: { strokeWidth: inputLineWidth.value } } })
+        handler: () => setData({ line: { style: { strokeWidth: inputLineWidth.value } } })
     }
 ];
 
@@ -72,9 +66,90 @@ function init() {
     initButtonHandlers();
     initDropdownStyleMenu();
     initJsMind();
-    initShapeButtons();
-    initButtonMenu();
+    initMenuSystem();
     initSelection();
+    initButtonMenu();
+    
+    addValidation('#font-size', 8, 72);
+    addValidation('#img-width', 10, 1000);
+    addValidation('#img-height', 10, 1000);
+}
+
+function initMenuSystem() {
+    requestAnimationFrame(() => {
+        const menus = {
+            node: document.querySelector('.menu.floating-menu'),
+            content: document.querySelector('.menu.content-menu'),
+            text: document.querySelector('.text-controls'),
+            image: document.querySelector('.image-controls')
+        };
+
+        if (!validateMenus(menus)) return;
+
+        setupInitialMenuState(menus);
+        setupMenuEventListeners(menus);
+    });
+}
+
+function validateMenus(menus) {
+    const missingMenus = Object.entries(menus)
+        .filter(([key, element]) => !element)
+        .map(([key]) => key);
+
+    if (missingMenus.length > 0) {
+        console.error('Missing menus:', missingMenus);
+        return false;
+    }
+    return true;
+}
+
+function setupInitialMenuState(menus) {
+    Object.values(menus).forEach(menu => {
+        menu.style.display = 'none';
+    });
+}
+
+function setupMenuEventListeners(menus) {
+    jm.setActiveNodeCallback = (hasActiveNodes) => {
+        if (hasActiveNodes && !jm.editableNodes) {
+            menus.node.style.display = 'block';
+            menus.content.style.display = 'none';
+            updateNodeMenu();
+        } else {
+            menus.node.style.display = 'none';
+        }
+    };
+
+    document.addEventListener('editable-mode-change', (e) => {
+        const isEditable = e.detail.editable;
+        if (isEditable) {
+            menus.node.style.display = 'none';
+            menus.content.style.display = 'block';
+            
+            if (jm.selectedBlockContent) {
+                const isImage = jm.selectedBlockContent.tagName === 'IMG';
+                menus.text.style.display = isImage ? 'none' : 'block';
+                menus.image.style.display = isImage ? 'block' : 'none';
+            } else {
+                menus.text.style.display = 'block';
+                menus.image.style.display = 'none';
+            }
+        }
+    });
+
+    document.addEventListener('block-selected', (e) => {
+        const block = e.detail.block;
+        const isImage = block.tagName === 'IMG';
+        
+        menus.text.style.display = isImage ? 'none' : 'block';
+        menus.image.style.display = isImage ? 'block' : 'none';
+
+        if (isImage) {
+            updateImageControls(block);
+        } else {
+            updateTextControls(block);
+        }
+    });
 }
 
 function initJsMind() {
@@ -85,14 +160,14 @@ function initJsMind() {
                 theme: 'dark',
                 onNodeAddButtonActive: nodeAddButtonActive,
                 onNodeAddButtonDisable: nodeAddButtonDisable,
-                onContextMenu: showContextMenu,
                 cascadeRemove: true,
                 renderMap: "mind",
             },
             data: { 
                 id: 'root', 
                 topic: {
-                    text: `<ol><li>TEXT</li><li>text</li></ol><h3>hi</h3>
+                    text: `<ol><li style="color:red;">TEXT</li><li>text</li></ol>
+                    <h3>hi</h3>
                     <img src="C:/Users/shulg/OneDrive/Pictures/Screenshots/ccc.png" style="width:150px; height:75px;" alt="Test image" />`,
                     color: '#000',
                     fontSize: '14px',
@@ -101,7 +176,7 @@ function initJsMind() {
                 parent: null,
                 children: [],
                 styleNode: JSON.parse(JSON.stringify(NODE_STYLES)),
-                figure: {...JSON.parse(JSON.stringify(FIGURE.TRAPEZOID)) },
+                styleContainer: {...JSON.parse(JSON.stringify(CONTAINER_STYLES)) },
                 styleTopic: JSON.parse(JSON.stringify(TOPIC_STYLES)),
                 styleLine: JSON.parse(JSON.stringify(LINE_STYLES.DASHED)),
                 position: { x: 0, y: 0 },
@@ -119,36 +194,6 @@ function initJsMind() {
     }
 }
 
-// Новая функция для отображения контекстного меню
-function showContextMenu(e, nodeId) {
-    const contextMenu = document.getElementById('context-menu');
-    const node = jm.nodes.get(nodeId);
-    
-    if (!node || !contextMenu) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-    
-    contextMenu.style.display = 'block';
-    
-    // Позиционируем меню внутри видимой области
-    const x = Math.min(e.pageX, window.innerWidth - contextMenu.offsetWidth);
-    const y = Math.min(e.pageY, window.innerHeight - contextMenu.offsetHeight);
-    
-    contextMenu.style.left = x + 'px';
-    contextMenu.style.top = y + 'px';
-    
-    // Закрываем меню при клике вне его
-    const closeMenu = (e) => {
-        if (!e.target.closest('#context-menu')) {
-            contextMenu.style.display = 'none';
-            document.removeEventListener('click', closeMenu);
-        }
-    };
-    
-    document.addEventListener('click', closeMenu);
-}
-
 function initSelection() {
     const selectionBox = document.createElement('div');
     selectionBox.className = 'selection-box';
@@ -159,51 +204,64 @@ function initSelection() {
     let justFinishedSelecting = false;
 
     document.addEventListener('mousedown', (e) => {
-        if (!jm) return;
+        if (!jm || e.target.closest('.menu')) return;
 
         const clickedNode = e.target.closest('.jsmind-node');
+        const clickedCanvas = e.target.id === 'jsmind_container';
 
-        if (clickedNode) {
+        
+        if (clickedCanvas) {
             if (!e.ctrlKey) {
-                selectedNodes.clear();
-                selectedNodes.add(clickedNode.id);
-            } else {
-                if (selectedNodes.has(clickedNode.id)) {
-                    selectedNodes.delete(clickedNode.id);
-                } else {
-                    selectedNodes.add(clickedNode.id);
-                }
+                jm.clearActiveNodes();
             }
-            jm.setActiveNode([...selectedNodes]);
-            if (selectedNodes.size === 1) {
+            nodeAddButtonDisable();
+            
+            
+            if (e.ctrlKey) {
+                isSelecting = true;
+                startX = e.pageX;
+                startY = e.pageY;
+                
+                selectionBox.style.left = startX + 'px';
+                selectionBox.style.top = startY + 'px';
+                selectionBox.style.width = '0';
+                selectionBox.style.height = '0';
+                selectionBox.style.display = 'block';
+            }
+            return;
+        }
+
+        
+        if (clickedNode) {
+            console.log('Clicked node:', clickedNode.id);
+            const currentActive = new Set(jm.activeNode);
+            console.log('Active nodes before:', currentActive);
+
+            if (e.ctrlKey) {
+                
+                if (currentActive.has(clickedNode.id)) {
+                    
+                    jm.removeActiveNode(clickedNode.id);
+                } else {
+                    
+                    jm.addActiveNode(clickedNode.id);
+                }
+            } else {
+                
+                jm.clearActiveNodes();
+                jm.addActiveNode(clickedNode.id);
+            }
+
+            console.log('Active nodes after:', jm.activeNode);
+
+            if (jm.activeNode.size === 1) {
                 nodeAddButtonActive();
             } else {
                 nodeAddButtonDisable();
             }
-
-
-            getData();
+            
             e.stopPropagation();
             return;
-        }
-
-        if (e.button === 0 && !e.target.matches('#create-node') && e.ctrlKey) {
-            isSelecting = true;
-            startX = e.pageX;
-            startY = e.pageY;
-
-            if (!e.ctrlKey) {
-                selectedNodes.clear();
-                jm.setActiveNode([]);
-            }
-
-            selectionBox.style.left = startX + 'px';
-            selectionBox.style.top = startY + 'px';
-            selectionBox.style.width = '0';
-            selectionBox.style.height = '0';
-            selectionBox.style.display = 'block';
-
-            getData();
         }
     });
 
@@ -232,6 +290,7 @@ function initSelection() {
             bottom: top + height
         };
 
+        
         document.querySelectorAll('.jsmind-node').forEach(node => {
             const nodeRect = node.getBoundingClientRect();
             const adjustedNodeRect = {
@@ -241,22 +300,20 @@ function initSelection() {
                 bottom: nodeRect.bottom + window.pageYOffset
             };
 
-            if (isRectIntersecting(selectionRect, adjustedNodeRect)) {
-                selectedNodes.add(node.id);
-            } 
-            else {
-                selectedNodes.delete(node.id);
+            const intersects = isRectIntersecting(selectionRect, adjustedNodeRect);
+            
+            if (intersects && !jm.activeNode.has(node.id)) {
+                jm.addActiveNode(node.id);
+            } else if (!intersects && jm.activeNode.has(node.id)) {
+                jm.removeActiveNode(node.id);
             }
         });
 
-        if (selectedNodes.size > 0) {
-            jm.setActiveNode(new Set(selectedNodes));
+        if (jm.activeNode.size === 1) {
+            nodeAddButtonActive();
+        } else {
+            nodeAddButtonDisable();
         }
-        else {
-            jm.setActiveNode(new Set());
-        }
-        
-        
     });
 
     document.addEventListener('mouseup', (e) => {
@@ -265,9 +322,9 @@ function initSelection() {
             justFinishedSelecting = true;
             selectionBox.style.display = 'none';
 
-            if (selectedNodes.size > 0) {
-                jm.setActiveNode(new Set(selectedNodes));
-                if (selectedNodes.size === 1) {
+            if (jm.activeNode.size > 0) {
+                jm.setActiveNode(new Set(jm.activeNode));
+                if (jm.activeNode.size === 1) {
                     nodeAddButtonActive();
                 } else {
                     nodeAddButtonDisable();
@@ -281,20 +338,11 @@ function initSelection() {
     });
 
     document.addEventListener('click', (e) => {
-        if (e.target.id === 'create-node' && selectedNodes.size === 1) {
+        if (e.target.id === 'create-node' && jm.activeNode.size === 1) {
             e.stopPropagation();
-            const parentId = Array.from(selectedNodes)[0];
+            const parentId = Array.from(jm.activeNode)[0];
             addNewNode(parentId);
-            return;
         }
-
-        if (e.target.id === 'jsmind_container' && !isSelecting && !justFinishedSelecting) {
-            selectedNodes.clear();
-            jm.setActiveNode([]);
-            nodeAddButtonDisable();
-        }
-
-        justFinishedSelecting = false;
     });
 
     window.addEventListener('keydown', async (e) => {
@@ -362,29 +410,7 @@ function initButtonMenu() {
         console.error('Переключатель #cascade-delete не найден');
     }
 
-    const buttonGroup = document.querySelector('.button-group');
-    if (buttonGroup) {
-        buttonGroup.addEventListener('click', function(event) {
-            const target = event.target.closest('button');
-            if (target && target.tagName === 'BUTTON') {
-                const shape = target.dataset.shape;
-                if (!shape) {
-                    console.warn('Атрибут data-shape не определён');
-                    return;
-                }
-                const typeFigure = shape.toUpperCase();
-                if (!FIGURE[typeFigure]) {
-                    console.warn(`Форма ${typeFigure} не найдена в FIGURE`);
-                    return;
-                }
-
-                const dNormalizedCopy = JSON.parse(JSON.stringify(FIGURE[typeFigure].dNormalized));
-                setData({ figure: {dNormalized: dNormalizedCopy} });
-            }
-        });
-    }
-
-    // Добавляем дебонсированные обработчики для полей ввода
+    
     inputs.forEach(({ element, event, handler }) => {
         if (element) {
             const debouncedHandler = debounce(handler, 10);
@@ -411,7 +437,7 @@ function initShapeButtons() {
 
         const button = document.createElement('button');
         button.className = 'shape-btn';
-        // button.classList.add('menu-button');
+        
         button.dataset.shape = shapeKey.toLowerCase();
 
         const canvas = document.createElement('canvas');
@@ -481,14 +507,31 @@ function initShapeButtons() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+function addValidation(selector, min, max) {
+    const input = document.querySelector(selector);
+    if (!input) return;
+
+    input.addEventListener('input', () => {
+        const value = parseInt(input.value);
+        input.value = isNaN(value) ? min : Math.max(min, Math.min(max, value));
+    });
+}
+
+function debounce(fn, delay) {
+    let timeout;
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn(...args), delay);
+    };
+}
+
+document.addEventListener("DOMContentLoaded", () => {
     init();
-    window.addEventListener('beforeunload', async (event) => {});
-    window.electron.onLoadSettings((settings) => { setTheme(settings.Theme); });
+    window.electron.onLoadSettings(settings => setTheme(settings.Theme));
 });
 
 function nodeAddButtonActive() {
-    if (selectedNodes.size !== 1) {
+    if (jm.activeNode.size !== 1) {
         nodeAddButtonDisable();
         return;
     }
@@ -550,148 +593,76 @@ function addNewNode(parentId) {
     jm.addChild(parentId);
 }
 
-function getData() {
-    const nodes = jm.activeNode;
-    if (!nodes) return;
+function updateNodeMenu() {
+    if (!jm.activeNode.size) return;
 
-    // Один узел — заполняем его данными
-    if (nodes.size === 1) {
-        const node = jm.nodes.get(Array.from(nodes)[0]);
-        fillUIWithNodeData(node);
-    }
-    else if (nodes.size !== 1) {
-        fillUIWithDefaultData();
-    }
-
-    function fillUIWithNodeData(node) {
-        try {
-            bgColorFigur.value = node.data.figure.fill;
-            borderColorFigure.value = node.data.figure.stroke;
-            borderWidth.value = node.data.figure.strokeWidth;
-
-            const width = node.data.styleNode.width === "auto" || !isFinite(parseFloat(node.data.styleNode.width))
-                ? parseFloat(node.data.styleNode.minWidth) || 250
-                : parseFloat(node.data.styleNode.width);
-            const height = node.data.styleNode.height === "auto" || !isFinite(parseFloat(node.data.styleNode.height))
-                ? parseFloat(node.data.styleNode.minHeight) || 75
-                : parseFloat(node.data.styleNode.height);
-
-            nodeWidth.value = width;
-            nodeHeight.value = height;
-
-            groupBoxLineStyle.value = node.data.styleLine.type;
-            inputLineColor.value = node.data.styleLine.style.stroke;
-            inputLineWidth.value = node.data.styleLine.style.strokeWidth;
-
-            // Получаем актуальные размеры из элемента
-            const containerContent = node.element.querySelector('.jsmind-node-content');
-            const currentWidth = parseInt(containerContent.style.width);
-            const currentHeight = parseInt(containerContent.style.height);
-
-            // Отображаем актуальные размеры в интерфейсе
-            nodeWidth.value = currentWidth || node.data.styleNode.width || 250;
-            nodeHeight.value = currentHeight || node.data.styleNode.height || 75;
-        } catch (error) {
-            console.error('Ошибка заполнения данными узла:', error);
-        }
-    }
-
-    function fillUIWithDefaultData() {
-        try {
-            const defaultFigure = FIGURE.RECTANGLE;
-            const defaultLine = LINE_STYLES.BEZIER;
-
-            bgColorFigur.value = defaultFigure.fill;
-            borderColorFigure.value = defaultFigure.stroke;
-            borderWidth.value = defaultFigure.strokeWidth;
-
-            groupBoxLineStyle.value = defaultLine.type;
-            inputLineColor.value = defaultLine.style.stroke;
-            inputLineWidth.value = defaultLine.style.strokeWidth;
-        } catch (error) {
-            console.error('Ошибка при установке стандартных значений: ' + error);
-        }
-    }
-}
-
-// Функция для дебонсинга
-function debounce(fn, delay) {
-    let timeout;
-    return function (...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => fn(...args), delay);
+    const controls = {
+        nodeColor: document.getElementById('node-color'),
+        borderColor: document.getElementById('border-color'),
+        borderWidth: document.getElementById('border-width'),
+        nodeWidth: document.getElementById('node-width'),
+        nodeHeight: document.getElementById('node-height'),
+        lineStyle: document.getElementById('line-style'),
+        lineColor: document.getElementById('line-color'),
+        lineWidth: document.getElementById('line-width')
     };
+
+    if (jm.activeNode.size === 1) {
+        const nodeId = Array.from(jm.activeNode)[0];
+        const node = jm.nodes.get(nodeId);
+        if (!node) return;
+
+        const { styleNode, styleContainer, styleLine } = node.data;
+
+        controls.nodeColor.value = styleNode.backgroundColor || '#ffffff';
+        controls.borderColor.value = styleNode.borderColor || '#cccccc';
+        controls.borderWidth.value = parseInt(styleNode.borderWidth) || 1;
+        controls.nodeWidth.value = styleContainer.width || 300;
+        controls.nodeHeight.value = styleContainer.height || 250;
+
+        controls.lineStyle.value = styleLine.type || 'straight';
+        controls.lineColor.value = styleLine.style.stroke || '#555555';
+        controls.lineWidth.value = parseInt(styleLine.style.strokeWidth) || 2;
+    } 
+    else {
+        controls.nodeColor.value = NODE_STYLES.backgroundColor || '#ffffff';
+        controls.borderColor.value = NODE_STYLES.borderColor || '#cccccc';
+        controls.borderWidth.value = '1';
+        controls.nodeWidth.value = CONTAINER_STYLES.minWidth;
+        controls.nodeHeight.value = CONTAINER_STYLES.minHeight;
+
+        controls.lineStyle.value = LINE_STYLES.STRAIGHT.type;
+        controls.lineColor.value = LINE_STYLES.STRAIGHT.style.stroke;
+        controls.lineWidth.value = LINE_STYLES.STRAIGHT.style.strokeWidth;
+    }
 }
 
-function setData(updates = {}) {
-    try {
-        if (!jm.activeNode || jm.activeNode.size === 0) {
-            console.log('Нет активных узлов для изменения стилей');
-            return;
+function setData(data) {
+    if (!jm.activeNode.size) return;
+
+    jm.activeNode.forEach(nodeId => {
+        const node = jm.nodes.get(nodeId);
+        if (!node) return;
+
+        const container = node.element.querySelector('.jsmind-container');
+        if (!container) return;
+
+        if (data.container) {
+            Object.assign(node.data.styleContainer, data.container);
+            Object.assign(container.style, data.container);
         }
 
-        jm.activeNode.forEach(nodeId => {
-            const node = jm.nodes.get(nodeId);
-            if (!node) {
-                console.warn(`Узел ${nodeId} не найден в jm.nodes`);
-                return;
-            }
-
-            if (updates.figure) {
-                Object.assign(node.data.figure, updates.figure);
+        if (data.line) {
+            if (data.line.type) {
                 
-                // const canvas = node.element.querySelector('canvas');
-                // const container = node.element.querySelector('.jsmind-node-content');
-                // jm.drawNodeFigure(canvas, container, node.data.figure);
+                node.data.styleLine.type = data.line.type;
             }
-
-            if (updates.styleLine) {
-                if (!node.data.styleLine || typeof node.data.styleLine !== 'object') {
-                    node.data.styleLine = { ...LINE_STYLES.STRAIGHT };
-                }
-                if (!node.data.styleLine.style || typeof node.data.styleLine.style !== 'object') {
-                    node.data.styleLine.style = { ...LINE_STYLES.STRAIGHT.style };
-                }
-
-                if (updates.styleLine.type) {
-                    const type = updates.styleLine.type.toUpperCase();
-                    if (!LINE_STYLES[type]) {
-                        console.warn(`Стиль линии ${type} не найден в LINE_STYLES`);
-                        return;
-                    }
-
-                    const currentStroke = node.data.styleLine.style.stroke || LINE_STYLES[type].style.stroke;
-                    const currentStrokeWidth = node.data.styleLine.style.strokeWidth || LINE_STYLES[type].style.strokeWidth;
-
-                    node.data.styleLine = {
-                        type: updates.styleLine.type,
-                        style: { ...JSON.parse(JSON.stringify(LINE_STYLES[type].style)) }
-                    };
-
-                    node.data.styleLine.style.stroke = currentStroke;
-                    node.data.styleLine.style.strokeWidth = currentStrokeWidth;
-                } else if (updates.styleLine.style) {
-                    Object.assign(node.data.styleLine.style, updates.styleLine.style);
-                } else {
-                    console.warn('Пропущено обновление styleLine: некорректные данные', updates.styleLine);
-                }
+            if (data.line.style) {
+                
+                Object.assign(node.data.styleLine.style, data.line.style);
             }
+        }
+    });
 
-            if (updates.size) {
-                const width = parseInt(updates.size.width);
-                const height = parseInt(updates.size.height);
-
-                if (!isNaN(width)) {
-                    node.data.styleNode.width = width;
-                }
-                if (!isNaN(height)) {
-                    node.data.styleNode.height = height;
-                }
-            }
-
-            jm.layout(jm.root, new Set([nodeId]));
-        });
-    } catch (error) {
-        console.error('Ошибка в методе setData: ' + error);
-    }
+    jm.drawLines();
 }

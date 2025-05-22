@@ -1,17 +1,16 @@
-import { FIGURE, TOPIC_STYLES, NODE_STYLES, 
+import { TOPIC_STYLES, NODE_STYLES, 
     LINE_STYLES, DEFAULT_NODE_DATA, MIND_MAP_THEMES, 
-    SPACING_WIDTH, SPACING_HEIGHT, PADDING_WITH_NODE,
-    DOUBLE_CLICK_DELAY } from '../../../data/constants.js';
+    SPACING_WIDTH, SPACING_HEIGHT, DOUBLE_CLICK_DELAY } from '../../../data/constants.js';
 
-    
 export class jsMind {
+    _editableNodes = false;
+
     constructor(map) {
         this.settings = {
             container: map.settings.container || 'jsmind_container',
             theme: map.settings.theme || 'default',
             onNodeAddButtonActive: map.settings.onNodeAddButtonActive || (() => {}),
             onNodeAddButtonDisable: map.settings.onNodeAddButtonDisable || (() => {}),
-            onContextMenu: map.settings.onContextMenu || (() => {}), // Добавляем новый обработчик
             cascadeRemove: map.settings.cascadeRemove ?? true,
             renderMap: map.settings.renderMap,
         };
@@ -25,61 +24,18 @@ export class jsMind {
         this.activeNode = new Set();
         this.selectedBlockContent = null;
 
-        this.initFiguresAllowedSpace();
         this.initContainer();
-    }
 
-    initFiguresAllowedSpace() {
-        Object.keys(FIGURE).forEach(figureKey => {
-            const figure = FIGURE[figureKey];
-            if (figure.tag === 'path' && figure.dNormalized) {
-                const edges = this.findEdges(figure.dNormalized);
-                
-                const horizontalSpace = this.calculateHorizontalSpace(edges, figure.dNormalized);
-                const verticalSpace = this.calculateVerticalSpace(edges, figure.dNormalized);
-                
-                figure.allowedSpace = {
-                    width: `${Math.floor(horizontalSpace * 90)}%`,
-                    height: `${Math.floor(verticalSpace * 90)}%`
-                };
+        Object.defineProperty(this, 'editableNodes', {
+            get: () => this._editableNodes,
+            set: (value) => {
+                this._editableNodes = value;
+                const event = new CustomEvent('editable-mode-change', {
+                    detail: { editable: value }
+                });
+                document.dispatchEvent(event);
             }
         });
-    }
-
-    calculateHorizontalSpace(edges, points) {
-        // Calculate horizontal space based on figure's shape
-        const topSpace = edges.top ? this.getEdgeLength(edges.top) : 1;
-        const bottomSpace = edges.bottom ? this.getEdgeLength(edges.bottom) : 1;
-        
-        // Find points with fixed offsets on sides
-        const sideOffsets = points.filter(p => p.fixedOffset !== undefined && (p.x === 0 || p.x === 1))
-            .map(p => p.fixedOffset);
-        
-        let horizontalRatio = Math.min(topSpace, bottomSpace);
-        if (sideOffsets.length > 0) {
-            const maxOffset = Math.max(...sideOffsets);
-            horizontalRatio = Math.min(horizontalRatio, 1 - (maxOffset / 150));
-        }
-        
-        return horizontalRatio;
-    }
-
-    calculateVerticalSpace(edges, points) {
-        // Calculate vertical space based on figure's shape
-        const leftSpace = edges.left ? this.getEdgeLength(edges.left) : 1;
-        const rightSpace = edges.right ? this.getEdgeLength(edges.right) : 1;
-        
-        // Find points with fixed offsets on top/bottom
-        const verticalOffsets = points.filter(p => p.fixedOffset !== undefined && (p.y === 0 || p.y === 1))
-            .map(p => p.fixedOffset);
-        
-        let verticalRatio = Math.min(leftSpace, rightSpace);
-        if (verticalOffsets.length > 0) {
-            const maxOffset = Math.max(...verticalOffsets);
-            verticalRatio = Math.min(verticalRatio, 1 - (maxOffset / 150));
-        }
-        
-        return verticalRatio;
     }
 
     async show(data = this.data) {
@@ -96,97 +52,123 @@ export class jsMind {
             topic: data.topic || this.deepCloneStyle(DEFAULT_NODE_DATA.topic),
             parent: data.parent || null,
             children: data.children || [],
-            styleNode: data.styleNode ? this.deepCloneStyle(data.styleNode) : this.deepCloneStyle(NODE_STYLES),
-            styleTopic: data.styleTopic ? this.deepCloneStyle(data.styleTopic) : this.deepCloneStyle(TOPIC_STYLES),
-            styleLine: data.styleLine ? this.deepCloneStyle(data.styleLine) : this.deepCloneStyle(LINE_STYLES.DEFAULT),
-            figure: data.figure ? this.deepCloneStyle(data.figure) : this.deepCloneStyle(FIGURE.RECTANGLE),
-            position: { x: data.position?.x || 0, y: data.position?.y || 0 },
-            draggable: data.draggable !== undefined ? data.draggable : true
+            styleContainer: this.deepCloneStyle(data.styleContainer || CONTAINER_STYLES),
+            styleNode: this.deepCloneStyle(data.styleNode || NODE_STYLES),
+            styleTopic: this.deepCloneStyle(data.styleTopic || TOPIC_STYLES),
+            styleLine: this.deepCloneStyle(data.styleLine || LINE_STYLES.DEFAULT),
+            position: data.position || { x: 0, y: 0 },
+            draggable: data.draggable ?? true
         };
-    
+
         const node = await this.createNodeElement(nodeData);
-    
+        this.addNodeToGraph(nodeData, node);
+
+        const position = this.getPosition(nodeData.id);
+        nodeData.position = position;
+        node.style.left = `${position.x}px`;
+        node.style.top = `${position.y}px`;
+
+        await this.processChildren(nodeData);
+        await this.updateNodeLayout(nodeData, node);
+
+        return nodeData.id;
+    }
+
+    addNodeToGraph(nodeData, node) {
         this.nodes.set(nodeData.id, {
             element: node,
             data: nodeData,
             parent: nodeData.parent,
             children: []
         });
-    
+
         const parentNode = this.nodes.get(nodeData.parent);
         if (parentNode) {
             parentNode.children.push(nodeData.id);
         }
-    
-        if (nodeData.children && Array.isArray(nodeData.children)) {
-            for (const child of nodeData.children) {
-                child.parent = nodeData.id;
-                const childId = await this.createNode(child);
-                this.nodes.get(nodeData.id).children.push(childId);
-            }
-        }
-    
-        // Обновляем размеры и отрисовываем узел
+    }
+
+    async processChildren(nodeData) {
+        if (!nodeData.children?.length) return;
+        
+        const childPromises = nodeData.children.map(child => {
+            child.parent = nodeData.id;
+            return this.createNode(child);
+        });
+
+        const childIds = await Promise.all(childPromises);
+        this.nodes.get(nodeData.id).children.push(...childIds);
+    }
+
+    async updateNodeLayout(nodeData, node) {
         await this.layout(this.root, new Set([nodeData.id]));
-    
-        // Устанавливаем позицию после layout
         const position = this.getPosition(nodeData.id);
         node.style.left = `${position.x}px`;
         node.style.top = `${position.y}px`;
-    
         this.drawLines();
-    
-        return nodeData.id;
     }
 
     async createNodeElement(data) {
+        const node = this.createBasicNodeElement(data);
+        const container = this.createContainerElement(data);
+        const topic = await this.createTopicElement(data);
+
+        container.appendChild(topic);
+        node.appendChild(container);
+        this.container.appendChild(node);
+
+        await this.finalizeNodeCreation(node, data);
+        return node;
+    }
+
+    createBasicNodeElement(data) {
         const node = document.createElement('div');
+        node.style.visibility = 'hidden';
         node.id = data.id;
         node.dataset.isroot = !data.parent ? 'true' : 'false';
         node.className = 'jsmind-node';
-        Object.assign(node.style, JSON.parse(JSON.stringify(NODE_STYLES)));
-    
-        const containerWithTextShape = document.createElement('div');
-        containerWithTextShape.className = 'jsmind-node-content';
-    
-        const canvas = document.createElement('canvas');
-        canvas.style.position = 'absolute';
-        canvas.style.top = '0';
-        canvas.style.left = '0';
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
-        containerWithTextShape.appendChild(canvas);
-    
+        Object.assign(node.style, data.styleNode, {
+            left: `${data.position.x}px`,
+            top: `${data.position.y}px`
+        });
+
+        return node;
+    }
+
+    createContainerElement(data) {
+        const container = document.createElement('div');
+        container.className = 'jsmind-container';
+        Object.assign(container.style, data.styleContainer);
+
+        return container;
+    }
+
+    async createTopicElement(data) {
         const topic = document.createElement('div');
         topic.className = 'node-topic';
         const markdownText = data.topic.text || '';
         topic.dataset.markdown = markdownText;
-    
-        containerWithTextShape.appendChild(topic);
-        node.appendChild(containerWithTextShape);
-        node.style.visibility = 'hidden';
-        this.container.appendChild(node);
-    
+
         topic.innerHTML = await window.electron.renderMarkdown(markdownText);
         Object.assign(topic.style, data.styleTopic, {
             color: data.topic.color,
             fontSize: data.topic.fontSize,
             fontFamily: data.topic.fontFamily,
-            position: 'relative',
-            zIndex: '2'
         });
 
+        return topic;
+    }
+
+    async finalizeNodeCreation(node, data) {
         await new Promise(resolve => requestAnimationFrame(resolve));
-    
+
         node.style.visibility = 'visible';
-    
+
         if (data.draggable) {
             this.makeNodeDraggable(node);
         }
 
-        this.setupTopicEventListeners(topic);
-    
-        return node;
+        this.setupTopicEventListeners(node.querySelector('.node-topic'));
     }
 
     async layout(nodeId = this.root, updatedNodes = new Set()) {
@@ -203,29 +185,9 @@ export class jsMind {
 
             const nodeElement = currentNode.element;
             const topic = nodeElement.querySelector('.node-topic');
-            const containerContent = nodeElement.querySelector('.jsmind-node-content');
-            const canvas = nodeElement.querySelector('canvas');
 
             if ((updatedNodes.size === 0 || updatedNodes.has(currentNodeId)) && topic && topic.innerHTML) {
-                const contentRect = topic.getBoundingClientRect();
-                if (contentRect.width > 0 && contentRect.height > 0) {
-                    const { width, height, maxWidth, maxHeight } = this.calculateNodeDimensions(
-                        currentNode.data.figure, 
-                        currentNode.data, 
-                        contentRect
-                    );
-                    
-                    containerContent.style.width = `${width}px`;
-                    containerContent.style.height = `${height}px`;
-                    topic.style.maxWidth = maxWidth;
-                    topic.style.maxHeight = maxHeight;
 
-                    // Сохраняем размеры в данных узла
-                    currentNode.data.styleNode.width = width;
-                    currentNode.data.styleNode.height = height;
-
-                    this.drawNodeFigure(canvas, containerContent, currentNode.data.figure);
-                }
             }
 
             nodeElement.style.left = `${currentNode.data.position.x}px`;
@@ -267,7 +229,7 @@ export class jsMind {
             topic: this.deepCloneStyle(DEFAULT_NODE_DATA.topic),
             parent: parentId,
             children: [],
-            figure: this.deepCloneStyle(parentNode.data.figure),
+            styleContainer: this.deepCloneStyle(parentNode.data.styleContainer),
             styleNode: this.deepCloneStyle(parentNode.data.styleNode),
             styleTopic: this.deepCloneStyle(parentNode.data.styleTopic),
             styleLine: this.deepCloneStyle(parentNode.data.styleLine),
@@ -278,7 +240,7 @@ export class jsMind {
         this.createNode(newNodeData);
     }
 
-    async removeNode() {
+    async removeNode(notContent = false) {
         if (!this.activeNode || this.activeNode.size === 0) return;
         const nodesToRemove = new Set(this.activeNode);
     
@@ -291,7 +253,7 @@ export class jsMind {
             const node = this.nodes.get(nodeId);
             if (!node) continue;
     
-            if (this.settings.cascadeRemove) {
+            if (this.settings.cascadeRemove || notContent) {
                 const removeNodeRecursively = (id) => {
                     const currentNode = this.nodes.get(id);
                     if (!currentNode) return;
@@ -476,106 +438,6 @@ export class jsMind {
         this.svgContainer.appendChild(line);
     }
 
-    drawPath(ctx, points, width, height, rx = 0) {
-        ctx.beginPath();
-    
-        const getPointCoords = (point) => {
-            let x, y;
-            if (point.fixedOffset !== undefined) {
-                if (point.x <= 0.5) {
-                    x = point.fixedOffset;
-                } else {
-                    x = width - point.fixedOffset;
-                }
-                if (point.y <= 0.5) {
-                    y = point.y * height;
-                } else {
-                    y = height - point.fixedOffset;
-                }
-            } else {
-                x = point.x * width;
-                y = point.y * height;
-            }
-            return { x, y };
-        };
-    
-        const radius = parseFloat(rx) || 0;
-        const pointsCount = points.length;
-    
-        if (pointsCount < 2) return;
-    
-        const coords = points.map(point => getPointCoords(point));
-    
-        if (radius > 0) {
-            const startIndex = 0;
-            const current = coords[startIndex];
-            const nextIndex = (startIndex + 1) % pointsCount;
-            const prevIndex = (startIndex - 1 + pointsCount) % pointsCount;
-            const next = coords[nextIndex];
-            const prev = coords[prevIndex];
-    
-            const dx1 = current.x - prev.x;
-            const dy1 = current.y - prev.y;
-            const dx2 = next.x - current.x;
-            const dy2 = next.y - current.y;
-    
-            const len1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
-            const len2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-    
-            const safeRadius = Math.min(radius, len1 / 2, len2 / 2);
-    
-            if (safeRadius > 0) {
-                const t1 = safeRadius / len1;
-                const x1 = current.x - dx1 * t1;
-                const y1 = current.y - dy1 * t1;
-                ctx.moveTo(x1, y1);
-            } else {
-                ctx.moveTo(current.x, current.y);
-            }
-        } else {
-            ctx.moveTo(coords[0].x, coords[0].y);
-        }
-    
-        points.forEach((point, index) => {
-            const current = coords[index];
-            const nextIndex = (index + 1) % pointsCount;
-            const prevIndex = (index - 1 + pointsCount) % pointsCount;
-            const next = coords[nextIndex];
-            const prev = coords[prevIndex];
-    
-            if (radius > 0) {
-                const dx1 = current.x - prev.x;
-                const dy1 = current.y - prev.y;
-                const dx2 = next.x - current.x;
-                const dy2 = next.y - current.y;
-    
-                const len1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
-                const len2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-    
-                const safeRadius = Math.min(radius, len1 / 2, len2 / 2);
-    
-                if (safeRadius > 0) {
-                    const t1 = safeRadius / len1;
-                    const x1 = current.x - dx1 * t1;
-                    const y1 = current.y - dy1 * t1;
-    
-                    const t2 = safeRadius / len2;
-                    const x2 = current.x + dx2 * t2;
-                    const y2 = current.y + dy2 * t2;
-    
-                    ctx.lineTo(x1, y1);
-                    ctx.quadraticCurveTo(current.x, current.y, x2, y2);
-                } else {
-                    ctx.lineTo(current.x, current.y);
-                }
-            } else {
-                ctx.lineTo(current.x, current.y);
-            }
-        });
-    
-        ctx.closePath();
-    }
-
     setupTopicEventListeners(topic) {
         let isEditMode = false;
         let draggedBlock = null;
@@ -583,9 +445,26 @@ export class jsMind {
         let clickTimer = null;
         let clickCount = 0;
 
+        const exitBlockEditing = () => {
+            if (!editingBlock) return;
+            
+            editingBlock.contentEditable = 'false';
+            editingBlock.draggable = true;
+            editingBlock = null;
+
+            const node = topic.closest('.jsmind-node');
+            if (node) {
+                this.saveNodeContent(node.id, topic);
+            }
+        };
+
         const exitEditMode = () => {
+            const contentMenuClicked = event?.target?.closest('.content-menu');
+            if (contentMenuClicked) return;
+
             isEditMode = false;
             editingBlock = null;
+            this.editableNodes = false;
             const node = topic.closest('.jsmind-node');
             if (!node) return;
 
@@ -661,6 +540,11 @@ export class jsMind {
                 clickCount = 0;
                 clickTimer = null;
 
+                const nonEditableTags = ['UL', 'OL', 'IMG'];
+                if (nonEditableTags.includes(block.tagName)) {
+                    return;
+                }
+
                 if (editingBlock === block) {
                     block.contentEditable = 'false';
                     block.draggable = true;
@@ -681,6 +565,8 @@ export class jsMind {
         topic.addEventListener('dblclick', (e) => {
             const node = topic.closest('.jsmind-node');
             if (!node || !this.activeNode.has(node.id) || this.activeNode.size !== 1) return;
+            
+            this.editableNodes = true;
 
             if (!isEditMode) {
                 isEditMode = true;
@@ -691,10 +577,11 @@ export class jsMind {
                     nodeData.data.draggable = false;
                 }
 
-                topic.querySelectorAll('h1, h2, h3, p, ul, ol, li, img').forEach(block => {
+                topic.querySelectorAll('h1, h2, h3, p, ul, ol, li, img, textarea').forEach(block => {
                     if (
                         block.tagName === 'IMG' || 
-                        block.textContent.trim()
+                        block.textContent.trim() ||
+                        block.tagName === 'TEXTAREA'
                     ) {
                         block.setAttribute('data-editable', 'true');
                         block.draggable = true;
@@ -718,6 +605,14 @@ export class jsMind {
             this.selectedBlockContent = block;
 
             if (isEditMode) {
+                const event = new CustomEvent('block-selected', {
+                    detail: {
+                        block,
+                        isImage: block.tagName === 'IMG'
+                    }
+                });
+                document.dispatchEvent(event);
+                
                 handleBlockClick(block);
             }
         });
@@ -780,110 +675,159 @@ export class jsMind {
         });
 
         document.addEventListener('mousedown', (e) => {
-            if (isEditMode && !topic.contains(e.target)) {
+            const isContentMenuClick = e.target.closest('.content-menu');
+            const isNodeOrBlockClick = topic.contains(e.target) || e.target.closest('.jsmind-node');
+            
+            if (isEditMode && !isContentMenuClick && !isNodeOrBlockClick) {
                 exitEditMode();
             }
         });
 
-        topic.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && isEditMode) {
+        const handleKeyDown = (e) => {
+            if (!isEditMode) return;
+
+            if (e.key === 'Enter') {
                 e.preventDefault();
-                exitEditMode();
-            } else if (e.key === 'Enter') {
-                if (!e.shiftKey) {
-                    e.preventDefault();
-                    exitEditMode();
-                } else if (isEditMode && editingBlock) {
-                    e.preventDefault();
-                    const selection = window.getSelection();
-                    const range = selection.getRangeAt(0);
 
-                    const content = editingBlock.textContent;
-                    const cursorPosition = range.startOffset;
-                    const textBefore = content.substring(0, cursorPosition);
-                    const textAfter = content.substring(cursorPosition);
-                    
-                    editingBlock.textContent = textBefore;
-                    
-                    const newBlock = document.createElement(editingBlock.tagName);
-                    newBlock.setAttribute('data-editable', 'true');
-                    newBlock.draggable = false;
-                    newBlock.contentEditable = 'true';
-                    newBlock.textContent = textAfter;
+                if (e.shiftKey) {
+                    if (editingBlock) {
+                        editingBlock.contentEditable = 'false';
+                        editingBlock.draggable = true;
 
+                        const newBlock = document.createElement(editingBlock.tagName);
+                        newBlock.setAttribute('data-editable', 'true');
+                        newBlock.contentEditable = 'true';
+                        newBlock.draggable = false;
 
-                    // if (block.contains(draggedBlock)) return; 
-                    if (editingBlock.nextSibling) {
                         editingBlock.parentNode.insertBefore(newBlock, editingBlock.nextSibling);
-                    } else {
-                        editingBlock.parentNode.appendChild(newBlock);
-                    }
 
-                    newBlock.focus();
-                    const newRange = document.createRange();
-                    newRange.setStart(newBlock.firstChild || newBlock, 0);
-                    newRange.collapse(true);
-                    selection.removeAllRanges();
-                    selection.addRange(newRange);
-                    
-                    editingBlock = newBlock;
+                        newBlock.focus();
+                        editingBlock = newBlock;
+
+                        const node = topic.closest('.jsmind-node');
+                        if (node) {
+                            this.saveNodeContent(node.id, topic);
+                        }
+                    }
+                    return;
+                }
+
+                if (editingBlock && editingBlock.contentEditable === 'true') {
+                    exitBlockEditing();
+                } 
+                else {
+                    exitEditMode();
                 }
             }
-        });
 
-        document.addEventListener('mousedown', (e) => {
-            if (isEditMode && !topic.contains(e.target)) {
-                exitEditMode();
-            }
-        });
-
-        window.addEventListener('keydown', async (e) => {
-            if ((e.key === 'Delete' || e.key === 'Del') && this.selectedBlockContent) {
+            if (e.key === 'Delete' || e.key === 'Del') {
                 e.preventDefault();
+
                 const node = topic.closest('.jsmind-node');
                 if (!node) return;
 
-                // Remove the block from the DOM
-                this.selectedBlockContent.remove();
+                if (this.selectedBlockContent && node.dataset.isroot === 'true') {
+                    this.selectedBlockContent.remove();
+                    this.selectedBlockContent = null;
+                    if (topic.querySelectorAll('[data-editable]').length === 0) {
+                        const h1 = document.createElement('H1');
+                        h1.textContent = 'Главный узел';
+                        h1.setAttribute('data-editable', 'true');
+                        h1.draggable = true;
+                        topic.innerHTML = '';
+                        topic.appendChild(h1);
+                        this.selectedBlockContent = h1;
+                    }                    
+                    this.saveNodeContent(node.id, topic);
+                    return;
+                }
 
-                // Clear selection
-                this.selectedBlockContent = null;
+                if (this.selectedBlockContent) {
+                    this.selectedBlockContent.remove();
+                    this.selectedBlockContent = null;
 
-                // Save updated content
-                this.saveNodeContent(node.id, topic);
+                    if (topic.querySelectorAll('[data-editable]').length === 0) {
+                        const p = document.createElement('p');
+                        p.textContent = 'Новый узел';
+                        p.setAttribute('data-editable', 'true');
+                        p.draggable = true;
+                        topic.appendChild(p);
+                    }
+                    this.saveNodeContent(node.id, topic);
+                }
             }
-        });
+
+
+            if ((e.key === 'Escape' || e.key === 'Esc') && isEditMode) {
+                e.preventDefault();
+                if (editingBlock) {
+                    exitBlockEditing();
+                } else {
+                    exitEditMode();
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
     }
 
-    setActiveNode(nodeIds) {
-        this.activeNode.forEach(nodeId => {
-            const activeNode = this.nodes.get(nodeId)?.element;
-            if (activeNode) {
-                activeNode.style.zIndex = '1';
-                activeNode.style.border = 'none';
+    clearActiveNodes() {
+        Array.from(this.activeNode).forEach(nodeId => {
+            const node = this.nodes.get(nodeId);
+            if (node?.element) {
+                node.element.style.zIndex = '1';
+                node.element.style.border = 'none';
             }
         });
         this.activeNode.clear();
-    
-        if (!nodeIds || nodeIds.size === 0) {
-            this.drawLines();
-            return;
-        }
-    
-        const theme = MIND_MAP_THEMES[this.settings.theme];
-    
-        nodeIds.forEach(nodeId => {
-            const node = this.nodes.get(nodeId);
-            if (node) {
-                node.element.style.zIndex = '1000';
-                if (theme && theme.selectBorderColorNode) {
-                    node.element.style.border = theme.selectBorderColorNode;
-                }
-                this.activeNode.add(nodeId);
-            }
-        });
-    
         this.drawLines();
+        this.setActiveNodeCallback?.(false);
+    }
+
+    addActiveNode(nodeId) {
+        if (!nodeId || !this.nodes.has(nodeId)) return;
+
+        const theme = MIND_MAP_THEMES[this.settings.theme];
+        const node = this.nodes.get(nodeId);
+        
+        node.element.style.zIndex = '1000';
+        if (theme?.selectBorderColorNode) {
+            node.element.style.border = theme.selectBorderColorNode;
+        }
+        this.activeNode.add(nodeId);
+
+        this.drawLines();
+        this.setActiveNodeCallback?.(true);
+        console.log('AddActiveNode - current active:', this.activeNode);
+    }
+
+    removeActiveNode(nodeId) {
+        if (!nodeId || !this.nodes.has(nodeId)) return;
+
+        const node = this.nodes.get(nodeId);
+        if (node?.element) {
+            node.element.style.zIndex = '1';
+            node.element.style.border = 'none';
+        }
+        
+        this.activeNode.delete(nodeId);
+        this.drawLines();
+        this.setActiveNodeCallback?.(this.activeNode.size > 0);
+        console.log('RemoveActiveNode - current active:', this.activeNode);
+    }
+
+    setActiveNode(nodeIds = []) {
+        this.clearActiveNodes();
+        
+        if (!nodeIds || nodeIds.length === 0) return;
+
+        if (Array.isArray(nodeIds)) {
+            nodeIds.forEach(id => this.addActiveNode(id));
+        } else if (nodeIds instanceof Set) {
+            nodeIds.forEach(id => this.addActiveNode(id));
+        } else {
+            this.addActiveNode(nodeIds);
+        }
     }
 
     findNearestNode(draggingNode) {
@@ -1031,164 +975,6 @@ export class jsMind {
         if (this.settings.theme) this.container.style.backgroundColor = MIND_MAP_THEMES[this.settings.theme].canvas.backgroundColor;
     }
 
-    findEdges(points) {
-        let minY = 1, maxY = 0;
-        points.forEach(point => {
-            if (point.y < minY) minY = point.y;
-            if (point.y > maxY) maxY = point.y;
-        });
-
-        const topPoints = points.filter(p => Math.abs(p.y - minY) < 0.1);
-        const bottomPoints = points.filter(p => Math.abs(p.y - maxY) < 0.1);
-        
-        const leftPoints = points.filter(p => p.x < 0.2);
-        const rightPoints = points.filter(p => p.x > 0.8);
-
-        return {
-            top: topPoints.length >= 2 ? topPoints.sort((a, b) => a.x - b.x) : null,
-            bottom: bottomPoints.length >= 2 ? bottomPoints.sort((a, b) => a.x - b.x) : null,
-            left: leftPoints.length >= 2 ? leftPoints.sort((a, b) => a.y - b.y) : null,
-            right: rightPoints.length >= 2 ? rightPoints.sort((a, b) => a.y - b.y) : null
-        };
-    }
-
-    getEdgeLength(points) {
-        if (!points || points.length < 2) return 1;
-
-        const [p1, p2] = [points[0], points[points.length - 1]];
-        
-        if (p1.fixedOffset !== undefined || p2.fixedOffset !== undefined) {
-            const p1Offset = p1.fixedOffset !== undefined ? p1.fixedOffset : 0;
-            const p2Offset = p2.fixedOffset !== undefined ? p2.fixedOffset : 0;
-            
-            const totalOffset = p1Offset + p2Offset;
-            
-            return 1 - (totalOffset / 150);
-        }
-
-        return Math.abs(p2.x - p1.x) || Math.abs(p2.y - p1.y);
-    }
-
-    calculateNodeDimensions(figure, data, topicRect) {
-        const padding = PADDING_WITH_NODE * 2;
-        const minWidth = parseInt(data.styleNode.minWidth) || 300;
-        const minHeight = parseInt(data.styleNode.minHeight) || 250;
-
-        const contentWidth = Math.max(topicRect.width > 0 ? topicRect.width : 100);
-        const contentHeight = Math.max(topicRect.height > 0 ? topicRect.height : 30);
-
-        if (figure.tag === 'path' && figure.dNormalized) {
-            // Получаем размеры фигуры
-            const figureMetrics = this.calculateFigureMetrics(figure.dNormalized);
-            
-            // Вычисляем масштаб, необходимый для вмещения контента
-            const scaleX = contentWidth / figureMetrics.contentWidth;
-            const scaleY = contentHeight / figureMetrics.contentHeight;
-            const scale = Math.max(scaleX, scaleY);
-
-            // Вычисляем финальные размеры с учетом масштаба и минимальных размеров
-            const width = Math.max(
-                figureMetrics.totalWidth * scale + padding,
-                minWidth
-            );
-            const height = Math.max(
-                figureMetrics.totalHeight * scale + padding,
-                minHeight
-            );
-
-            return {
-                width,
-                height,
-                maxWidth: `${figureMetrics.contentWidth * scale}px`,
-                maxHeight: `${figureMetrics.contentHeight * scale}px`
-            };
-        }
-
-        // Для обычных фигур используем стандартные размеры
-        const width = Math.max(contentWidth + padding, minWidth);
-        const height = Math.max(contentHeight + padding, minHeight);
-
-        return {
-            width,
-            height,
-            maxWidth: `${width - padding}px`,
-            maxHeight: `${height - padding}px`
-        };
-    }
-
-    calculateFigureMetrics(points) {
-        let minX = 1, maxX = 0, minY = 1, maxY = 0;
-        let contentMinX = 1, contentMaxX = 0, contentMinY = 1, contentMaxY = 0;
-
-        // Находим крайние точки фигуры и области контента
-        points.forEach(point => {
-            const x = point.x;
-            const y = point.y;
-
-            // Обновляем общие границы
-            minX = Math.min(minX, x);
-            maxX = Math.max(maxX, x);
-            minY = Math.min(minY, y);
-            maxY = Math.max(maxY, y);
-
-            // Если точка имеет fixedOffset, учитываем это для области контента
-            if (point.fixedOffset === undefined) {
-                contentMinX = Math.min(contentMinX, x);
-                contentMaxX = Math.max(contentMaxX, x);
-                contentMinY = Math.min(contentMinY, y);
-                contentMaxY = Math.max(contentMaxY, y);
-            }
-        });
-
-        // Вычисляем размеры с учетом отступов
-        const totalWidth = (maxX - minX) * 100;
-        const totalHeight = (maxY - minY) * 100;
-        const contentWidth = (contentMaxX - contentMinX) * 100;
-        const contentHeight = (contentMaxY - contentMinY) * 100;
-
-        // Учитываем fixedOffset
-        points.forEach(point => {
-            if (point.fixedOffset) {
-                if (point.x <= 0.5) contentMinX = Math.max(contentMinX, point.fixedOffset / totalWidth);
-                if (point.x >= 0.5) contentMaxX = Math.min(contentMaxX, 1 - point.fixedOffset / totalWidth);
-                if (point.y <= 0.5) contentMinY = Math.max(contentMinY, point.fixedOffset / totalHeight);
-                if (point.y >= 0.5) contentMaxY = Math.min(contentMaxY, 1 - point.fixedOffset / totalHeight);
-            }
-        });
-
-        return {
-            totalWidth,
-            totalHeight,
-            contentWidth: contentWidth * 0.8, // Оставляем 80% от доступного пространства для контента
-            contentHeight: contentHeight * 0.8
-        };
-    }
-
-    drawNodeFigure(canvas, container, figure) {
-        const computedStyle = getComputedStyle(container);
-        const strokeWidth = parseFloat(figure.strokeWidth) * 2 || 1;
-        const strokePadding = strokeWidth;
-    
-        canvas.width = parseInt(computedStyle.width) + strokePadding;
-        canvas.height = parseInt(computedStyle.height) + strokePadding;
-    
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-        ctx.translate(strokeWidth / 2, strokeWidth / 2);
-    
-        ctx.fillStyle = figure.fill || '#ffffff';
-        ctx.strokeStyle = figure.stroke || '#cccccc';
-        ctx.lineWidth = strokeWidth;
-    
-        if (figure.dNormalized) {
-            this.drawPath(ctx, figure.dNormalized, canvas.width - strokePadding, canvas.height - strokePadding, figure.rx);
-        }
-    
-        ctx.fill();
-        ctx.stroke();
-    }
-    
     saveNodeContent(nodeId, topic) {
         const node = this.nodes.get(nodeId);
         if (!node) return;

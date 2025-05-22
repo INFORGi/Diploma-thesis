@@ -131,6 +131,23 @@ main {
 
 .menu.hidden {
     transform: translateX(100%);
+    pointer-events: none;
+}
+
+/* Стили для активного меню */
+.menu:not(.hidden) {
+    transform: translateX(0);
+    pointer-events: all;
+}
+
+/* Анимация переключения меню */
+.menu {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 1;
+}
+
+.menu.hidden {
+    opacity: 0;
 }
 
 /* Секции меню */
@@ -254,46 +271,108 @@ main {
     transition: background-color 0.2s;
 }
 
-/* Стили контекстного меню */
-#context-menu {
-    display: none;
-    position: fixed;
-    z-index: 3;
-    background: white;
-    border: 1px solid #ccc;
+/* Стили для меню контента */
+.content-menu {
+    background: var(--menu-bg);
+    border-left: 1px solid var(--border-color);
+}
+
+.content-menu .menu-section {
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.text-controls,
+.image-controls {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.text-controls.hidden,
+.image-controls.hidden {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+}
+
+.block-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 8px;
+}
+
+.block-btn {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    padding: 5px 0;
-}
-
-#context-menu.show {
-    display: block;
-}
-
-#context-menu button {
-    display: block;
-    width: 100%;
-    padding: 8px 15px;
-    text-align: left;
-    border: none;
-    background: none;
+    background: var(--button-bg);
+    color: var(--text-color);
     cursor: pointer;
+    transition: all 0.2s;
 }
 
-#context-menu button:hover {
-    background-color: #f0f0f0;
+.block-btn:hover {
+    background: var(--button-hover-bg);
 }
 
-#context-menu .context-submenu {
-    display: none;
-    position: absolute;
-    left: 100%;
-    top: 0;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.style-group {
+    margin-bottom: 12px;
 }
 
-#context-menu .context-menu-group:hover .context-submenu {
+.style-group label {
     display: block;
+    margin-bottom: 4px;
+    color: var(--text-color);
+}
+
+.style-group select,
+.style-group input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--text-color);
+}
+
+.text-style-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.style-btn {
+    width: 32px;
+    height: 32px; 
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.style-btn.active {
+    background: var(--button-active-bg);
+}
+
+.node-topic {
+    max-width: 480px !important;
+    max-height: 430px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    line-height: 1.4 !important;
+    padding-right: 10px !important;
+}
+
+.node-topic::-webkit-scrollbar {
+    width: 6px;
+    height: 0px;
+}
+
+.node-topic::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.node-topic::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
 }

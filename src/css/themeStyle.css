@@ -237,26 +237,26 @@ label.dark { color: var(--dark-text-primary); }
     color: var(--dark-text-primary);
 }
 
-.shape-btn.light, 
+.style-btn.light, 
 .action-btn.light {
     background-color: var(--light-gray-300);
     color: var (--light-text-primary);
     border: 1px solid var(--light-gray-500);
 }
 
-.shape-btn.dark,
+.style-btn.dark,
 .action-btn.dark {
     background-color: var(--dark-gray-200);
     color: var(--dark-text-primary);
     border: 1px solid var(--dark-gray-400);
 }
 
-.shape-btn.light:hover,
+.style-btn.light:hover,
 .action-btn.light:hover {
     background-color: var(--light-gray-100);
 }
 
-.shape-btn.dark:hover,
+.style-btn.dark:hover,
 .action-btn.dark:hover {
     background-color: var(--dark-gray-300);
 }
@@ -393,4 +393,8 @@ select.dark {
 
 .dark [data-editable="true"].selected:hover {
     background-color: var(--editable-selected-hover-bg-dark);
+}
+
+.style-btn {
+    border: 1px solid var(--border-color);
 }

@@ -47,12 +47,10 @@ main {
 
 .jsmind-container {
     position: relative;
-    width: 100% !important;
-    height: 100% !important;
-    left: 0 !important;
-    top: 0 !important;
+    left: 0;
+    top: 0;
     z-index: 1;
-    overflow: auto;
+    overflow: visible;
 }
 
 .jsmind-container svg {
@@ -159,14 +157,12 @@ main {
 
 .menu-section-toggle {
     width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    padding: 12px 15px;
     font-size: 14px;
-    font-weight: bold;
+    font-weight: 600;
     text-align: left;
-    transition: background-color 0.2s;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
 }
 
 .menu-section-content {
@@ -187,6 +183,7 @@ main {
 
 .menu input[type="color"],
 .menu input[type="number"],
+.menu input[type="text"],
 .menu select {
     width: 100%;
     padding: 4px;
@@ -273,88 +270,182 @@ main {
 
 /* Стили для меню контента */
 .content-menu {
-    background: var(--menu-bg);
-    border-left: 1px solid var(--border-color);
+    min-width: 300px;
+    padding: 15px;
 }
 
-.content-menu .menu-section {
-    margin-bottom: 15px;
-    transition: all 0.3s ease;
+.menu-section:not(:last-child) {
+    margin-bottom: 20px;
 }
 
-.text-controls,
-.image-controls {
-    transition: opacity 0.3s ease, transform 0.3s ease;
+/* Заголовки секций */
+.menu-section-toggle {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
 }
 
-.text-controls.hidden,
-.image-controls.hidden {
-    opacity: 0;
-    transform: translateY(-10px);
-    pointer-events: none;
-}
-
-.block-buttons {
+/* Контейнеры с кнопками */
+.block-buttons,
+.block-edit-text-buttons,
+.block-edit-list-buttons {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    padding: 8px;
+    gap: 10px;
+    padding: 10px 0;
 }
 
-.block-btn {
-    padding: 8px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background: var(--button-bg);
-    color: var(--text-color);
-    cursor: pointer;
-    transition: all 0.2s;
+/* Стили для всех кнопок в меню */
+.block-btn,
+.block-edit-btn {
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s ease;
 }
 
-.block-btn:hover {
-    background: var(--button-hover-bg);
+.block-btn:hover,
+.block-edit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Стили для контролов текста */
 .style-group {
-    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
 }
 
 .style-group label {
     display: block;
-    margin-bottom: 4px;
-    color: var(--text-color);
+    margin-bottom: 5px;
+    font-size: 13px;
+    font-weight: 500;
 }
 
 .style-group select,
 .style-group input {
     width: 100%;
-    padding: 4px 8px;
-    border: 1px solid var(--border-color);
+    padding: 8px;
     border-radius: 4px;
-    background: var(--input-bg);
-    color: var(--text-color);
+    font-size: 13px;
+    box-sizing: border-box;
+}
+
+.style-group input[type="color"] {
+    width: 100% !important;
+    height: 40px;
+    padding: 0;
+    border-radius: 4px;
+    box-sizing: border-box; 
+    cursor: pointer;
+}
+
+.style-group input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+.style-group input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 2px;
+}
+.style-group input[type="color"]::-moz-color-swatch {
+    border: none;
+    border-radius: 2px;
+}
+
+.style-group input[type="range"] {
+    margin: 8px 0;
 }
 
 .text-style-buttons {
     display: flex;
     gap: 8px;
+    margin-top: 15px;
+    width: 100%;
 }
 
 .style-btn {
-    width: 32px;
-    height: 32px; 
-    border-radius: 4px;
-    cursor: pointer;
+    flex: 1;
+    height: 36px;
+    font-size: 14px;
     font-weight: bold;
+    border-radius: 4px;
+    transition: all 0.2s ease;
 }
 
-.style-btn.active {
-    background: var(--button-active-bg);
+.parent-style-control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding: 8px 0;
+    width: 100%;
+}
+
+.parent-style-control label {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.parent-style-control input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Стили для контролов изображения */
+.img-path,
+.img-size,
+.img-position {
+    margin-bottom: 15px;
+}
+
+.img-path input,
+.img-size input,
+.img-position select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+#img-select,
+#img-upload {
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 6px;
+    margin-top: 5px;
+    transition: all 0.2s ease;
+}
+
+#img-select:hover,
+#img-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.menu-section-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.menu-section-content:not(.hidden) {
+    max-height: 500px;
 }
 
 .node-topic {
-    max-width: 480px !important;
-    max-height: 430px !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     word-wrap: break-word !important;
@@ -375,4 +466,14 @@ main {
 .node-topic::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 3px;
+}
+
+.style-group-inline {
+    margin-bottom: 5px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
 }

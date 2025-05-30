@@ -1,6 +1,7 @@
 import { TOPIC_STYLES, NODE_STYLES, 
     LINE_STYLES, DEFAULT_NODE_DATA, MIND_MAP_THEMES, 
-    SPACING_WIDTH, SPACING_HEIGHT, DOUBLE_CLICK_DELAY } from '../../../data/constants.js';
+    SPACING_WIDTH, SPACING_HEIGHT, DOUBLE_CLICK_DELAY,
+    BASIC_CONTAINER } from '../../../data/constants.js';
 
 export class jsMind {
     _editableNodes = false;
@@ -101,7 +102,7 @@ export class jsMind {
     }
 
     async updateNodeLayout(nodeData, node) {
-        await this.layout(this.root, new Set([nodeData.id]));
+        await this.layout(nodeData.id);
         const position = this.getPosition(nodeData.id);
         node.style.left = `${position.x}px`;
         node.style.top = `${position.y}px`;
@@ -137,9 +138,8 @@ export class jsMind {
 
     createContainerElement(data) {
         const container = document.createElement('div');
-        container.className = 'jsmind-container';
+        container.className = 'jsmind-container';        
         Object.assign(container.style, data.styleContainer);
-
         return container;
     }
 
@@ -151,9 +151,9 @@ export class jsMind {
 
         topic.innerHTML = await window.electron.renderMarkdown(markdownText);
         Object.assign(topic.style, data.styleTopic, {
-            color: data.topic.color,
-            fontSize: data.topic.fontSize,
-            fontFamily: data.topic.fontFamily,
+            color: data.topic.globalStyle.color,
+            fontSize: data.topic.globalStyle.fontSize,
+            fontFamily: data.topic.globalStyle.fontFamily,
         });
 
         return topic;
@@ -171,49 +171,59 @@ export class jsMind {
         this.setupTopicEventListeners(node.querySelector('.node-topic'));
     }
 
-    async layout(nodeId = this.root, updatedNodes = new Set()) {
-        if (!nodeId) return;
-    
-        const node = this.nodes.get(nodeId);
-        if (!node) return;
-    
+    async layout(nodeIds = this.root) {
+        const nodesToUpdate = nodeIds instanceof Set ? nodeIds : new Set([nodeIds]);
+        if (nodesToUpdate.size === 0) return;
+
+        const validNodes = Array.from(nodesToUpdate).filter(id => this.nodes.has(id));
+        if (validNodes.length === 0) return;
+
         await new Promise(resolve => requestAnimationFrame(resolve));
-    
+
         const updateNode = (currentNodeId) => {
             const currentNode = this.nodes.get(currentNodeId);
             if (!currentNode) return;
 
             const nodeElement = currentNode.element;
+            const container = nodeElement.querySelector('.jsmind-container');
             const topic = nodeElement.querySelector('.node-topic');
 
-            if ((updatedNodes.size === 0 || updatedNodes.has(currentNodeId)) && topic && topic.innerHTML) {
-
+            if (container) {
+                Object.assign(container.style, currentNode.data.styleContainer); // Применяем все стили styleContainer
             }
 
-            nodeElement.style.left = `${currentNode.data.position.x}px`;
-            nodeElement.style.top = `${currentNode.data.position.y}px`;
+            if (topic) {
+                Object.assign(topic.style, currentNode.data.topic.globalStyle); // Применяем все стили globalStyle
+            }
 
-            currentNode.children.forEach(childId => {
-                updateNode(childId);
-            });
+            const position = this.getPosition(currentNodeId);
+            currentNode.data.position = position;
+            nodeElement.style.left = `${position.x}px`;
+            nodeElement.style.top = `${position.y}px`;
+
+            currentNode.children.forEach(childId => updateNode(childId));
         };
-    
-        updateNode(nodeId);
 
-        if (nodeId === this.root) {
-            const containerRect = this.container.getBoundingClientRect();
-            const elementRect = node.element.getBoundingClientRect();
-    
-            const position = {
-                x: Math.floor(containerRect.width / 2 - elementRect.width / 2),
-                y: Math.floor(containerRect.height / 2 - elementRect.height / 2)
-            };
-    
-            node.element.style.left = `${position.x}px`;
-            node.element.style.top = `${position.y}px`;
-            node.data.position = position;
+        if (nodesToUpdate.has(this.root)) {
+            const node = this.nodes.get(this.root);
+            if (node) {
+                const containerRect = this.container.getBoundingClientRect();
+                const elementRect = node.element.getBoundingClientRect();
+
+                const position = {
+                    x: Math.floor(containerRect.width / 2 - elementRect.width / 2),
+                    y: Math.floor(containerRect.height / 2 - elementRect.height / 2)
+                };
+
+                node.element.style.left = `${position.x}px`;
+                node.element.style.top = `${position.y}px`;
+                node.data.position = position;
+            }
         }
 
+        validNodes.forEach(nodeId => updateNode(nodeId));
+
+        await new Promise(resolve => requestAnimationFrame(resolve));
         this.drawLines();
     }
 
@@ -223,10 +233,17 @@ export class jsMind {
             console.error('Parent node not found');
             return;
         }
-    
+
         const newNodeData = {
             id: `node_${Date.now()}`,
-            topic: this.deepCloneStyle(DEFAULT_NODE_DATA.topic),
+            topic: {
+                text: BASIC_CONTAINER.p.replace('"></p>', '">Новый узел</p>'),
+                globalStyle: {
+                    color: parentNode.data.topic.globalStyle?.color || '#000000',
+                    fontSize: parentNode.data.topic.globalStyle?.fontSize || '14px',
+                    fontFamily: parentNode.data.topic.globalStyle?.fontFamily || 'Arial'
+                }
+            },
             parent: parentId,
             children: [],
             styleContainer: this.deepCloneStyle(parentNode.data.styleContainer),
@@ -400,7 +417,7 @@ export class jsMind {
         const toX = parseInt(toElement.style.left) + Math.floor(toElement.offsetWidth / 2);
         const toY = parseInt(toElement.style.top) + Math.floor(toElement.offsetHeight / 2);
 
-        const lineStyle = from.data.styleLine || LINE_STYLES.STRAIGHT;
+        const lineStyle = from.data.styleLine || this.deepCloneStyle(LINE_STYLES.DEFAULT);
         const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
         let path;
 
@@ -488,9 +505,12 @@ export class jsMind {
                                 li.setAttribute('data-editable', 'true');
                                 li.contentEditable = 'false';
                                 li.draggable = false;
+                                li.style.cssText = child.style.cssText;
+                                if (child.classList.contains('parent-style')) {
+                                    li.classList.add('parent-style');
+                                }
                                 block.replaceChild(li, child);
-                            }
-                            else {
+                            } else {    
                                 const parent = block.parentNode;
                                 const next = block.nextSibling;
                                 block.removeChild(child);
@@ -511,6 +531,10 @@ export class jsMind {
                     p.setAttribute('data-editable', 'true');
                     p.contentEditable = 'false';
                     p.draggable = false;
+                    p.style.cssText = block.style.cssText;
+                    if (block.classList.contains('parent-style')) {
+                        p.classList.add('parent-style');
+                    }
 
                     const parent = block.parentNode;
                     parent.replaceChild(p, block);
@@ -577,11 +601,10 @@ export class jsMind {
                     nodeData.data.draggable = false;
                 }
 
-                topic.querySelectorAll('h1, h2, h3, p, ul, ol, li, img, textarea').forEach(block => {
+                topic.querySelectorAll('h1, h2, h3, p, ul, ol, li, img').forEach(block => {
                     if (
                         block.tagName === 'IMG' || 
-                        block.textContent.trim() ||
-                        block.tagName === 'TEXTAREA'
+                        block.textContent.trim()
                     ) {
                         block.setAttribute('data-editable', 'true');
                         block.draggable = true;
@@ -636,7 +659,7 @@ export class jsMind {
             if (!isEditMode || !draggedBlock) return;
             e.preventDefault();
 
-            const block = e.target.closest('[data-editable="true"]');
+            const block = e.target.closest('.image-wrapper') || e.target.closest('[data-editable="true"]'); // Проверяем контейнер
             if (!block) {
                 const topicElement = e.target.closest('.node-topic');
                 if (topicElement) {
@@ -644,21 +667,11 @@ export class jsMind {
                 }
                 return;
             }
-            
+
             if (block === draggedBlock) return;
 
             const rect = block.getBoundingClientRect();
             const insertBefore = e.clientY < rect.top + rect.height / 2;
-
-            if (draggedBlock.tagName === 'IMG' && (block.tagName === 'UL' || block.tagName === 'OL')) {
-                const parent = block.parentNode;
-                if (insertBefore) {
-                    parent.insertBefore(draggedBlock, block);
-                } else {
-                    parent.insertBefore(draggedBlock, block.nextSibling);
-                }
-                return;
-            }
 
             if (insertBefore) {
                 block.parentNode.insertBefore(draggedBlock, block);
@@ -698,6 +711,7 @@ export class jsMind {
                         newBlock.setAttribute('data-editable', 'true');
                         newBlock.contentEditable = 'true';
                         newBlock.draggable = false;
+                        newBlock.style.cssText = editingBlock.style.cssText;
 
                         editingBlock.parentNode.insertBefore(newBlock, editingBlock.nextSibling);
 
@@ -747,11 +761,11 @@ export class jsMind {
                     this.selectedBlockContent = null;
 
                     if (topic.querySelectorAll('[data-editable]').length === 0) {
-                        const p = document.createElement('p');
-                        p.textContent = 'Новый узел';
-                        p.setAttribute('data-editable', 'true');
-                        p.draggable = true;
-                        topic.appendChild(p);
+                        const p = document.createElement('div');
+                        p.innerHTML = BASIC_CONTAINER.p.replace('"></p>', '>Новый узел</p>');
+                        p.firstChild.setAttribute('data-editable', 'true');
+                        p.firstChild.draggable = true;
+                        topic.appendChild(p.firstChild);
                     }
                     this.saveNodeContent(node.id, topic);
                 }
@@ -798,8 +812,7 @@ export class jsMind {
 
         this.drawLines();
         this.setActiveNodeCallback?.(true);
-        console.log('AddActiveNode - current active:', this.activeNode);
-    }
+        }
 
     removeActiveNode(nodeId) {
         if (!nodeId || !this.nodes.has(nodeId)) return;
@@ -872,6 +885,7 @@ export class jsMind {
     getPosition(nodeId) {        
         const node = this.nodes.get(nodeId);
         if (!node) return { x: 0, y: 0 };
+        if (node.data.position.x !== 0 && node.data.position.y !== 0) return node.data.position;
     
         const parentNode = this.nodes.get(node.parent);
         if (!parentNode) {
@@ -970,8 +984,16 @@ export class jsMind {
     initContainer() {
         this.container.innerHTML = '';
         this.svgContainer = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        this.svgContainer.style.position = 'absolute';
+        this.svgContainer.style.width = '100%';
+        this.svgContainer.style.height = '100%';
+        this.svgContainer.style.left = '0';
+        this.svgContainer.style.top = '0';
+        this.svgContainer.style.pointerEvents = 'none';
         this.container.appendChild(this.svgContainer);
-
+        this.container.style.overflow = 'visible';
+        this.container.style.width = '100%';
+        this.container.style.height = '100%';
         if (this.settings.theme) this.container.style.backgroundColor = MIND_MAP_THEMES[this.settings.theme].canvas.backgroundColor;
     }
 
@@ -983,6 +1005,6 @@ export class jsMind {
         node.data.topic.text = content;
         topic.dataset.markdown = content;
 
-        this.layout(this.root, new Set([node.id]));
+        this.layout(node.id);
     }
 }

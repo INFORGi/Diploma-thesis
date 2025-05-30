@@ -227,14 +227,14 @@ label.dark { color: var(--dark-text-primary); }
     border: 1px solid var(--dark-gray-400);
 }
 
-.menu-section-toggle.light {
-    background-color: var(--light-tertiary);
-    color: var(--light-text-primary);
+.light .menu-section-toggle {
+    background-color: var(--dark-gray-200);
+    color: var(--light-tertiary);
 }
 
-.menu-section-toggle.dark {
-    background-color: var(--dark-tertiary);
-    color: var(--dark-text-primary);
+.dark  .menu-section-toggle{
+    background-color: var(--light-gray-100);
+    color: var(--dark-secondary);
 }
 
 .style-btn.light, 
@@ -396,5 +396,60 @@ select.dark {
 }
 
 .style-btn {
+    border: 1px solid var(--border-color);
+}
+
+.dark .block-btn {
+    background: var(--dark-primary);
+    color: var(--dark-accent-text);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+
+}
+
+.dark .block-btn:hover {
+    background: var(--dark-tertiary);
+}
+
+.light .block-btn {
+    background: var(--light-primary);
+    color: var(--light-text-secondary);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+
+}
+
+.light .block-btn:hover {
+    background: var(--light-tertiary);
+}
+
+.dark .block-edit-btn {
+    background: var(--dark-primary);
+    color: var(--dark-accent-text);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+
+}
+
+.dark .block-edit-btn:hover {
+    background: var(--dark-tertiary);
+}
+
+.light .block-edit-btn {
+    background: var(--light-primary);
+    color: var(--light-text-secondary);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+
+}
+
+.light .block-edit-btn:hover {
+    background: var(--light-tertiary);
+}
+
+.content-menu {
+    border-left: 1px solid var(--border-color);
+}
+.style-group input[type="color"] {
     border: 1px solid var(--border-color);
 }

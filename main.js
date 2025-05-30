@@ -38,11 +38,11 @@ function createWindow() {
         roundedCorners: true,  
         icon: path.join(__dirname, 'src/assets/blue.ico'),
         webPreferences: {
-            preload: path.join(__dirname, 'src/preload/preload.js'),
+            preload: path.join(__dirname, 'src/js/preload.js'),
             contextIsolation: true,
             webSecurity: true,
             allowRunningInsecureContent: false,
-            nodeIntegration: true,
+            nodeIntegration: false,
             contextIsolation: true,
             sandbox: false,
         },
@@ -167,4 +167,16 @@ ipcMain.handle('render-markdown', async (event, markdown) => {
         console.error('Error rendering markdown:', error);
         return markdown;
     }
+});
+
+ipcMain.handle('open-file-dialog', async () => {
+    const result = await dialog.showOpenDialog({
+        title: 'Выберите изображение',
+        properties: ['openFile'],
+        filters: [
+            { name: 'Изображения', extensions: ['png', 'jpg', 'jpeg', 'gif', 'bmp'] },
+            { name: 'Все файлы', extensions: ['*'] }
+        ]
+    });
+    return result.filePaths[0] || null;
 });

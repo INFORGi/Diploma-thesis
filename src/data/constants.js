@@ -1,7 +1,6 @@
 export const LINE_STYLES = {
     STRAIGHT: {
         type: "straight",
-
         style: {
             stroke: "#555555",
             strokeWidth: "2",
@@ -10,7 +9,6 @@ export const LINE_STYLES = {
     },
     CURVED: {
         type: "curved",
-
         style: {
             stroke: "#555555",
             strokeWidth: "2",
@@ -52,10 +50,8 @@ export const LINE_STYLES = {
 
 export const TOPIC_STYLES = {
     position: "relative",
-    width: "auto",
-    maxWidth: "480px", // добавляем максимальную ширину
-    maxHeight: "430px", // добавляем максимальную высоту
-    height: "auto",
+    width: "100%",
+    height: "100%",
     zIndex: "2",
     display: "flex",
     flexDirection: "column",
@@ -65,13 +61,15 @@ export const TOPIC_STYLES = {
     textAlign: "justify",
     whiteSpace: "pre-wrap",
     wordWrap: "break-word",
-    overflow: "auto", // меняем на auto для добавления прокрутки
+    overflow: "auto",
     boxSizing: "border-box",
-    padding: "10px", // добавляем отступы
+    padding: "10px",
 };
 
 export const NODE_STYLES = {
     position: "absolute",
+    width: "auto",
+    height: "auto",
     cursor: "pointer",
     userSelect: "none", 
     outline: "none",
@@ -81,20 +79,19 @@ export const NODE_STYLES = {
 
 export const CONTAINER_STYLES = {
     backgroundColor: "#ffffff",
-    minWidth: 300,
-    minHeight: 250,
-    maxWidth: 500,  // добавляем максимальную ширину
-    maxHeight: 450, // добавляем максимальную высоту
-    width: "auto",
-    height: "auto",
+    minWidth: '250px',
+    minHeight: '200px',
+    maxWidth: '900px',
+    maxHeight: '800px',
+    width: '250px',
+    height: '200px',
+    border: "3px solid #cccccc",
     borderRadius: '15px',
-    border: '1px solid #cccccc',
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: "10px",
     boxSizing: "border-box",
-    overflow: "auto",
+    overflow: "visible"
 };
 
 export const FIGURE = {
@@ -188,13 +185,26 @@ export const FIGURE = {
     }
 };
 
+export const BASIC_CONTAINER = {
+    h1: '<h1 style="font-family: Arial; color: #000000; font-style: normal; text-decoration: none; font-size: 32px; font-weight: bold;"></h1>',
+    h2: '<h2 style="font-family: Arial; color: #000000; font-style: normal; text-decoration: none; font-size: 34.5px; font-weight: bold;"></h2>',
+    h3: '<h3 style="font-family: Arial; color: #000000; font-style: normal; text-decoration: none; font-size: 26.9px; font-weight: bold;"></h3>',
+    p: '<p class="parent-style" style="font-family: Arial; font-size: 14px; color: #000000; font-weight: normal; font-style: normal; text-decoration: none;"></p>',
+    ul: '<ul style=""></ul>',
+    ol: '<ol style=""></ol>',
+    li: '<li style="font-family: Arial; font-size: 14px; color: #000000; font-weight: normal; font-style: normal; text-decoration: none;"></li>',
+    img: '<img src="" alt="Image" style="width: 100px; height: 100px; object-fit: cover; border-radius: 10px;">',
+};
+
 export const DEFAULT_NODE_DATA = {
     id: null,
     topic: {
-        text: `<p>Text</p>`,
-        color: '#000',
-        fontSize: '14px',
-        fontFamily: 'Arial'
+        text: { ...BASIC_CONTAINER.p},
+        globalStyle: {
+            color: '#000',
+            fontSize: '14px',
+            fontFamily: 'Arial'
+        },
     },  
     parent: null,
     children: {},
@@ -254,6 +264,10 @@ export const MENU_CONTROLS = {
         position: '#img-position',
         select: '#img-select',
         upload: '#img-upload'
+    },
+    list: {
+        toUnordered: '#to-ul-btn',      // Кнопка для преобразования в ul
+        toOrdered: '#to-ol-btn'         // Кнопка для преобразования в ol
     }
 };
 

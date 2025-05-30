@@ -17,6 +17,7 @@
 </head>
 <body class="entry-point">
     <div class="window entry-point">
+        <!-- Header -->
         <header id="title-bar" class="entry-point">
             <div style="position: relative; user-select: none;">
                 <button id="menu-button" class="style-button-menu entry-point">⋮</button>
@@ -38,76 +39,123 @@
                 <button class="button-close-style entry-point" id="close" aria-label="Close"></button>
             </div>
         </header>
+
         <main id="main" class="entry-point">
+            <!-- Sidebar -->
             <div class="side-toolbar entry-point">
                 <button id="back-button" class="side-button entry-point" title="Вернуться на главную">
                     <img src="../image/back_window.svg" alt="Назад">
                 </button>
             </div>
+
+            <!-- Main Canvas Area -->
             <div class="canvas entry-point">
                 <div id="jsmind_container" class="jsmind-container"></div>
                 <button id="create-node">+</button>
                 
+                <!-- Node Properties Menu -->
                 <div class="menu floating-menu entry-point">
-                    <!-- Настройки узла -->
+                    <!-- Node Section -->
                     <div class="menu-section">
                         <button class="menu-section-toggle">Узел ▼</button>
                         <div class="menu-section-content">
-                            <!-- <label>Форма узла</label>
-                            <div class="button-group"></div> -->
-                            
-                            <label>Цвет узла</label>
-                            <input type="color" id="node-color" value="#ffffff" class="menu-button">
-                            
-                            <label>Цвет границы</label>
-                            <input type="color" id="border-color" value="#000000" class="menu-button">
-                            
-                            <label>Толщина границы</label>
-                            <input type="range" id="border-width" min="1" max="5" value="1" class="menu-button">
-                        
-                            <label>Ширина узла</label>
-                            <input type="number" id="node-width" class="" min="300">
-
-                            <label>Высота узла</label>
-                            <input type="number" id="node-height" class="" min="250">
+                            <div class="control-group">
+                                <label>Цвет узла</label>
+                                <input type="color" id="node-color" value="#ffffff" class="menu-button">
+                            </div>
+                            <div class="control-group">
+                                <label>Цвет границы</label>
+                                <input type="color" id="border-color" value="#000000" class="menu-button">
+                            </div>
+                            <div class="control-group">
+                                <label>Толщина границы</label>
+                                <input type="range" id="border-width" min="1" max="10" class="menu-button">
+                            </div>
+                            <div class="control-group">
+                                <label>Ширина узла</label>
+                                <input type="number" id="node-width" min="250">
+                            </div>
+                            <div class="control-group">
+                                <label>Высота узла</label>
+                                <input type="number" id="node-height" min="200">
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Настройки линии -->
+                    <!-- Text Section -->
+                    <div class="menu-section">
+                        <button class="menu-section-toggle">Стиль текста у узла ▼</button>
+                        <div class="menu-section-content">
+                            <div class="control-group">
+                                <label>Цвет текста</label>
+                                <input type="color" id="text-color" value="#000000" class="menu-button">
+                            </div>
+                            <div class="control-group">
+                                <label>Размер текста</label>
+                                <input type="number" id="text-size" min="8" max="72" class="menu-button">
+                            </div>
+                            <div class="control-group">
+                                <label>Шрифт</label>
+                                <select id="font-family" class="menu-button">
+                                    <option value="Arial" style="font-family: Arial">Arial</option>
+                                    <option value="Times New Roman" style="font-family: 'Times New Roman'">Times New Roman</option>
+                                    <option value="Courier New" style="font-family: 'Courier New'">Courier New</option>
+                                    <option value="Georgia" style="font-family: Georgia">Georgia</option>
+                                    <option value="Verdana" style="font-family: Verdana">Verdana</option>
+                                    <option value="Helvetica" style="font-family: Helvetica">Helvetica</option>
+                                    <option value="Tahoma" style="font-family: Tahoma">Tahoma</option>
+                                    <option value="Trebuchet MS" style="font-family: 'Trebuchet MS'">Trebuchet MS</option>
+                                    <option value="Impact" style="font-family: Impact">Impact</option>
+                                    <option value="Comic Sans MS" style="font-family: 'Comic Sans MS'">Comic Sans MS</option>
+                                    <option value="Palatino" style="font-family: Palatino">Palatino</option>
+                                    <option value="Garamond" style="font-family: Garamond">Garamond</option>
+                                    <option value="Bookman" style="font-family: Bookman">Bookman</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Line Section -->
                     <div class="menu-section">
                         <button class="menu-section-toggle">Линия ▼</button>
                         <div class="menu-section-content">
-                            <label>Стиль линии</label>
-                            <select id="line-style" class="menu-button">
-                                <option value="straight">Прямая</option>
-                                <option value="curved">Кривая</option>
-                                <option value="bezier">Линия Безье</option>
-                                <option value="dashed">Пунктирная</option>
-                                <option value="dotted">Точечная</option>
-                            </select>
-                            
-                            <label>Цвет линии</label>
-                            <input type="color" id="line-color" value="#666666" class="menu-button">
-                            
-                            <label>Толщина линии</label>
-                            <input type="range" id="line-width" min="1" max="5" value="1" class="menu-button">
+                            <div class="control-group">
+                                <label>Стиль линии</label>
+                                <select id="line-style" class="menu-button">
+                                    <option value="straight">Прямая</option>
+                                    <option value="curved">Кривая</option>
+                                    <option value="bezier">Линия Безье</option>
+                                    <option value="dashed">Пунктирная</option>
+                                    <option value="dotted">Точечная</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <label>Цвет линии</label>
+                                <input type="color" id="line-color" value="#666666" class="menu-button">
+                            </div>
+                            <div class="control-group">
+                                <label>Толщина линии</label>
+                                <input type="range" id="line-width" min="1" max="5" value="1" class="menu-button">
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Глобальные настройки -->
+                    <!-- Map Settings Section -->
                     <div class="menu-section">
                         <button class="menu-section-toggle">Карта ▼</button>
                         <div class="menu-section-content">
-                            <label>Тип карты</label>
-                            <select id="map-type">
-                                <option value="mind">Ментальная карта</option>
-                                <option value="tree">Дерево</option>
-                                <option value="organization">Организационная</option>
-                            </select>
-                            
-                            <label>Масштаб</label>
-                            <input type="range" id="map-zoom" min="50" max="200" value="100">
-
+                            <div class="control-group">
+                                <label>Тип карты</label>
+                                <select id="map-type">
+                                    <option value="mind">Ментальная карта</option>
+                                    <option value="tree">Дерево</option>
+                                    <option value="organization">Организационная</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <label>Масштаб</label>
+                                <input type="range" id="map-zoom" min="50" max="200" value="100">
+                            </div>
                             <div class="toggle-container">
                                 <label for="cascade-delete">Каскадное удаление узлов</label>
                                 <input type="checkbox" id="cascade-delete">
@@ -115,79 +163,178 @@
                         </div>
                     </div>
                     
+                    <!-- Action Buttons -->
                     <div class="action-buttons">
                         <button class="action-btn" id="expand-all">Развернуть все</button>
                         <button class="action-btn" id="collapse-all">Свернуть все</button>
                     </div>
                 </div>
                 
+                <!-- Content Editor Menu -->
                 <div class="menu content-menu entry-point">
+                    <!-- Block Addition Section -->
                     <div class="menu-section">
                         <button class="menu-section-toggle">Добавить блок ▼</button>
                         <div class="menu-section-content">
                             <div class="block-buttons">
-                                <button class="block-btn" data-block="h1">H1</button>
-                                <button class="block-btn" data-block="h2">H2</button>
-                                <button class="block-btn" data-block="h3">H3</button>
-                                <button class="block-btn" data-block="p">Абзац</button>
-                                <button class="block-btn" data-block="ul">Список</button>
-                                <button class="block-btn" data-block="ol">Нумерованный список</button>
-                                <button class="block-btn" data-block="img">Изображение</button>
+                                <button class="block-btn entry-point" data-block="h1">H1</button>
+                                <button class="block-btn entry-point" data-block="h2">H2</button>
+                                <button class="block-btn entry-point" data-block="h3">H3</button>
+                                <button class="block-btn entry-point" data-block="p">Абзац</button>
+                                <button class="block-btn entry-point" data-block="ul">Список</button>
+                                <button class="block-btn entry-point" data-block="ol">Нумерованный список</button>
+                                <button class="block-btn entry-point" data-block="img">Изображение</button>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Block Type Controls -->
+                    <div class="menu-section text-block-controls" style="display: none;">
+                        <button class="menu-section-toggle text">Изменить текстовый блок ▼</button>
+                        <div class="menu-section-content">
+                            <div class="block-edit-text-buttons">
+                                <button class="block-edit-btn entry-point" data-block="h1">H1</button>
+                                <button class="block-edit-btn entry-point" data-block="h2">H2</button>
+                                <button class="block-edit-btn entry-point" data-block="h3">H3</button>
+                                <button class="block-edit-btn entry-point" data-block="p">Абзац</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- List Controls -->
+                    <div class="menu-section list-controls" style="display: none;">
+                        <button class="menu-section-toggle list">Изменить список ▼</button>
+                        <div class="menu-section-content">
+                            <div class="block-edit-list-buttons">
+                                <button class="block-edit-btn entry-point" data-block="ul">Маркированный список</button>
+                                <button class="block-edit-btn entry-point" data-block="ol">Нумерованный список</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Text Style Controls -->
                     <div class="menu-section text-controls">
                         <button class="menu-section-toggle">Стили текста ▼</button>
                         <div class="menu-section-content">
                             <div class="style-group">
                                 <label>Шрифт</label>
-                                <select id="font-family">
-                                    <option value="Arial">Arial</option>
-                                    <option value="Times New Roman">Times New Roman</option>
-                                    <option value="Courier New">Courier New</option>
+                                <select id="block-font-family">
+                                    <option value="Arial" style="font-family: Arial">Arial</option>
+                                    <option value="Times New Roman" style="font-family: 'Times New Roman'">Times New Roman</option>
+                                    <option value="Courier New" style="font-family: 'Courier New'">Courier New</option>
+                                    <option value="Georgia" style="font-family: Georgia">Georgia</option>
+                                    <option value="Verdana" style="font-family: Verdana">Verdana</option>
+                                    <option value="Helvetica" style="font-family: Helvetica">Helvetica</option>
+                                    <option value="Tahoma" style="font-family: Tahoma">Tahoma</option>
+                                    <option value="Trebuchet MS" style="font-family: 'Trebuchet MS'">Trebuchet MS</option>
+                                    <option value="Impact" style="font-family: Impact">Impact</option>
+                                    <option value="Comic Sans MS" style="font-family: 'Comic Sans MS'">Comic Sans MS</option>
+                                    <option value="Palatino" style="font-family: Palatino">Palatino</option>
+                                    <option value="Garamond" style="font-family: Garamond">Garamond</option>
+                                    <option value="Bookman" style="font-family: Bookman">Bookman</option>
                                 </select>
                             </div>
                             <div class="style-group">
                                 <label>Размер шрифта</label>
-                                <input type="number" id="font-size" value="16" min="8" max="72">
+                                <input type="number" id="block-font-size" value="16" min="8" max="72">
                             </div>
                             <div class="style-group">
                                 <label>Цвет текста</label>
-                                <input type="color" id="text-color">
+                                <input type="color" id="block-text-color" value="#000000" class="menu-button">
+                            </div>
+                            <div class="style-group">
+                                <label>Выравнивание текста</label>
+                                <select id="block-text-align">
+                                    <option value="left">Слева</option>
+                                    <option value="center">По центру</option>
+                                    <option value="right">Справа</option>
+                                    <option value="justify">По ширине</option>
+                                </select>
+                            </div>
+                            <div class="style-group-inline">
+                                <label for="use-parent-style">Использовать стиль узла</label>
+                                <input type="checkbox" id="use-parent-style">
                             </div>
                             <div class="text-style-buttons">
-                                <button id="bold-btn" class="style-btn" title="Жирный">B</button>
-                                <button id="italic-btn" class="style-btn" title="Курсив">I</button>
-                                <button id="underline-btn" class="style-btn" title="Подчёркнутый">U</button>
+                                <button id="block-bold-btn" class="style-btn" title="Жирный">B</button>
+                                <button id="block-italic-btn" class="style-btn" title="Курсив">I</button>
+                                <button id="block-underline-btn" class="style-btn" title="Подчёркнутый">U</button>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Image Controls -->
                     <div class="menu-section image-controls" style="display: none;">
                         <button class="menu-section-toggle">Настройки изображения ▼</button>
                         <div class="menu-section-content">
-                            <div class="img-path">
-                                <label for="img-path">Путь к изображению</label>
-                                <input type="text" id="img-path">
-                                <button id="img-select">Выбрать изображение</button>
+                            <div class="img-controls">
+                                <div class="control-group">
+                                    <button id="img-select" class="style-btn">Выбрать изображение</button>
+                                </div>
+                                <div class="control-group">
+                                    <label for="img-width">Ширина</label>
+                                    <input type="number" id="img-width" value="100" min="1">
+                                </div>
+                                <div class="control-group">
+                                    <label for="img-height">Высота</label>
+                                    <input type="number" id="img-height" value="100" min="1">
+                                </div>
+                                <div class="control-group">
+                                    <label for="img-position">Положение</label>
+                                    <select id="img-position">
+                                        <option value="left">Слева</option>
+                                        <option value="right">Справа</option>
+                                        <option value="center">По центру</option>
+                                    </select>
+                                </div>
+                                <button id="img-upload" class="style-btn">Загрузить изображение</button>
                             </div>
-                            <div class="img-size">
-                                <label for="img-width">Ширина</label>
-                                <input type="number" id="img-width" value="100" min="1">
-                                <label for="img-height">Высота</label>
-                                <input type="number" id="img-height" value="100" min="1">
-                            </div>
-                            <div class="img-position">
-                                <label for="img-position">Положение</label>
-                                <select id="img-position">
-                                    <option value="left">Слева</option>
-                                    <option value="right">Справа</option>
-                                    <option value="top">Сверху</option>
-                                    <option value="bottom">Снизу</option>
+                        </div>
+                    </div>
+
+                    <!-- Header Controls -->
+                    <div class="menu-section header-controls" style="display: none;">
+                        <button class="menu-section-toggle">Настройки заголовка ▼</button>
+                        <div class="menu-section-content">
+                            <div class="style-group">
+                                <label>Шрифт</label>
+                                <select id="header-font-family">
+                                    <option value="Arial" style="font-family: Arial">Arial</option>
+                                    <option value="Times New Roman" style="font-family: 'Times New Roman'">Times New Roman</option>
+                                    <option value="Courier New" style="font-family: 'Courier New'">Courier New</option>
+                                    <option value="Georgia" style="font-family: Georgia">Georgia</option>
+                                    <option value="Verdana" style="font-family: Verdana">Verdana</option>
+                                    <option value="Helvetica" style="font-family: Helvetica">Helvetica</option>
+                                    <option value="Tahoma" style="font-family: Tahoma">Tahoma</option>
+                                    <option value="Trebuchet MS" style="font-family: 'Trebuchet MS'">Trebuchet MS</option>
+                                    <option value="Impact" style="font-family: Impact">Impact</option>
+                                    <option value="Comic Sans MS" style="font-family: 'Comic Sans MS'">Comic Sans MS</option>
+                                    <option value="Palatino" style="font-family: Palatino">Palatino</option>
+                                    <option value="Garamond" style="font-family: Garamond">Garamond</option>
+                                    <option value="Bookman" style="font-family: Bookman">Bookman</option>
                                 </select>
                             </div>
-                            <button id="img-upload">Загрузить изображение</button>
+                            <div class="style-group">
+                                <label>Цвет текста</label>
+                                <input type="color" id="header-text-color" value="#000000" class="menu-button">
+                            </div>
+                            <div class="style-group">
+                                <label>Выравнивание текста</label>
+                                <select id="header-text-align">
+                                    <option value="left">Слева</option>
+                                    <option value="center">По центру</option>
+                                    <option value="right">Справа</option>
+                                    <option value="justify">По ширине</option>
+                                </select>
+                            </div>
+                            <div class="style-group-inline">
+                                <label for="header-use-parent-style">Использовать стиль узла</label>
+                                <input type="checkbox" id="header-use-parent-style">
+                            </div>
+                            <div class="text-style-buttons">
+                                <button id="header-italic-btn" class="style-btn" title="Курсив">I</button>
+                                <button id="header-underline-btn" class="style-btn" title="Подчёркнутый">U</button>
+                            </div>
                         </div>
                     </div>
                 </div>

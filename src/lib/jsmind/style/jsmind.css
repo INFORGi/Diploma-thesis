@@ -295,3 +295,33 @@
     color: #999;
     font-style: italic;
 }
+
+/* .parent-style {
+    color: inherit !important;
+    font-family: inherit !important;
+    font-style: inherit !important;
+    text-decoration: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+} */
+
+li.parent-style,
+p.parent-style {
+    color: inherit !important;
+    font-family: inherit !important;
+    font-style: inherit !important;
+    text-decoration: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+}
+
+h1.parent-style,
+h2.parent-style,
+h3.parent-style {
+    color: inherit !important;
+    font-family: inherit !important;
+    font-style: inherit !important;
+    text-decoration: inherit !important;
+    font-size: revert !important;
+    font-weight: revert !important;
+}

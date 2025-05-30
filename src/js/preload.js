@@ -14,4 +14,5 @@ contextBridge.exposeInMainWorld('electron', {
     onLoadMapData: (callback) => ipcRenderer.on('load-map-data', (_, data) => callback(data)),
     renderMarkdown: (markdown) => ipcRenderer.invoke('render-markdown', markdown),
     html2canvas: (element, options) => html2canvas(element, options),
+    openFileDialog: async () => ipcRenderer.invoke('open-file-dialog'),
 });
